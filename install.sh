@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-01-24 16:47:45
+ # @LastEditTime: 2021-01-24 21:10:29
  # @FilePath: \undefinedc:\Users\skillf\Desktop\archScriptbspwmNvim\iniTest\iniTest\install.sh
 ### 
 
@@ -30,7 +30,7 @@ if [ "$type" = "laptop" ]; then
                 ssid="$wifiSSID"
                 psk="$wifiPSK"
             }
-            EOF
+EOF
             echo -e "wifi.conf generated successfully !\n"
         else
             exit
@@ -50,7 +50,7 @@ echo -e "\n##======================================================" > mirrorlis
 
 reflector --verbose --country 'China' -l 100 -p https --sort rate >> mirrorlist.temp
 
-#curl -sSL 'https://www.archlinux.org/mirrorlist/?country=CN&protocol=https&ip_version=4&use_mirror_status=on' \
+curl -sSL 'https://www.archlinux.org/mirrorlist/?country=CN&protocol=https&ip_version=4&use_mirror_status=on' \
      | sed '/^## China/d; s/^#Server/Server/g' >> mirrorlist.temp
 
 echo -e "##======================================================\n" >> mirrorlist.temp
@@ -70,19 +70,20 @@ boot=`awk -F "=" '$1=="boot" {print $2}' ./install.conf`
 home=`awk -F "=" '$1=="home" {print $2}' ./install.conf`
 swap=`awk -F "=" '$1=="swap" {print $2}' ./install.conf`
 
-if [ ! -n "$root" ]; then
+if [ -n "$root" ]; then
     mkfs.ext4 /dev/$root
     mount /dev/$root /mnt
 else
     echo "ERROR: root partition does not exist !"
-    exit 1
+    exit
 fi
 
 if [ ! -d "/mnt/boot" ]; then
     mkdir -p /mnt/boot
 fi
 
-if [ ! -n "$boot" ]; then
+system=`awk -F "=" '$1=="system" {print $2}' ./install.conf`
+if [ -n "$boot" ]; then
     if [ "$system" != "dual" ];then
         mkfs.fat -F32 /dev/$boot
     fi
@@ -95,12 +96,12 @@ fi
 if [ ! -d "/mnt/home" ]; then
     mkdir -p /mnt/home
 fi
-if [ ! -n "$home" ]; then
+if [ -n "$home" ]; then
     mkfs.ext4 /dev/$home
     mount /dev/$home /mnt/home
 fi
 
-if [ ! -n "$swap" ]; then
+if [ -n "$swap" ]; then
     mkswap /dev/$swap
     swapon /dev/$swap
 fi
@@ -112,76 +113,14 @@ pacstrap /mnt base linux linux-firmware
 genfstab -L /mnt >> /mnt/etc/fstab
 
 # Chroot
-arch-chroot /mnt
-
-# Time zone
-ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
-hwclock --systohc
-
-# Localization
-sed -i 's/^#en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen
-sed -i 's/^#zh_CN.GB18030/zh_CN.GB18030/' /etc/locale.gen
-sed -i 's/^#zh_CN.GBK/zh_CN.GBK/' /etc/locale.gen
-sed -i 's/^#zh_CN.UTF-8/zh_CN.UTF-8/' /etc/locale.gen
-sed -i 's/^#zh_CN GB2312/zh_CN GB2312/' /etc/locale.gen
-
-locale-gen
-
-echo "LANG=en_US.UTF-8" > /etc/locale.conf
-
-# Network configuration
-hostname=`awk -F "=" '$1=="hostname" {print $2}' ./install.conf`
-echo $hostname > /etc/hostname
-cat >> /etc/hosts <<EOF
-127.0.0.1    localhost \
-::1               localhost \
-127.0.1.1    $hostname.localdomain	$hostname \
-EOF
-
-# Initramfs
-mkinitcpio -P
-
-# Root password
-rootpasswd=`awk -F "=" '$1=="rootpasswd" {print $2}' ./install.conf`
-echo root:$rootpasswd | chpasswd
-
-# Boot loader
-# Verify the boot mode
-set +e
-ls /sys/firmware/efi/efivars > /dev/null
-if [[ "$?" == "0" ]]; then
-    # UEFI systems
-    pacman -S efibootmgr
-    grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
-else
-    # BIOS systems
-    grub-install --target=i386-pc /dev/`echo "$boot" | tr -d [:digit:]`
-fi
-set -e
-
-# MS Windows
-system=`awk -F "=" '$1=="system" {print $2}' ./install.conf`
-if [ "$system" = "dual" ]; then
-    pacman -S os-prober
-    os-prober
+if [ ! -d "/mnt/chroorinstall" ]; then
+    mkdir -p /mnt/chroorinstall
 fi
 
-# Microcode
-cpu_processor=`lscpu | grep "Intel"`
-if [ -n $cpu_processor ]; then
-    pacman -S intel-ucode
-else
-    pacman -S amd-ucode
-fi
+if [ -s "chroorinstall.sh" ]; then
+    cp ./chroorinstall.sh /mnt/chroorinstall/
+fi  
+arch-chroot /mnt t/chroorinstall/chroorinstall.sh
 
-# Generate the main configuration file
-grub-mkconfig -o /boot/grub/grub.cfg
 
-# Adduser
-username=`awk -F "=" '$1=="username" {print $2}' ./install.conf`
-userpasswd=`awk -F "=" '$1=="userpasswd" {print $2}' ./install.conf`
 
-useradd -m -g users -G wheel -s /bin/bash $username
-echo $username:$userpasswd | chpasswd
-
-echo -e "The ArchLinux installation was successful.\n"
