@@ -10,6 +10,8 @@
 # -o pipefail : As soon as a subcommand fails, the entire pipeline command fails and the script terminates.
 set -euxo pipefail
 
+configfile="/mnt/chrootinstall/install.conf"
+
 # Time zone
 ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 hwclock --systohc
@@ -26,7 +28,7 @@ locale-gen
 echo "LANG=en_US.UTF-8" > /etc/locale.conf
 
 # Network configuration
-hostname=`awk -F "=" '$1=="hostname" {print $2}' ./install.conf`
+hostname=`awk -F "=" '$1=="hostname" {print $2}' $configfile`
 if [ -n "$hostname" ]; then
     echo $hostname > /etc/hostname
 else
@@ -44,7 +46,7 @@ EOF
 mkinitcpio -P
 
 # Root password
-rootpasswd=`awk -F "=" '$1=="rootpasswd" {print $2}' ./install.conf`
+rootpasswd=`awk -F "=" '$1=="rootpasswd" {print $2}' $configfile`
 echo root:$rootpasswd | chpasswd
 
 # Boot loader
@@ -62,7 +64,7 @@ fi
 set -e
 
 # MS Windows
-system=`awk -F "=" '$1=="system" {print $2}' ./install.conf`
+system=`awk -F "=" '$1=="system" {print $2}' $configfile`
 if [ "$system" = "dual" ]; then
     pacman -S os-prober
     os-prober
@@ -80,8 +82,8 @@ fi
 grub-mkconfig -o /boot/grub/grub.cfg
 
 # Adduser
-username=`awk -F "=" '$1=="username" {print $2}' ./install.conf`
-userpasswd=`awk -F "=" '$1=="userpasswd" {print $2}' ./install.conf`
+username=`awk -F "=" '$1=="username" {print $2}' $configfile`
+userpasswd=`awk -F "=" '$1=="userpasswd" {print $2}' $configfile`
 
 useradd -m -g users -G wheel -s /bin/bash $username
 echo $username:$userpasswd | chpasswd

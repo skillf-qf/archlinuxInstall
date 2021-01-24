@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-01-24 21:10:29
+ # @LastEditTime: 2021-01-24 23:34:51
  # @FilePath: \undefinedc:\Users\skillf\Desktop\archScriptbspwmNvim\iniTest\iniTest\install.sh
 ### 
 
@@ -10,9 +10,11 @@
 # -o pipefail : As soon as a subcommand fails, the entire pipeline command fails and the script terminates.
 set -euxo pipefail
 
+configfile="./install.conf"
+
 # Connect to the internet
 configfile="./wifi.conf"
-type=`awk -F "=" '$1=="compute" {print $2}' ./install.conf`
+type=`awk -F "=" '$1=="compute" {print $2}' $configfile`
 if [ "$type" = "laptop" ]; then
     if [ -s $configfile ]; then
         cp wifi.conf /etc/wpa_supplicant/
@@ -65,10 +67,10 @@ timedatectl set-ntp true
 
 # Disks
 
-root=`awk -F "=" '$1=="root" {print $2}' ./install.conf`
-boot=`awk -F "=" '$1=="boot" {print $2}' ./install.conf`
-home=`awk -F "=" '$1=="home" {print $2}' ./install.conf`
-swap=`awk -F "=" '$1=="swap" {print $2}' ./install.conf`
+root=`awk -F "=" '$1=="root" {print $2}' $configfile`
+boot=`awk -F "=" '$1=="boot" {print $2}' $configfile`
+home=`awk -F "=" '$1=="home" {print $2}' $configfile`
+swap=`awk -F "=" '$1=="swap" {print $2}' $configfile`
 
 if [ -n "$root" ]; then
     mkfs.ext4 /dev/$root
@@ -82,7 +84,7 @@ if [ ! -d "/mnt/boot" ]; then
     mkdir -p /mnt/boot
 fi
 
-system=`awk -F "=" '$1=="system" {print $2}' ./install.conf`
+system=`awk -F "=" '$1=="system" {print $2}' $configfile`
 if [ -n "$boot" ]; then
     if [ "$system" != "dual" ];then
         mkfs.fat -F32 /dev/$boot
@@ -101,7 +103,9 @@ if [ -n "$home" ]; then
     mount /dev/$home /mnt/home
 fi
 
-if [ -n "$swap" ]; then
+swapstatus=`swapon -s | grep $swap`
+
+if [ -n "$swap" && ! -n  $swapstatus ]; then
     mkswap /dev/$swap
     swapon /dev/$swap
 fi
@@ -113,14 +117,16 @@ pacstrap /mnt base linux linux-firmware
 genfstab -L /mnt >> /mnt/etc/fstab
 
 # Chroot
-if [ ! -d "/mnt/chroorinstall" ]; then
-    mkdir -p /mnt/chroorinstall
-fi
 
-if [ -s "chroorinstall.sh" ]; then
-    cp ./chroorinstall.sh /mnt/chroorinstall/
+rm -rf /mnt/chrootinstall
+mkdir -p /mnt/chrootinstall
+
+scriptfile="chrootInstall.sh"
+ 
+if [ -s $scriptfile ]; then
+    cp ./* /mnt/chrootinstall/
 fi  
-arch-chroot /mnt t/chroorinstall/chroorinstall.sh
+arch-chroot /mnt /chrootinstall/$scriptfile
 
 
 
