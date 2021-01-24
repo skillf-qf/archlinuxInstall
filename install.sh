@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-01-25 00:10:59
+ # @LastEditTime: 2021-01-25 00:41:10
  # @FilePath: \undefinedc:\Users\skillf\Desktop\archScriptbspwmNvim\iniTest\iniTest\install.sh
 ### 
 
@@ -72,9 +72,11 @@ boot=`awk -F "=" '$1=="boot" {print $2}' $configfile`
 home=`awk -F "=" '$1=="home" {print $2}' $configfile`
 swap=`awk -F "=" '$1=="swap" {print $2}' $configfile`
 
+set +e
 umount /dev/$boot
 umount /dev/$home
 umount /dev/$root
+set -e
 
 if [ -n "$root" ]; then
     echo y | mkfs.ext4 /dev/$root
