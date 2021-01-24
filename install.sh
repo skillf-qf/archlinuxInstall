@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-01-25 01:09:40
+ # @LastEditTime: 2021-01-25 01:29:56
  # @FilePath: \undefinedc:\Users\skillf\Desktop\archScriptbspwmNvim\iniTest\iniTest\install.sh
 ### 
 
@@ -50,10 +50,9 @@ ping -c 3 www.baidu.com > /dev/null
 cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
 echo -e "\n##======================================================" > mirrorlist.temp
 
-reflector --verbose --country 'China' -l 100 -p https --sort rate >> mirrorlist.temp
+reflector --verbose --country 'China' -l 20 -p https --sort rate >> mirrorlist.temp
 
-curl -sSL 'https://www.archlinux.org/mirrorlist/?country=CN&protocol=https&ip_version=4&use_mirror_status=on' \
-     | sed '/^## China/d; s/^#Server/Server/g' >> mirrorlist.temp
+#curl -sSL 'https://www.archlinux.org/mirrorlist/?country=CN&protocol=https&ip_version=4&use_mirror_status=on' | sed '/^## China/d; s/^#Server/Server/g' >> mirrorlist.temp
 
 echo -e "##======================================================\n" >> mirrorlist.temp
 
@@ -109,7 +108,9 @@ if [ -n "$home" ]; then
     mount /dev/$home /mnt/home
 fi
 
+set +e
 swapstatus=`swapon -s | grep "$swap"`
+set -e
 
 if [[ -n "$swap" ]] && [[ ! -n "$swapstatus" ]]; then
     mkswap /dev/$swap
