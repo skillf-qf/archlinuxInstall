@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-01-25 01:00:53
+ # @LastEditTime: 2021-01-25 01:09:40
  # @FilePath: \undefinedc:\Users\skillf\Desktop\archScriptbspwmNvim\iniTest\iniTest\install.sh
 ### 
 
@@ -109,9 +109,9 @@ if [ -n "$home" ]; then
     mount /dev/$home /mnt/home
 fi
 
-swapstatus=`swapon -s | grep $swap`
+swapstatus=`swapon -s | grep "$swap"`
 
-if [ -n "$swap" ] && [ ! -n "$swapstatus" ]; then
+if [[ -n "$swap" ]] && [[ ! -n "$swapstatus" ]]; then
     mkswap /dev/$swap
     swapon /dev/$swap
 fi
