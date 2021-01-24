@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-01-24 20:58:56
+ # @LastEditTime: 2021-01-24 23:54:45
  # @FilePath: \undefinedc:\Users\skillf\Desktop\archScriptbspwmNvim\iniTest\iniTest\chrootInstall.sh
 ### 
 
@@ -10,7 +10,7 @@
 # -o pipefail : As soon as a subcommand fails, the entire pipeline command fails and the script terminates.
 set -euxo pipefail
 
-configfile="/mnt/chrootinstall/install.conf"
+configfile="/chrootinstall/install.conf"
 
 # Time zone
 ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
@@ -51,11 +51,12 @@ echo root:$rootpasswd | chpasswd
 
 # Boot loader
 # Verify the boot mode
+echo y | pacman -S grub
 set +e
 ls /sys/firmware/efi/efivars > /dev/null
-if [[ "$?" == "0" ]]; then
+if [[ "$?" = "0" ]]; then
     # UEFI systems
-    pacman -S efibootmgr
+    echo y | pacman -S efibootmgr
     grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
 else
     # BIOS systems
@@ -66,16 +67,16 @@ set -e
 # MS Windows
 system=`awk -F "=" '$1=="system" {print $2}' $configfile`
 if [ "$system" = "dual" ]; then
-    pacman -S os-prober
+    echo y | pacman -S os-prober
     os-prober
 fi
 
 # Microcode
 cpu_processor=`lscpu | grep "Intel"`
 if [ -n $cpu_processor ]; then
-    pacman -S intel-ucode
+    echo y | pacman -S intel-ucode
 else
-    pacman -S amd-ucode
+    echo y | pacman -S amd-ucode
 fi
 
 # Generate the main configuration file

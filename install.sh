@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-01-24 23:34:51
+ # @LastEditTime: 2021-01-24 23:58:20
  # @FilePath: \undefinedc:\Users\skillf\Desktop\archScriptbspwmNvim\iniTest\iniTest\install.sh
 ### 
 
@@ -13,10 +13,10 @@ set -euxo pipefail
 configfile="./install.conf"
 
 # Connect to the internet
-configfile="./wifi.conf"
-type=`awk -F "=" '$1=="compute" {print $2}' $configfile`
+wificonfig="./wifi.conf"
+type=`awk -F "=" '$1=="compute" {print $2}' $wificonfig`
 if [ "$type" = "laptop" ]; then
-    if [ -s $configfile ]; then
+    if [ -s $wificonfig ]; then
         cp wifi.conf /etc/wpa_supplicant/
     else    
         read -r -p "The wifi.conf file does not exist or is empty. Is it automatically generated? [Y/n]" confirm
@@ -72,8 +72,12 @@ boot=`awk -F "=" '$1=="boot" {print $2}' $configfile`
 home=`awk -F "=" '$1=="home" {print $2}' $configfile`
 swap=`awk -F "=" '$1=="swap" {print $2}' $configfile`
 
+umount /dev/$boot
+umount /dev/$home
+umount /dev/$root
+
 if [ -n "$root" ]; then
-    mkfs.ext4 /dev/$root
+    echo y | mkfs.ext4 /dev/$root
     mount /dev/$root /mnt
 else
     echo "ERROR: root partition does not exist !"
@@ -87,7 +91,7 @@ fi
 system=`awk -F "=" '$1=="system" {print $2}' $configfile`
 if [ -n "$boot" ]; then
     if [ "$system" != "dual" ];then
-        mkfs.fat -F32 /dev/$boot
+        echo y | mkfs.fat -F32 /dev/$boot
     fi
     mount /dev/$boot /mnt/boot
 else
@@ -99,7 +103,7 @@ if [ ! -d "/mnt/home" ]; then
     mkdir -p /mnt/home
 fi
 if [ -n "$home" ]; then
-    mkfs.ext4 /dev/$home
+    echo y | mkfs.ext4 /dev/$home
     mount /dev/$home /mnt/home
 fi
 
