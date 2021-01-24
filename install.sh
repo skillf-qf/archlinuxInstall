@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-01-25 00:41:10
+ # @LastEditTime: 2021-01-25 01:00:53
  # @FilePath: \undefinedc:\Users\skillf\Desktop\archScriptbspwmNvim\iniTest\iniTest\install.sh
 ### 
 
@@ -111,7 +111,7 @@ fi
 
 swapstatus=`swapon -s | grep $swap`
 
-if [ -n "$swap" && ! -n  $swapstatus ]; then
+if [ -n "$swap" ] && [ ! -n "$swapstatus" ]; then
     mkswap /dev/$swap
     swapon /dev/$swap
 fi
