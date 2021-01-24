@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-01-25 00:26:14
+ # @LastEditTime: 2021-01-25 03:08:52
  # @FilePath: \undefinedc:\Users\skillf\Desktop\archScriptbspwmNvim\iniTest\iniTest\chrootInstall.sh
 ### 
 
@@ -52,9 +52,8 @@ echo root:$rootpasswd | chpasswd
 # Boot loader
 # Verify the boot mode
 echo y | pacman -S grub
-set +e
-ls /sys/firmware/efi/efivars > /dev/null
-if [[ "$?" = "0" ]]; then
+
+if ls /sys/firmware/efi/efivars > /dev/null; then
     # UEFI systems
     echo y | pacman -S efibootmgr
     grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
@@ -62,7 +61,6 @@ else
     # BIOS systems
     grub-install --target=i386-pc /dev/`echo "$boot" | tr -d [:digit:]`
 fi
-set -e
 
 # MS Windows
 system=`awk -F "=" '$1=="system" {print $2}' $configfile`
