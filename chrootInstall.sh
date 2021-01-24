@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-01-24 23:54:45
+ # @LastEditTime: 2021-01-25 00:26:14
  # @FilePath: \undefinedc:\Users\skillf\Desktop\archScriptbspwmNvim\iniTest\iniTest\chrootInstall.sh
 ### 
 
@@ -73,7 +73,7 @@ fi
 
 # Microcode
 cpu_processor=`lscpu | grep "Intel"`
-if [ -n $cpu_processor ]; then
+if [ -n "$cpu_processor" ]; then
     echo y | pacman -S intel-ucode
 else
     echo y | pacman -S amd-ucode
