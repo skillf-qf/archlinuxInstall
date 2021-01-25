@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-01-25 01:29:56
+ # @LastEditTime: 2021-01-25 12:07:39
  # @FilePath: \undefinedc:\Users\skillf\Desktop\archScriptbspwmNvim\iniTest\iniTest\install.sh
 ### 
 
@@ -131,7 +131,7 @@ mkdir -p /mnt/chrootinstall
 scriptfile="chrootInstall.sh"
  
 if [ -s $scriptfile ]; then
-    cp ./* /mnt/chrootinstall/
+    cp -r ./* /mnt/chrootinstall/
 fi  
 arch-chroot /mnt /chrootinstall/$scriptfile
 
