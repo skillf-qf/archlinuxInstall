@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-01-25 03:08:52
+ # @LastEditTime: 2021-01-25 11:59:15
  # @FilePath: \undefinedc:\Users\skillf\Desktop\archScriptbspwmNvim\iniTest\iniTest\chrootInstall.sh
 ### 
 
@@ -59,7 +59,8 @@ if ls /sys/firmware/efi/efivars > /dev/null; then
     grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
 else
     # BIOS systems
-    grub-install --target=i386-pc /dev/`echo "$boot" | tr -d [:digit:]`
+    bootpartition=$(echo $boot | sed 's/[0-9]*$//')
+    grub-install --target=i386-pc /dev/$bootpartition
 fi
 
 # MS Windows
