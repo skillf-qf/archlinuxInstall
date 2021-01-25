@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-01-25 13:19:45
+ # @LastEditTime: 2021-01-25 20:56:24
  # @FilePath: \undefinedc:\Users\skillf\Desktop\archScriptbspwmNvim\iniTest\iniTest\chrootInstall.sh
 ### 
 
@@ -87,5 +87,7 @@ userpasswd=`awk -F "=" '$1=="userpasswd" {print $2}' $configfile`
 
 useradd -m -g users -G wheel -s /bin/bash $username
 echo $username:$userpasswd | chpasswd
+
+#TODO ：安装网络配置
 
 echo -e "The ArchLinux installation was successful.\n"
