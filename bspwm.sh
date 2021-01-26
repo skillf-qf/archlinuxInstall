@@ -3,7 +3,6 @@
  # @Author: skillf
  # @Date: 2021-01-25 17:18:53
  # @LastEditTime: 2021-01-25 21:05:33
- # @FilePath: \undefinedc:\Users\skillf\Desktop\archScriptbspwmNvim\iniTest\iniTest\bspwm.sh
 ### 
 
 echo y | pacman -S xorg xorg-xinit bspwm sxhkd sudo wget ttf-fira-code pkg-config make gcc picom feh zsh

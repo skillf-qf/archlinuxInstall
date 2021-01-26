@@ -132,7 +132,7 @@ scriptfile="chrootInstall.sh"
  
 if [ -s $scriptfile ]; then
     cp -r ./* /mnt/chrootinstall/
-fi  
+fi
 arch-chroot /mnt /chrootinstall/$scriptfile
 
 
