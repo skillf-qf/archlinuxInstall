@@ -2,7 +2,11 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
+<<<<<<< HEAD
  # @LastEditTime: 2021-01-28 00:21:41
+=======
+ # @LastEditTime: 2021-01-27 11:34:24
+>>>>>>> aad536e3ece68c43a9cc953dfa52092d760ec2b3
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ### 
 

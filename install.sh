@@ -2,7 +2,11 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
+<<<<<<< HEAD
  # @LastEditTime: 2021-01-27 15:15:27
+=======
+ # @LastEditTime: 2021-01-27 11:35:13
+>>>>>>> aad536e3ece68c43a9cc953dfa52092d760ec2b3
  # @FilePath: \archlinuxInstall\install.sh
 ### 
 
