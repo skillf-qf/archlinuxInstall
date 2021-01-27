@@ -2,8 +2,8 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-01-25 12:07:39
- # @FilePath: \undefinedc:\Users\skillf\Desktop\archScriptbspwmNvim\iniTest\iniTest\install.sh
+ # @LastEditTime: 2021-01-27 15:15:27
+ # @FilePath: \archlinuxInstall\install.sh
 ### 
 
 # Print the command. The script ends when the command fails.

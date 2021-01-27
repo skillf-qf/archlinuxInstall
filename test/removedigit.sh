@@ -1,4 +1,12 @@
 #!/bin/bash
+###
+ # @Author: skillf
+ # @Date: 2021-01-27 10:30:19
+ # @LastEditTime: 2021-01-27 11:32:50
+ # @FilePath: \archlinuxInstall\test\removedigit.sh
+### 
+
+
 
 #str=test22
 #echo -e "str=$str\n"
