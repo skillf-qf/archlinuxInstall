@@ -2,8 +2,8 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-01-25 20:56:24
- # @FilePath: \undefinedc:\Users\skillf\Desktop\archScriptbspwmNvim\iniTest\iniTest\chrootInstall.sh
+ # @LastEditTime: 2021-01-27 11:34:24
+ # @FilePath: \archlinuxInstall\chrootInstall.sh
 ### 
 
 # Print the command. The script ends when the command fails.

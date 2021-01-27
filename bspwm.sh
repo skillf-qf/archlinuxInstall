@@ -1,11 +1,13 @@
 #!/bin/bash
 ###
  # @Author: skillf
- # @Date: 2021-01-25 17:18:53
- # @LastEditTime: 2021-01-25 21:05:33
+ # @Date: 2021-01-27 10:30:18
+ # @LastEditTime: 2021-01-27 11:34:51
+ # @FilePath: \archlinuxInstall\bspwm.sh
 ### 
 
-echo y | pacman -S xorg xorg-xinit bspwm sxhkd sudo wget ttf-fira-code pkg-config make gcc picom feh zsh
+echo y | pacman -S xorg xorg-xinit bspwm sxhkd sudo wget ttf-fira-code pkg-config \
+								make gcc picom feh zsh
 
 wget -c --tries=2 -P $HOME/Downloads https://dl.suckless.org/st/st-0.8.4.tar.gz
 tar -zxvf $HOME/Downloads/st-0.8.4.tar.gz
