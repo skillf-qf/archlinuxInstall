@@ -2,11 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
-<<<<<<< HEAD
- # @LastEditTime: 2021-01-28 00:21:41
-=======
- # @LastEditTime: 2021-01-27 11:34:24
->>>>>>> aad536e3ece68c43a9cc953dfa52092d760ec2b3
+ # @LastEditTime: 2021-01-28 17:45:41
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ### 
 
@@ -93,29 +89,69 @@ userpasswd=`awk -F "=" '$1=="userpasswd" {print $2}' $install_config`
 useradd -m -g users -G wheel -s /bin/bash $username
 echo $username:$userpasswd | chpasswd
 
-## yay
-# echo -e "\n" y | pacman -S --needed base-devel git
-#
-#sed -i 's/^#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j$(nproc)\"/g' /etc/makepkg.conf
-#
-#download_dir="$HOME/download/"
-#  if [ ! -d "$download_dir" ]; then
-#        mkdir -p "$download_dir"
-#    fi
-#current_dir=`pwd`
-#cd $download_dir
-#git clone https://aur.archlinux.org/yay.git
-#cd $download_dir/yay
-#
-#makepkg -si
-#cd $current_dir
+# yay
+ echo -e "\n" y | pacman -S --needed base-devel git
+
+sed -i 's/^#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j$(nproc)\"/g' /etc/makepkg.conf
+
+download_dir="$HOME/download/"
+  if [ ! -d "$download_dir" ]; then
+        mkdir -p "$download_dir"
+    fi
+current_dir=`pwd`
+cd $download_dir
+git clone https://aur.archlinux.org/yay.git
+cd $download_dir/yay
+
+makepkg -si
+cd $current_dir
+
+# NetworkManager 
+echo y | pacman -S networkmanager network-manager-applet dhcpcd
+systemctl enable --now NetworkManager
+systemctl enable --now dhcpcd
+systemctl disable NetworkManager-wait-online
+
+#TODO ：显卡驱动
+lspci -k
+
+#TODO ：声卡驱动
+
+# Touchpad libinput (laptop)
+type=`awk -F "=" '$1=="compute" {print $2}' $install_config`
+if [ "$type" = "laptop" ]; then
+    echo y | pacman -S xf86-input-libinput xorg-xinput
+    # default configuration /usr/share/X11/xorg.conf.d/40-libinput.conf
+
+    if [ -s "./config/touchpad/30-touchpad.conf"  ]; then
+        cp ./config/touchpad/30-touchpad.conf /etc/X11/xorg.conf.d/
+    else
+        cp /usr/share/X11/xorg.conf.d/40-libinput.conf /etc/X11/xorg.conf.d/30-touchpad.conf 
+        
+        cat >> /etc/X11/xorg.conf.d/30-touchpad.conf <<EOF
+        Section "InputClass"
+                Identifier "touchpad"
+                Driver "libinput"
+                MatchDevicePath "/dev/input/event*"
+                MatchIsPointer "on"
+                Option "Tapping" "on"
+                Option "DisableWhileTypeing" "on"
+                Option "TappingButtonMap" "lmr"
+                Option "TappingDrag" "on"
+        EndSection
+EOF
+    fi
+
+fi
 
 
-#TODO ：安装网络配置
+#TODO ：Bluetooth（laptop）
+#TODO ：添加archlinuxcn源
+#TODO ：安装中文输入法
+#TODO ：中文字体
 
-
-
-
+#TODO：sudo 
+#TODO ：常用应用(选装)
 
 desktop=`awk -F "=" '$1=="desktop" {print $2}' $install_config`
 if [ -n "$desktop" ]; then

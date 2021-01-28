@@ -2,11 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
-<<<<<<< HEAD
- # @LastEditTime: 2021-01-27 15:15:27
-=======
- # @LastEditTime: 2021-01-27 11:35:13
->>>>>>> aad536e3ece68c43a9cc953dfa52092d760ec2b3
+ # @LastEditTime: 2021-01-28 17:19:52
  # @FilePath: \archlinuxInstall\install.sh
 ### 
 
@@ -18,7 +14,7 @@ configfile="./install.conf"
 
 # Connect to the internet
 wificonfig="./wifi.conf"
-type=`awk -F "=" '$1=="compute" {print $2}' $wificonfig`
+type=`awk -F "=" '$1=="compute" {print $2}' $configfile`
 if [ "$type" = "laptop" ]; then
     if [ -s $wificonfig ]; then
         cp wifi.conf /etc/wpa_supplicant/
