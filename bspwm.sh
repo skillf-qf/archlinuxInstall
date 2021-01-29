@@ -2,12 +2,12 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-27 10:30:18
- # @LastEditTime: 2021-01-28 17:24:10
+ # @LastEditTime: 2021-01-29 16:31:09
  # @FilePath: \archlinuxInstall\bspwm.sh
 ### 
 
 function replacestr()
-# function : Replaces the default string with the specified string
+# function : Replaces the string on the next line of the specified row
 # $1 : filename
 # S2 : string for replace
 {
@@ -18,22 +18,8 @@ function replacestr()
 	sed -i "/super + Return/a\  $2" $1
 }
 
-function deleteline()
-# function : Deletes from the beginning of the specified line to the end of the line
-# $1 : filename
-# $2 : start line for deleteline
-{
-	str=$2
-	if [ -z $2 ];then
-		str="tem &"
-	fi
-  	line=`sed -n "/$str/=" $1`
- 	echo -e "line=$line\n"
-  	sed -i "$line"',$d' $1
-}
-
 configfile="./config/install.conf"
-echo y | pacman -S xorg xorg-xinit bspwm sxhkd sudo wget ttf-fira-code pkg-config \
+pacman -S --noconfirm xorg xorg-xinit bspwm sxhkd sudo wget ttf-fira-code pkg-config \
 								make gcc picom feh zsh ranger
 
 # bspwm config file 
@@ -55,7 +41,7 @@ if [ "$terminal" = "st" ] || [ -z "$terminal" ]; then
 	./st
 	replacestr $HOME/.config/sxhkd/sxhkdrc st
 else
-    if  echo y | pacman -S "$terminal"; then
+    if  pacman -S --noconfirm pacman -S "$terminal"; then
 		# set terminal
 		replacestr $HOME/.config/sxhkd/sxhkdrc "$terminal"
 	else
@@ -81,7 +67,7 @@ if [ -s "./config/xorg-xinit/.xinitrc"  ]; then
 else
 	cp /etc/X11/xinit/xinitrc $HOME/.xinitrc
 	# Delete the last five lines
-	deleteline $HOME/.xinitrc
+	./deleteline.sh $HOME/.xinitrc "tem &"
 	echo -e "\nexec bspwm\n" >> $HOME/.xinitrc
 fi
 

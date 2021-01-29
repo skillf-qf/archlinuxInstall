@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-01-28 17:45:41
+ # @LastEditTime: 2021-01-29 17:09:35
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ### 
 
@@ -52,11 +52,11 @@ echo root:$rootpasswd | chpasswd
 
 # Boot loader
 # Verify the boot mode
-echo y | pacman -S grub
+pacman -S --noconfirm grub
 
 if ls /sys/firmware/efi/efivars > /dev/null; then
     # UEFI systems
-    echo y | pacman -S efibootmgr
+    pacman -S --noconfirm efibootmgr
     grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
 else
     # BIOS systems
@@ -67,16 +67,16 @@ fi
 # MS Windows
 system=`awk -F "=" '$1=="system" {print $2}' $install_config`
 if [ "$system" = "dual" ]; then
-    echo y | pacman -S os-prober
+    pacman -S --noconfirm os-prober
     os-prober
 fi
 
 # Microcode
 cpu_processor=`lscpu | grep "Intel"`
 if [ -n "$cpu_processor" ]; then
-    echo y | pacman -S intel-ucode
+    pacman -S --noconfirm intel-ucode
 else
-    echo y | pacman -S amd-ucode
+    pacman -S --noconfirm amd-ucode
 fi
 
 # Generate the main configuration file
@@ -107,7 +107,7 @@ makepkg -si
 cd $current_dir
 
 # NetworkManager 
-echo y | pacman -S networkmanager network-manager-applet dhcpcd
+pacman -S --noconfirm networkmanager network-manager-applet dhcpcd
 systemctl enable --now NetworkManager
 systemctl enable --now dhcpcd
 systemctl disable NetworkManager-wait-online
@@ -120,14 +120,13 @@ lspci -k
 # Touchpad libinput (laptop)
 type=`awk -F "=" '$1=="compute" {print $2}' $install_config`
 if [ "$type" = "laptop" ]; then
-    echo y | pacman -S xf86-input-libinput xorg-xinput
-    # default configuration /usr/share/X11/xorg.conf.d/40-libinput.conf
-
+    pacman -S --noconfirm xf86-input-libinput xorg-xinput
+    # default configuration from /usr/share/X11/xorg.conf.d/40-libinput.conf
     if [ -s "./config/touchpad/30-touchpad.conf"  ]; then
         cp ./config/touchpad/30-touchpad.conf /etc/X11/xorg.conf.d/
     else
         cp /usr/share/X11/xorg.conf.d/40-libinput.conf /etc/X11/xorg.conf.d/30-touchpad.conf 
-        
+        ./deleteline.sh /etc/X11/xorg.conf.d/30-touchpad.conf  "^Section"
         cat >> /etc/X11/xorg.conf.d/30-touchpad.conf <<EOF
         Section "InputClass"
                 Identifier "touchpad"
@@ -141,16 +140,27 @@ if [ "$type" = "laptop" ]; then
         EndSection
 EOF
     fi
-
+    #TODO ：Bluetooth（laptop）
+    #pacman -S --noconfirm bluez bluez-utils blueman bluedevil
 fi
 
 
-#TODO ：Bluetooth（laptop）
-#TODO ：添加archlinuxcn源
-#TODO ：安装中文输入法
-#TODO ：中文字体
+ # The Chinese Arch Linux Community Warehouse
+cat >> /etc/pacman.conf <<EOF
+[archlinuxcn]
+SigLevel = Optional TrustAll
+# 清华大学
+Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/$arch
+EOF
 
-#TODO：sudo 
+#TODO ：安装中文输入法
+
+# Chinese font
+pacman -S --noconfirm wqy-zenhei wqy-bitmapfont wqy-microhei firefox-i18n-zh-cn firefox-i18n-zh-tw
+#  sudo 
+pacman -S --noconfirm sudo
+sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/g' /etc/sudoers
+
 #TODO ：常用应用(选装)
 
 desktop=`awk -F "=" '$1=="desktop" {print $2}' $install_config`
