@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-01-31 02:12:25
+ # @LastEditTime: 2021-01-31 03:53:11
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ### 
 
@@ -10,7 +10,7 @@
 # -o pipefail : As soon as a subcommand fails, the entire pipeline command fails and the script terminates.
 set -euxo pipefail
 
-config_dir="/chrootinstall/"
+config_dir="/chrootinstall"
 install_config="/chrootinstall/config/install.conf"
 
 # Time zone
@@ -152,9 +152,11 @@ fi
 # Intel
 if lspci | grep VGA | grep Intel; then
     pacman -S --noconfirm xf86-video-intel
+fi
 # AMD
 if lspci | grep VGA | grep AMD; then
-    pacman -S --noconfirm xf86-video-amdgpu	
+    pacman -S --noconfirm xf86-video-amdgpu
+fi	
 # NVIDIA
 if lspci | grep VGA | grep NVIDIA; then
     pacman -S --noconfirm nvidia
@@ -168,6 +170,7 @@ SigLevel = Optional TrustAll
 # 清华大学
 Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/$arch
 EOF
+pacman -Sy
 
 #  sudo 
 pacman -S --noconfirm sudo

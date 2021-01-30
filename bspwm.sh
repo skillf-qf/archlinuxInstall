@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-27 10:30:18
- # @LastEditTime: 2021-01-31 02:53:00
+ # @LastEditTime: 2021-01-31 04:17:57
  # @FilePath: \archlinuxInstall\bspwm.sh
 ### 
 
@@ -22,64 +22,67 @@ function replacestr()
 	sed -i "/super + Return/a\  $2" $1
 }
 
-configfile="./config/install.conf"
+install_dir="/chrootinstall"
+configfile="$install_dir/config/install.conf"
 user=`awk -F "=" '$1=="username" {print $2}' $configfile`
+userhome="/home/$user"
+
 pacman -S --noconfirm xorg xorg-xinit bspwm sxhkd sudo wget ttf-fira-code pkg-config \
 								make gcc picom feh zsh ranger
 
 # bspwm config file 
-if [ -s "./config/bspwm/bspwmrc"  ]; then
-	install -Dm755 ./config/bspwm/bspwmrc /home/$user/.config/bspwm/bspwmrc
+if [ -s "$install_dir/config/bspwm/bspwmrc"  ]; then
+	install -Dm755 $install_dir/config/bspwm/bspwmrc $userhome/.config/bspwm/bspwmrc
 else
-	install -Dm755 /usr/share/doc/bspwm/examples/bspwmrc /home/$user/.config/bspwm/bspwmrc
+	install -Dm755 /usr/share/doc/bspwm/examples/bspwmrc $userhome/.config/bspwm/bspwmrc
 fi
 # sxhkd config file
-if [ -s "./config/bspwm/sxhkdrc"  ]; then
-	install -Dm755 ./config/bspwm/sxhkdrc /home/$user/.config/sxhkd/sxhkdrc
+if [ -s "$install_dir/config/bspwm/sxhkdrc"  ]; then
+	install -Dm755 $install_dir/config/bspwm/sxhkdrc $userhome/.config/sxhkd/sxhkdrc
 else
-	install -Dm644 /usr/share/doc/bspwm/examples/sxhkdrc /home/$user/.config/sxhkd/sxhkdrc
+	install -Dm644 /usr/share/doc/bspwm/examples/sxhkdrc $userhome/.config/sxhkd/sxhkdrc
 fi
 
 # install teiminal : default  -> st
 terminal=`awk -F "=" '$1=="terminal" {print $2}' $configfile`
 if [ "$terminal" = "st" ] || [ -z "$terminal" ]; then
-	./st.sh
-	replacestr /home/$user/.config/sxhkd/sxhkdrc st
+	$install_dir/st.sh
+	replacestr $userhome/.config/sxhkd/sxhkdrc st
 else
     if  pacman -S --noconfirm pacman -S "$terminal"; then
 		# set terminal
-		replacestr /home/$user/.config/sxhkd/sxhkdrc "$terminal"
+		replacestr $userhome/.config/sxhkd/sxhkdrc "$terminal"
 	else
     # default terminal
-		./st.sh
-		replacestr /home/$user/.config/sxhkd/sxhkdrc st
+		$install_dir/st.sh
+		replacestr $userhome/.config/sxhkd/sxhkdrc st
 	fi
 fi
 
 # start startx
-if [ -s "./config/bash/.bash_profile"  ]; then
-	cp ./config/bash/.bash_profile /home/$user/
+if [ -s "$install_dir/config/bash/.bash_profile"  ]; then
+	cp $install_dir/config/bash/.bash_profile $userhome/
 else
-	cat >> /home/$user/.bash_profile <<EOF
+	cat >> $userhome/.bash_profile <<EOF
 	if systemctl -q is-active graphical.target && [[ ! $DISPLAY && $XDG_VTNR -eq 1 ]]; then
   			exec startx
 	fi 
 EOF
 
 # start bspwm
-if [ -s "./config/xorg-xinit/.xinitrc"  ]; then
-	cp ./config/xorg-xinit/.xinitrc /home/$user/
+if [ -s "$install_dir/config/xorg-xinit/.xinitrc"  ]; then
+	cp $install_dir/config/xorg-xinit/.xinitrc $userhome/
 else
-	cp /etc/X11/xinit/xinitrc /home/$user/.xinitrc
+	cp /etc/X11/xinit/xinitrc $userhome/.xinitrc
 	# Delete the last five lines
-	./deleteline.sh /home/$user/.xinitrc "tem &"
-	echo -e "\nexec bspwm\n" >> /home/$user/.xinitrc
+	$install_dir/deleteline.sh $userhome/.xinitrc "tem &"
+	echo -e "\nexec bspwm\n" >> $userhome/.xinitrc
 fi
 
 # autologin
 mkdir -p /etc/systemd/system/getty@tty1.service.d
-if [ -s "./config/autologin/override.conf"  ]; then
-	cp ./config/autologin/override.conf /etc/systemd/system/getty@tty1.service.d/
+if [ -s "$install_dir/config/autologin/override.conf"  ]; then
+	cp $install_dir/config/autologin/override.conf /etc/systemd/system/getty@tty1.service.d/
 else
 	cat > /etc/systemd/system/getty@tty1.service.d/override.conf <<EOF
 	[Service]
@@ -99,7 +102,7 @@ fi
 ##TODO ：安装中文输入法
 #pacman -S --noconfirm fcitx
 #
-#sed -i '/# Last Check/r mirrorlist.temp' /home/$user/.xinitrc
+#sed -i '/# Last Check/r mirrorlist.temp' $userhome/.xinitrc
 #export GTK_IM_MODULE=fcitx
 #export QT_IM_MODULE=fcitx
 #export XMODIFIERS=@im=fcitx

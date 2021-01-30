@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-01-31 01:32:11
+ # @LastEditTime: 2021-01-31 03:47:35
  # @FilePath: \archlinuxInstall\install.sh
 ### 
 
@@ -56,10 +56,10 @@ reflector --verbose --country 'China' -l 20 -p https --sort rate >> mirrorlist.t
 
 echo -e "##======================================================\n" >> mirrorlist.temp
 
-sed -i '/# Last Check/r mirrorlist.temp' /etc/pacman.d/mirrorlist
+sed -i '/## Generated/r mirrorlist.temp' /etc/pacman.d/mirrorlist
 rm mirrorlist.temp
 
-pacman -Syy
+pacman -Sy
 
 # Update the system clock
 timedatectl set-ntp true
