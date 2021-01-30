@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-27 10:30:18
- # @LastEditTime: 2021-01-31 01:12:15
+ # @LastEditTime: 2021-01-31 02:53:00
  # @FilePath: \archlinuxInstall\bspwm.sh
 ### 
 
@@ -43,7 +43,7 @@ fi
 # install teiminal : default  -> st
 terminal=`awk -F "=" '$1=="terminal" {print $2}' $configfile`
 if [ "$terminal" = "st" ] || [ -z "$terminal" ]; then
-	./st
+	./st.sh
 	replacestr /home/$user/.config/sxhkd/sxhkdrc st
 else
     if  pacman -S --noconfirm pacman -S "$terminal"; then
@@ -51,7 +51,7 @@ else
 		replacestr /home/$user/.config/sxhkd/sxhkdrc "$terminal"
 	else
     # default terminal
-		./st
+		./st.sh
 		replacestr /home/$user/.config/sxhkd/sxhkdrc st
 	fi
 fi

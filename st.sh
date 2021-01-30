@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-27 10:30:19
- # @LastEditTime: 2021-01-30 17:47:39
+ # @LastEditTime: 2021-01-31 02:56:42
  # @FilePath: \archlinuxInstall\st.sh
 ### 
 
@@ -10,9 +10,12 @@
 # -o pipefail : As soon as a subcommand fails, the entire pipeline command fails and the script terminates.
 set -euxo pipefail
 
+configfile="./config/install.conf"
+user=`awk -F "=" '$1=="username" {print $2}' $configfile`
+
 function st_download_install(){
     st_url="https://dl.suckless.org/st/"
-    st_place_dir="$HOME/download/"
+    st_place_dir="/home/$user/download/"
     st_list=`curl -s $st_url | sed -n 's/.*\(st-[0-9]*.[0-9]*.[0-9]*.tar.gz\).*/\1/p' | sort |tail -2`
     st1=`echo $st_list | awk -F " " '{print $1}'`
     st2=`echo $st_list | awk -F " " '{print $2}'`

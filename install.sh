@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-01-28 17:19:52
+ # @LastEditTime: 2021-01-31 01:32:11
  # @FilePath: \archlinuxInstall\install.sh
 ### 
 
@@ -10,7 +10,7 @@
 # -o pipefail : As soon as a subcommand fails, the entire pipeline command fails and the script terminates.
 set -euxo pipefail
 
-configfile="./install.conf"
+configfile="./config/install.conf"
 
 # Connect to the internet
 wificonfig="./wifi.conf"

@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-01-31 01:09:26
+ # @LastEditTime: 2021-01-31 02:12:25
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ### 
 
@@ -11,7 +11,7 @@
 set -euxo pipefail
 
 config_dir="/chrootinstall/"
-install_config="/chrootinstall/install.conf"
+install_config="/chrootinstall/config/install.conf"
 
 # Time zone
 ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
@@ -90,25 +90,25 @@ useradd -m -g users -G wheel -s /bin/bash $username
 echo $username:$userpasswd | chpasswd
 
 # yay
- pacman -S  --noconfirm --needed base-devel git
-
-sed -i 's/^#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j$(nproc)\"/g' /etc/makepkg.conf
-
-download_dir="/home/$username/download/"
-  if [ ! -d "$download_dir" ]; then
-        mkdir -p "$download_dir"
-    fi
-current_dir=`pwd`
-cd $download_dir
-git clone https://aur.archlinux.org/yay.git
-cd $download_dir/yay
-echo y | makepkg -si
-cd $current_dir
+#pacman -S  --noconfirm --needed base-devel git
+#
+#sed -i 's/^#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j$(nproc)\"/g' /etc/makepkg.conf
+#
+#download_dir="/home/$username/download/"
+#  if [ ! -d "$download_dir" ]; then
+#        mkdir -p "$download_dir"
+#    fi
+#current_dir=`pwd`
+#cd $download_dir
+#git clone https://aur.archlinux.org/yay.git
+#cd $download_dir/yay
+#echo y | makepkg -si
+#cd $current_dir
 
 # NetworkManager 
 pacman -S --noconfirm networkmanager network-manager-applet dhcpcd
-systemctl enable --now NetworkManager
-systemctl enable --now dhcpcd
+systemctl enable NetworkManager
+systemctl enable dhcpcd
 systemctl disable NetworkManager-wait-online
 
 
