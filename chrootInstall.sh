@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-01-29 17:09:35
+ # @LastEditTime: 2021-01-31 01:09:26
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ### 
 
@@ -28,7 +28,7 @@ locale-gen
 
 echo "LANG=en_US.UTF-8" > /etc/locale.conf
 
-# Network configuration
+# localhost Network configuration
 hostname=`awk -F "=" '$1=="hostname" {print $2}' $install_config`
 if [ -n "$hostname" ]; then
     echo $hostname > /etc/hostname
@@ -90,11 +90,11 @@ useradd -m -g users -G wheel -s /bin/bash $username
 echo $username:$userpasswd | chpasswd
 
 # yay
- echo -e "\n" y | pacman -S --needed base-devel git
+ pacman -S  --noconfirm --needed base-devel git
 
 sed -i 's/^#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j$(nproc)\"/g' /etc/makepkg.conf
 
-download_dir="$HOME/download/"
+download_dir="/home/$username/download/"
   if [ ! -d "$download_dir" ]; then
         mkdir -p "$download_dir"
     fi
@@ -102,8 +102,7 @@ current_dir=`pwd`
 cd $download_dir
 git clone https://aur.archlinux.org/yay.git
 cd $download_dir/yay
-
-makepkg -si
+echo y | makepkg -si
 cd $current_dir
 
 # NetworkManager 
@@ -112,10 +111,14 @@ systemctl enable --now NetworkManager
 systemctl enable --now dhcpcd
 systemctl disable NetworkManager-wait-online
 
-#TODO ：显卡驱动
-lspci -k
 
-#TODO ：声卡驱动
+# ALSA
+# ALSA is a set of built-in Linux kernel modules. Therefore, manual installation is not necessary.
+# alsa-utils contains :
+#   alsamixer : provides a more intuitive ncurses based interface for audio device configuration.
+#   amixer :  a shell command to change audio settings,
+pacman -S --noconfirm alsa-utils  
+
 
 # Touchpad libinput (laptop)
 type=`awk -F "=" '$1=="compute" {print $2}' $install_config`
@@ -142,6 +145,19 @@ EOF
     fi
     #TODO ：Bluetooth（laptop）
     #pacman -S --noconfirm bluez bluez-utils blueman bluedevil
+
+fi
+
+# GPU open source
+# Intel
+if lspci | grep VGA | grep Intel; then
+    pacman -S --noconfirm xf86-video-intel
+# AMD
+if lspci | grep VGA | grep AMD; then
+    pacman -S --noconfirm xf86-video-amdgpu	
+# NVIDIA
+if lspci | grep VGA | grep NVIDIA; then
+    pacman -S --noconfirm nvidia
 fi
 
 
@@ -153,19 +169,16 @@ SigLevel = Optional TrustAll
 Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/$arch
 EOF
 
-#TODO ：安装中文输入法
-
-# Chinese font
-pacman -S --noconfirm wqy-zenhei wqy-bitmapfont wqy-microhei firefox-i18n-zh-cn firefox-i18n-zh-tw
 #  sudo 
 pacman -S --noconfirm sudo
-sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/g' /etc/sudoers
+sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/g' /etc/sudoers 
 
 #TODO ：常用应用(选装)
 
 desktop=`awk -F "=" '$1=="desktop" {print $2}' $install_config`
 if [ -n "$desktop" ]; then
     $config_dir/$desktop.sh
+    echo -e "The archLinux and $desktop installation is complete !\n"
 else
     echo -e "The archLinux minimal system installation is complete !\n"
 fi

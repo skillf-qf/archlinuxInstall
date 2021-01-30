@@ -2,26 +2,14 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-27 10:30:19
- # @LastEditTime: 2021-01-28 00:15:09
+ # @LastEditTime: 2021-01-30 17:47:39
  # @FilePath: \archlinuxInstall\st.sh
 ### 
 
+# Print the command. The script ends when the command fails.
+# -o pipefail : As soon as a subcommand fails, the entire pipeline command fails and the script terminates.
+set -euxo pipefail
 
-
-#st-0.2.4.tar
-#st-0.2.7.tar
-#st-1.2.5.tar
-#st-1.2.tar
-#st-1.8.6.tar
-#st-1.3.6.tar
-#st-1.8.9.tar
-#st-1.8.3.tar
-#st-1.8.7.tar
-
-
-#st_last_release=`curl -s https://dl.suckless.org/st/ | sed -n 's/.*\(st-[0-9]*.[0-9]*.[0-9]*.tar.gz\).*/\1/p' | sort |tail -2 | awk 'NR==1{print}'`
-
-#echo -e "st_last_release: $st_last_release\n"
 function st_download_install(){
     st_url="https://dl.suckless.org/st/"
     st_place_dir="$HOME/download/"
