@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-27 10:30:19
- # @LastEditTime: 2021-01-31 02:56:42
+ # @LastEditTime: 2021-01-31 04:34:28
  # @FilePath: \archlinuxInstall\st.sh
 ### 
 
@@ -10,12 +10,14 @@
 # -o pipefail : As soon as a subcommand fails, the entire pipeline command fails and the script terminates.
 set -euxo pipefail
 
-configfile="./config/install.conf"
+configfile="/chrootinstall/config/install.conf"
 user=`awk -F "=" '$1=="username" {print $2}' $configfile`
+userhome="/home/$user"
+install_dir="/chrootinstall"
 
 function st_download_install(){
     st_url="https://dl.suckless.org/st/"
-    st_place_dir="/home/$user/download/"
+    st_place_dir="$userhome/download/"
     st_list=`curl -s $st_url | sed -n 's/.*\(st-[0-9]*.[0-9]*.[0-9]*.tar.gz\).*/\1/p' | sort |tail -2`
     st1=`echo $st_list | awk -F " " '{print $1}'`
     st2=`echo $st_list | awk -F " " '{print $2}'`
@@ -45,11 +47,11 @@ function st_download_install(){
     st_dir=`echo ${st_last_release/%.tar.gz}`
     
     current_dir=`pwd`
-	if [ -f "./config/st/config.h"  ]; then
-		cp ./config/st/config.h $st_place_dir$st_dir
+	if [ -f "$install_dir/config/st/config.h"  ]; then
+		cp $install_dir/config/st/config.h $st_place_dir$st_dir
 	else
         cd $st_place_dir$st_dir
-        cp ./config.def.h ./config.h
+        cp install_dir/config.def.h ./config.h
         sed -i 's/Liberation Mono/Fira Code/g' ./config.h
     fi
     cd $st_place_dir$st_dir

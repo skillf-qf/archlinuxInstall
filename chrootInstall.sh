@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-01-31 03:53:11
+ # @LastEditTime: 2021-01-31 04:25:46
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ### 
 
@@ -168,7 +168,7 @@ cat >> /etc/pacman.conf <<EOF
 [archlinuxcn]
 SigLevel = Optional TrustAll
 # 清华大学
-Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/$arch
+Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/\$arch
 EOF
 pacman -Sy
 
