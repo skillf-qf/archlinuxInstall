@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-27 10:30:19
- # @LastEditTime: 2021-01-31 04:34:28
+ # @LastEditTime: 2021-01-31 04:50:13
  # @FilePath: \archlinuxInstall\st.sh
 ### 
 
@@ -12,7 +12,7 @@ set -euxo pipefail
 
 configfile="/chrootinstall/config/install.conf"
 user=`awk -F "=" '$1=="username" {print $2}' $configfile`
-userhome="/home/$user"
+userhome="/mnt/home/$user"
 install_dir="/chrootinstall"
 
 function st_download_install(){
@@ -51,7 +51,7 @@ function st_download_install(){
 		cp $install_dir/config/st/config.h $st_place_dir$st_dir
 	else
         cd $st_place_dir$st_dir
-        cp install_dir/config.def.h ./config.h
+        cp $install_dir/config.def.h ./config.h
         sed -i 's/Liberation Mono/Fira Code/g' ./config.h
     fi
     cd $st_place_dir$st_dir
