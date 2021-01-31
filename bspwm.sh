@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-27 10:30:18
- # @LastEditTime: 2021-02-01 03:03:07
+ # @LastEditTime: 2021-02-01 03:11:16
  # @FilePath: \archlinuxInstall\bspwm.sh
 ### 
 
@@ -15,10 +15,10 @@ function replacestr()
 # $1 : filename
 # S2 : string for replace
 {
-  	line=`sed -n "/super + Return/=" $1`
-  	line=`expr $line + 1`
-  	echo -e "line=$line\n"
-  	sed -i "$line  d" $1
+	line=`sed -n "/super + Return/=" $1`
+	line=`expr $line + 1`
+	echo -e "line=$line\n"
+	sed -i "$line  d" $1
 	sed -i "/super + Return/a\  $2" $1
 }
 
@@ -57,11 +57,11 @@ if [ "$terminal" = "st" ] || [ -z "$terminal" ]; then
 	git clone https://github.com/skillf-qf/st.git
 	sleep 2
 	cd $download/st
-    make clean install
-    cd $current_dir
+	make clean install
+	cd $current_dir
 	replacestr $userhome/.config/sxhkd/sxhkdrc st
 else
-    if  pacman -S --noconfirm pacman -S "$terminal"; then
+	if  pacman -S --noconfirm pacman -S "$terminal"; then
 		# set terminal
 		replacestr $userhome/.config/sxhkd/sxhkdrc "$terminal"
 	else
@@ -83,7 +83,7 @@ if [ -s "$install_dir/config/bash/.bash_profile"  ]; then
 else
 	cat >> $userhome/.bash_profile <<EOF
 	if systemctl -q is-active graphical.target && [[ ! $DISPLAY && $XDG_VTNR -eq 1 ]]; then
-  			exec startx
+		exec startx
 	fi 
 EOF
 fi
