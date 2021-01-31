@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-27 10:30:18
- # @LastEditTime: 2021-01-31 06:35:14
+ # @LastEditTime: 2021-02-01 03:03:07
  # @FilePath: \archlinuxInstall\bspwm.sh
 ### 
 
@@ -26,6 +26,7 @@ install_dir="/chrootinstall"
 configfile="$install_dir/config/install.conf"
 user=`awk -F "=" '$1=="username" {print $2}' $configfile`
 userhome="/home/$user"
+download="$userhome/Downloads"
 
 pacman -S --noconfirm xorg xorg-xinit bspwm sxhkd sudo wget ttf-fira-code pkg-config \
 								make gcc picom feh zsh ranger
@@ -45,16 +46,33 @@ fi
 
 # install teiminal : default  -> st
 terminal=`awk -F "=" '$1=="terminal" {print $2}' $configfile`
+if [ ! -d "$download" ]; then
+	mkdir -p "$download"
+fi
+
 if [ "$terminal" = "st" ] || [ -z "$terminal" ]; then
-	$install_dir/st.sh
+	# st terminal
+	current_dir=`pwd`
+	cd $download
+	git clone https://github.com/skillf-qf/st.git
+	sleep 2
+	cd $download/st
+    make clean install
+    cd $current_dir
 	replacestr $userhome/.config/sxhkd/sxhkdrc st
 else
     if  pacman -S --noconfirm pacman -S "$terminal"; then
 		# set terminal
 		replacestr $userhome/.config/sxhkd/sxhkdrc "$terminal"
 	else
-    # default terminal
-		$install_dir/st.sh
+		# default terminal
+		current_dir=`pwd`
+		cd $download
+		git clone https://github.com/skillf-qf/st.git
+		sleep 2
+		cd $download/st
+		make clean install
+		cd $current_dir
 		replacestr $userhome/.config/sxhkd/sxhkdrc st
 	fi
 fi
