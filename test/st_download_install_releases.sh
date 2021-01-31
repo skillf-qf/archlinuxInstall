@@ -2,8 +2,8 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-27 10:30:19
- # @LastEditTime: 2021-01-31 06:04:16
- # @FilePath: \archlinuxInstall\st.sh
+ # @LastEditTime: 2021-02-01 01:34:17
+ # @FilePath: \archlinuxInstall\test\st_download_install_releases.sh
 ### 
 
 # Print the command. The script ends when the command fails.
@@ -61,6 +61,6 @@ function st_download_install(){
 
 }
 
-st_download_install
+st_download_install_releases
 
 
