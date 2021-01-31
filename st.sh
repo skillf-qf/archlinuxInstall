@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-27 10:30:19
- # @LastEditTime: 2021-01-31 04:50:13
+ # @LastEditTime: 2021-01-31 06:04:16
  # @FilePath: \archlinuxInstall\st.sh
 ### 
 
@@ -12,12 +12,12 @@ set -euxo pipefail
 
 configfile="/chrootinstall/config/install.conf"
 user=`awk -F "=" '$1=="username" {print $2}' $configfile`
-userhome="/mnt/home/$user"
+userhome="/home/$user"
 install_dir="/chrootinstall"
 
 function st_download_install(){
     st_url="https://dl.suckless.org/st/"
-    st_place_dir="$userhome/download/"
+    st_place_dir="$userhome/download"
     st_list=`curl -s $st_url | sed -n 's/.*\(st-[0-9]*.[0-9]*.[0-9]*.tar.gz\).*/\1/p' | sort |tail -2`
     st1=`echo $st_list | awk -F " " '{print $1}'`
     st2=`echo $st_list | awk -F " " '{print $2}'`
@@ -43,18 +43,19 @@ function st_download_install(){
     wget --tries=20 -w 3 -c -P $st_place_dir $st_url$st_last_release
     echo -e "Download completes !\n"
      
-    tar -zxvf $st_place_dir$st_last_release
+    tar -zxvf $st_place_dir/$st_last_release -C $st_place_dir/
+    sleep 3
     st_dir=`echo ${st_last_release/%.tar.gz}`
     
     current_dir=`pwd`
 	if [ -f "$install_dir/config/st/config.h"  ]; then
-		cp $install_dir/config/st/config.h $st_place_dir$st_dir
+		cp $install_dir/config/st/config.h $st_place_dir/$st_dir
 	else
-        cd $st_place_dir$st_dir
+        cd $st_place_dir/$st_dir
         cp $install_dir/config.def.h ./config.h
         sed -i 's/Liberation Mono/Fira Code/g' ./config.h
     fi
-    cd $st_place_dir$st_dir
+    cd $st_place_dir/$st_dir
     make clean install
     cd $current_dir
 

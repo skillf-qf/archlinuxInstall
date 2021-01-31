@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-27 10:30:18
- # @LastEditTime: 2021-01-31 04:17:57
+ # @LastEditTime: 2021-01-31 06:35:14
  # @FilePath: \archlinuxInstall\bspwm.sh
 ### 
 
@@ -68,6 +68,7 @@ else
   			exec startx
 	fi 
 EOF
+fi
 
 # start bspwm
 if [ -s "$install_dir/config/xorg-xinit/.xinitrc"  ]; then
@@ -93,7 +94,13 @@ else
 EOF
 fi
 
-# TODO : Wallpaper
+#  Wallpaper
+if [ ! -d "$userhome/.picture" ]; then
+	mkdir -p $userhome/.picture
+fi
+if [ -s "$install_dir/wallpaper/wallpaper.jpg"  ]; then
+	cp $install_dir/wallpaper/wallpaper.jpg $userhome/.picture
+else
 
 
 ## Chinese font
