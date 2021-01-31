@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-01-31 04:25:46
+ # @LastEditTime: 2021-02-01 03:31:25
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ### 
 
@@ -177,6 +177,9 @@ pacman -S --noconfirm sudo
 sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/g' /etc/sudoers 
 
 #TODO ：常用应用(选装)
+software_list=`awk -F "=" '$1=="software" {print $2}' $install_config`
+pacman -S --noconfirm $software_list
+
 
 desktop=`awk -F "=" '$1=="desktop" {print $2}' $install_config`
 if [ -n "$desktop" ]; then
