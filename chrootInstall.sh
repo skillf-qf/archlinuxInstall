@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-02-01 03:31:25
+ # @LastEditTime: 2021-02-01 08:52:58
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ### 
 
@@ -43,6 +43,14 @@ cat >> /etc/hosts <<EOF
 127.0.1.1    $hostname.localdomain	$hostname
 EOF
 
+# Microcode
+cpu_processor=`lscpu | grep "Intel"`
+if [ -n "$cpu_processor" ]; then
+    pacman -S --noconfirm intel-ucode
+else
+    pacman -S --noconfirm amd-ucode
+fi
+
 # Initramfs
 mkinitcpio -P
 
@@ -64,19 +72,12 @@ else
     grub-install --target=i386-pc /dev/$boot
 fi
 
-# MS Windows
+# check MS Windows
 system=`awk -F "=" '$1=="system" {print $2}' $install_config`
 if [ "$system" = "dual" ]; then
     pacman -S --noconfirm os-prober
     os-prober
-fi
-
-# Microcode
-cpu_processor=`lscpu | grep "Intel"`
-if [ -n "$cpu_processor" ]; then
-    pacman -S --noconfirm intel-ucode
-else
-    pacman -S --noconfirm amd-ucode
+    sleep 1
 fi
 
 # Generate the main configuration file
@@ -119,35 +120,6 @@ systemctl disable NetworkManager-wait-online
 #   amixer :  a shell command to change audio settings,
 pacman -S --noconfirm alsa-utils  
 
-
-# Touchpad libinput (laptop)
-type=`awk -F "=" '$1=="compute" {print $2}' $install_config`
-if [ "$type" = "laptop" ]; then
-    pacman -S --noconfirm xf86-input-libinput xorg-xinput
-    # default configuration from /usr/share/X11/xorg.conf.d/40-libinput.conf
-    if [ -s "./config/touchpad/30-touchpad.conf"  ]; then
-        cp ./config/touchpad/30-touchpad.conf /etc/X11/xorg.conf.d/
-    else
-        cp /usr/share/X11/xorg.conf.d/40-libinput.conf /etc/X11/xorg.conf.d/30-touchpad.conf 
-        ./deleteline.sh /etc/X11/xorg.conf.d/30-touchpad.conf  "^Section"
-        cat >> /etc/X11/xorg.conf.d/30-touchpad.conf <<EOF
-        Section "InputClass"
-                Identifier "touchpad"
-                Driver "libinput"
-                MatchDevicePath "/dev/input/event*"
-                MatchIsPointer "on"
-                Option "Tapping" "on"
-                Option "DisableWhileTypeing" "on"
-                Option "TappingButtonMap" "lmr"
-                Option "TappingDrag" "on"
-        EndSection
-EOF
-    fi
-    #TODO ：Bluetooth（laptop）
-    #pacman -S --noconfirm bluez bluez-utils blueman bluedevil
-
-fi
-
 # GPU open source
 # Intel
 if lspci | grep VGA | grep Intel; then
@@ -162,7 +134,6 @@ if lspci | grep VGA | grep NVIDIA; then
     pacman -S --noconfirm nvidia
 fi
 
-
  # The Chinese Arch Linux Community Warehouse
 cat >> /etc/pacman.conf <<EOF
 [archlinuxcn]
@@ -170,21 +141,53 @@ SigLevel = Optional TrustAll
 # 清华大学
 Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/\$arch
 EOF
-pacman -Sy
+pacman -Syy
 
 #  sudo 
 pacman -S --noconfirm sudo
 sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/g' /etc/sudoers 
 
+# desktop
+desktop=`awk -F "=" '$1=="desktop" {print $2}' $install_config`
+if [ -n "$desktop" ]; then
+    $config_dir/$desktop.sh
+    #echo -e "The archLinux and $desktop installation is complete !\n"
+else
+    echo -e "The archLinux minimal system installation is complete !\n"
+fi
+
 #TODO ：常用应用(选装)
 software_list=`awk -F "=" '$1=="software" {print $2}' $install_config`
 pacman -S --noconfirm $software_list
 
+# Touchpad libinput (laptop)
+type=`awk -F "=" '$1=="compute" {print $2}' $install_config`
+if [ "$type" = "laptop" ]; then
+    pacman -S --noconfirm xf86-input-libinput xorg-xinput
+    # default configuration from /usr/share/X11/xorg.conf.d/40-libinput.conf
+    if [ -s "$config_dir/config/touchpad/30-touchpad.conf"  ]; then
+        cp $config_dir/config/touchpad/30-touchpad.conf /etc/X11/xorg.conf.d/
+    else
+        cp /usr/share/X11/xorg.conf.d/40-libinput.conf /etc/X11/xorg.conf.d/30-touchpad.conf 
+        $config_dir/deleteline.sh /etc/X11/xorg.conf.d/30-touchpad.conf  "^Section"
+        cat >> /etc/X11/xorg.conf.d/30-touchpad.conf <<EOF
+Section "InputClass"
+        Identifier "touchpad"
+        Driver "libinput"
+        MatchDevicePath "/dev/input/event*"
+        MatchIsPointer "on"
+        Option "Tapping" "on"
+        Option "DisableWhileTypeing" "on"
+        Option "TappingButtonMap" "lmr"
+        Option "TappingDrag" "on"
+EndSection
+EOF
+    fi
+    #TODO ：Bluetooth（laptop）
+    #pacman -S --noconfirm bluez bluez-utils blueman bluedevil
 
-desktop=`awk -F "=" '$1=="desktop" {print $2}' $install_config`
-if [ -n "$desktop" ]; then
-    $config_dir/$desktop.sh
-    echo -e "The archLinux and $desktop installation is complete !\n"
-else
-    echo -e "The archLinux minimal system installation is complete !\n"
 fi
+
+echo -e "The archLinux and $desktop installation is complete !\n"
+echo -e "\n"
+echo -e "Enjoy!\n"

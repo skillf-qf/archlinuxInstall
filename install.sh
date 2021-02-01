@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-01-31 03:47:35
+ # @LastEditTime: 2021-02-01 08:47:37
  # @FilePath: \archlinuxInstall\install.sh
 ### 
 
@@ -15,36 +15,49 @@ configfile="./config/install.conf"
 # Connect to the internet
 wificonfig="./wifi.conf"
 type=`awk -F "=" '$1=="compute" {print $2}' $configfile`
+ssid=`awk -F "=" '$1=="ssid" {print $2}' $configfile`
+psk=`awk -F "=" '$1=="psk" {print $2}' $configfile`
+
 if [ "$type" = "laptop" ]; then
-    if [ -s $wificonfig ]; then
-        cp wifi.conf /etc/wpa_supplicant/
+    if [ -n $wifiSSID ] && [ -n $wifiPSK ] ; then
+        wifiSSID=$ssid
+        wifiPSK=$psk
     else    
-        read -r -p "The wifi.conf file does not exist or is empty. Is it automatically generated? [Y/n]" confirm
+        read -r -p "The wifi ssid or wifi psk is empty. Is it automatically generated? [y/n]" confirm
         if [[ ! "$confirm" =~ ^(n|N) ]]; then
             read -r -p "Input your wifi ssid: " wifiSSID
             read -r -p "Input your wifi psk: " wifiPSK
-            
-            cat > wifi.conf <<EOF
-            ctrl_interfaces=/run/wpa_supplicant
-            update_config=1
-
-            network={
-                ssid="$wifiSSID"
-                psk="$wifiPSK"
-            }
-EOF
-            echo -e "wifi.conf generated successfully !\n"
         else
             exit
         fi
     fi
+    cat > /etc/wpa_supplicant/wifi.conf <<EOF
+ctrl_interface=/run/wpa_supplicant
+update_config=1
+
+network={
+    ssid="$wifiSSID"
+    psk="$wifiPSK"
+}
+EOF
+    echo -e "wifi.conf generated successfully !\n"
+
     rfkill unblock wifi
     ip link set dev wlan0 up
-    wpa_suppress -B -i wlan0 -c /etc/wpa_supplicant/wifi.conf
-    dhcpcd wlan0
-    
+    #  check wpa_supplicant PID
+    set +e
+    ps -aux|grep wpa_supplicant
+    if  [ $? -eq 0 ]; then
+        killall wpa_supplicant
+        sleep 2
+    fi
+    set -e
+    wpa_supplicant -B -i wlan0 -c /etc/wpa_supplicant/wifi.conf
+    dhcpcd wlan0    
+    sleep 5
 fi
-ping -c 3 www.baidu.com > /dev/null
+
+ping -c 3 www.baidu.com
 
 # Update mirrors
 cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
@@ -55,11 +68,10 @@ reflector --verbose --country 'China' -l 20 -p https --sort rate >> mirrorlist.t
 #curl -sSL 'https://www.archlinux.org/mirrorlist/?country=CN&protocol=https&ip_version=4&use_mirror_status=on' | sed '/^## China/d; s/^#Server/Server/g' >> mirrorlist.temp
 
 echo -e "##======================================================\n" >> mirrorlist.temp
-
-sed -i '/## Generated/r mirrorlist.temp' /etc/pacman.d/mirrorlist
+sed -i '1r ./mirrorlist.temp' /etc/pacman.d/mirrorlist
 rm mirrorlist.temp
 
-pacman -Sy
+pacman -Syy
 
 # Update the system clock
 timedatectl set-ntp true
@@ -93,8 +105,18 @@ system=`awk -F "=" '$1=="system" {print $2}' $configfile`
 if [ -n "$boot" ]; then
     if [ "$system" != "dual" ];then
         echo y | mkfs.fat -F32 /dev/$boot
+        mount /dev/$boot /mnt/boot
+    else
+        mount /dev/$boot /mnt/boot
+        # Remove everything except EFI 
+        if [ -d "/mnt/boot/grub" ]; then
+            rm -rf /mnt/boot/grub
+        fi
+        if ls /mnt/boot/*.img > /dev/null 2>&1; then
+            rm -rf /mnt/boot/*.img
+            rm -rf /mnt/boot/*linux
+        fi
     fi
-    mount /dev/$boot /mnt/boot
 else
     echo "ERROR: boot partition does not exist !"
     exit

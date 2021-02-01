@@ -4,7 +4,7 @@ pgrep -x sxhkd > /dev/null || sxhkd &
 #sxhkd &
 picom -b
 
-feh --bg-scale $HOME/.picture/guidao.jpg
+feh --bg-scale $HOME/.picture/wallpaper.jpg
 
 
 

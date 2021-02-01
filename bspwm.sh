@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-27 10:30:18
- # @LastEditTime: 2021-02-01 03:11:16
+ # @LastEditTime: 2021-02-01 08:09:43
  # @FilePath: \archlinuxInstall\bspwm.sh
 ### 
 
@@ -29,7 +29,7 @@ userhome="/home/$user"
 download="$userhome/Downloads"
 
 pacman -S --noconfirm xorg xorg-xinit bspwm sxhkd sudo wget ttf-fira-code pkg-config \
-								make gcc picom feh zsh ranger
+								make gcc picom feh zsh ranger git
 
 # bspwm config file 
 if [ -s "$install_dir/config/bspwm/bspwmrc"  ]; then
@@ -118,7 +118,7 @@ if [ ! -d "$userhome/.picture" ]; then
 fi
 if [ -s "$install_dir/wallpaper/wallpaper.jpg"  ]; then
 	cp $install_dir/wallpaper/wallpaper.jpg $userhome/.picture
-else
+fi
 
 
 ## Chinese font
