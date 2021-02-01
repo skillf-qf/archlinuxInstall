@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-02-01 09:50:35
+ # @LastEditTime: 2021-02-01 09:57:50
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ### 
 
@@ -183,6 +183,9 @@ EOF
 
 fi
 
+#TODO : shell
+
+
 # NetworkManager
 ssid=`awk -F "=" '$1=="ssid" {print $2}' $configfile`
 psk=`awk -F "=" '$1=="psk" {print $2}' $configfile`
@@ -193,6 +196,7 @@ systemctl enable NetworkManager
 systemctl enable dhcpcd
 systemctl disable NetworkManager-wait-online
 systemctl disable wpa_supplicant
+systemctl stop wpa_supplicant
 
 if [ "$type" = "laptop" ]; then
     sleep 3

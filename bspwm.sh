@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-27 10:30:18
- # @LastEditTime: 2021-02-01 08:09:43
+ # @LastEditTime: 2021-02-01 11:01:28
  # @FilePath: \archlinuxInstall\bspwm.sh
 ### 
 
@@ -51,10 +51,10 @@ if [ ! -d "$download" ]; then
 fi
 
 if [ "$terminal" = "st" ] || [ -z "$terminal" ]; then
+	
 	# st terminal
 	current_dir=`pwd`
-	cd $download
-	git clone https://github.com/skillf-qf/st.git
+	git clone https://github.com/skillf-qf/st.git $download/st
 	sleep 2
 	cd $download/st
 	make clean install
@@ -67,8 +67,7 @@ else
 	else
 		# default terminal
 		current_dir=`pwd`
-		cd $download
-		git clone https://github.com/skillf-qf/st.git
+		git clone https://github.com/skillf-qf/st.git $download/st
 		sleep 2
 		cd $download/st
 		make clean install
