@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-02-01 13:24:38
+ # @LastEditTime: 2021-02-01 14:28:42
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ### 
 
@@ -90,22 +90,6 @@ userpasswd=`awk -F "=" '$1=="userpasswd" {print $2}' $configfile`
 useradd -m -g users -G wheel -s /bin/bash $username
 echo $username:$userpasswd | chpasswd
 
-# yay
-#pacman -S  --noconfirm --needed base-devel git
-#
-#sed -i 's/^#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j$(nproc)\"/g' /etc/makepkg.conf
-#
-#download_dir="/home/$username/download/"
-#  if [ ! -d "$download_dir" ]; then
-#        mkdir -p "$download_dir"
-#    fi
-#current_dir=`pwd`
-#cd $download_dir
-#git clone https://aur.archlinux.org/yay.git
-#cd $download_dir/yay
-#echo y | makepkg -si
-#cd $current_dir
-
 # ALSA
 # ALSA is a set of built-in Linux kernel modules. Therefore, manual installation is not necessary.
 # alsa-utils contains :
@@ -139,6 +123,7 @@ pacman -Syy
 #  sudo 
 pacman -S --noconfirm sudo
 sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/g' /etc/sudoers 
+sed -i 's/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/g' /etc/sudoers 
 
 # desktop
 desktop=`awk -F "=" '$1=="desktop" {print $2}' $configfile`
@@ -190,27 +175,30 @@ if [ "$shell" = "ohmyzsh" ] || [ -z "$shell" ]; then
 fi
 
 # NetworkManager
-ssid=`awk -F "=" '$1=="ssid" {print $2}' $configfile`
-psk=`awk -F "=" '$1=="psk" {print $2}' $configfile`
-type=`awk -F "=" '$1=="compute" {print $2}' $configfile`
-
 pacman -S --noconfirm networkmanager network-manager-applet nm-connection-editor dhcpcd
 systemctl enable NetworkManager
 systemctl enable dhcpcd
 systemctl disable NetworkManager-wait-online
-systemctl disable wpa_supplicant
-#systemctl stop wpa_supplicant
 
-if [ "$type" = "laptop" ]; then
-    sleep 3
-    userhome="/home/$username"
-    sed -i '/^exec/i\\nmcli device wifi connect $ssid password $psk' $userhome/.xinitrc
-
-    #sed -i nmcli device wifi connect $ssid password $psk
-    sleep 5
+if [ ! -d "/etc/rc.local.d" ]; then
+	mkdir -p "/etc/rc.local.d"
 fi
 
+cat > /etc/rc.local <<EOF
+#!/bin/sh
+# /etc/rc.local
+if test -d /etc/rc.local.d; then
+    for rcscript in /etc/rc.local.d/*.sh; do
+        test -r "${rcscript}" && sh ${rcscript}
+    done
+    unset rcscript
+fi
+EOF
 
+cp $install_dir/bootrun.sh /etc/rc.local.d/
+cp $install_dir/config/service/rc-local.service /usr/lib/systemd/system/
+
+chown -R $username:users /home/$username
 
 echo -e "The archLinux and $desktop installation is complete !\n"
 echo -e "\n"
