@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-02-01 11:20:28
+ # @LastEditTime: 2021-02-01 13:17:26
  # @FilePath: \archlinuxInstall\ohmyzsh.sh
 ### 
 
@@ -16,9 +16,11 @@ shell=`awk -F "=" '$1=="shell" {print $2}' $configfile`
 if [ ! -d "$download" ]; then
 	mkdir -p "$download"
 fi
+
 if [ "$shell" = "ohmyzsh" ] || [ -z "$shell" ]; then
 	
     # ohmyzsh shell
+    pacman -S --noconfirm zsh
 	git clone https://github.com/skillf-qf/ohmyzsh.git $download/ohmyzsh
 	sleep 2
 	echo n | $download/ohmyzsh/tools/install.sh
@@ -41,4 +43,4 @@ if [ "$shell" = "ohmyzsh" ] || [ -z "$shell" ]; then
     $download/powerlinefonts/install.sh
 fi
 
-pacman -S --noconfirm zsh
+

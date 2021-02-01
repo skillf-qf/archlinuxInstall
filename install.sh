@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-02-01 08:47:37
+ # @LastEditTime: 2021-02-01 11:48:31
  # @FilePath: \archlinuxInstall\install.sh
 ### 
 
@@ -13,13 +13,12 @@ set -euxo pipefail
 configfile="./config/install.conf"
 
 # Connect to the internet
-wificonfig="./wifi.conf"
 type=`awk -F "=" '$1=="compute" {print $2}' $configfile`
 ssid=`awk -F "=" '$1=="ssid" {print $2}' $configfile`
 psk=`awk -F "=" '$1=="psk" {print $2}' $configfile`
 
 if [ "$type" = "laptop" ]; then
-    if [ -n $wifiSSID ] && [ -n $wifiPSK ] ; then
+    if [ -n $ssid ] && [ -n $psk ] ; then
         wifiSSID=$ssid
         wifiPSK=$psk
     else    

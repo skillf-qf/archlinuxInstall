@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-02-01 09:57:50
+ # @LastEditTime: 2021-02-01 13:24:38
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ### 
 
@@ -10,8 +10,8 @@
 # -o pipefail : As soon as a subcommand fails, the entire pipeline command fails and the script terminates.
 set -euxo pipefail
 
-config_dir="/chrootinstall"
-install_config="/chrootinstall/config/install.conf"
+install_dir="/chrootinstall"
+configfile="$install_dir/config/install.conf"
 
 # Time zone
 ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
@@ -29,7 +29,7 @@ locale-gen
 echo "LANG=en_US.UTF-8" > /etc/locale.conf
 
 # localhost Network configuration
-hostname=`awk -F "=" '$1=="hostname" {print $2}' $install_config`
+hostname=`awk -F "=" '$1=="hostname" {print $2}' $configfile`
 if [ -n "$hostname" ]; then
     echo $hostname > /etc/hostname
 else
@@ -55,7 +55,7 @@ fi
 mkinitcpio -P
 
 # Root password
-rootpasswd=`awk -F "=" '$1=="rootpasswd" {print $2}' $install_config`
+rootpasswd=`awk -F "=" '$1=="rootpasswd" {print $2}' $configfile`
 echo root:$rootpasswd | chpasswd
 
 # Boot loader
@@ -68,12 +68,12 @@ if ls /sys/firmware/efi/efivars > /dev/null; then
     grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
 else
     # BIOS systems
-    boot=$(echo `awk -F "=" '$1=="boot" {print $2}' $install_config` | sed 's/[0-9]*$//')
+    boot=$(echo `awk -F "=" '$1=="boot" {print $2}' $configfile` | sed 's/[0-9]*$//')
     grub-install --target=i386-pc /dev/$boot
 fi
 
 # check MS Windows
-system=`awk -F "=" '$1=="system" {print $2}' $install_config`
+system=`awk -F "=" '$1=="system" {print $2}' $configfile`
 if [ "$system" = "dual" ]; then
     pacman -S --noconfirm os-prober
     os-prober
@@ -84,8 +84,8 @@ fi
 grub-mkconfig -o /boot/grub/grub.cfg
 
 # Adduser
-username=`awk -F "=" '$1=="username" {print $2}' $install_config`
-userpasswd=`awk -F "=" '$1=="userpasswd" {print $2}' $install_config`
+username=`awk -F "=" '$1=="username" {print $2}' $configfile`
+userpasswd=`awk -F "=" '$1=="userpasswd" {print $2}' $configfile`
 
 useradd -m -g users -G wheel -s /bin/bash $username
 echo $username:$userpasswd | chpasswd
@@ -141,30 +141,30 @@ pacman -S --noconfirm sudo
 sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/g' /etc/sudoers 
 
 # desktop
-desktop=`awk -F "=" '$1=="desktop" {print $2}' $install_config`
+desktop=`awk -F "=" '$1=="desktop" {print $2}' $configfile`
 if [ -n "$desktop" ]; then
-    $config_dir/$desktop.sh
+    $install_dir/$desktop.sh
     #echo -e "The archLinux and $desktop installation is complete !\n"
 else
     echo -e "The archLinux minimal system installation is complete !\n"
 fi
 
 # other software
-software_list=`awk -F "=" '$1=="software" {print $2}' $install_config`
+software_list=`awk -F "=" '$1=="software" {print $2}' $configfile`
 if [ -n "$software_list" ]; then
     pacman -S --noconfirm $software_list
 fi
 
 # Touchpad libinput (laptop)
-type=`awk -F "=" '$1=="compute" {print $2}' $install_config`
+type=`awk -F "=" '$1=="compute" {print $2}' $configfile`
 if [ "$type" = "laptop" ]; then
     pacman -S --noconfirm xf86-input-libinput xorg-xinput
     # default configuration from /usr/share/X11/xorg.conf.d/40-libinput.conf
-    if [ -s "$config_dir/config/touchpad/30-touchpad.conf"  ]; then
-        cp $config_dir/config/touchpad/30-touchpad.conf /etc/X11/xorg.conf.d/
+    if [ -s "$install_dir/config/touchpad/30-touchpad.conf"  ]; then
+        cp $install_dir/config/touchpad/30-touchpad.conf /etc/X11/xorg.conf.d/
     else
         cp /usr/share/X11/xorg.conf.d/40-libinput.conf /etc/X11/xorg.conf.d/30-touchpad.conf 
-        $config_dir/deleteline.sh /etc/X11/xorg.conf.d/30-touchpad.conf  "^Section"
+        $install_dir/deleteline.sh /etc/X11/xorg.conf.d/30-touchpad.conf  "^Section"
         cat >> /etc/X11/xorg.conf.d/30-touchpad.conf <<EOF
 Section "InputClass"
         Identifier "touchpad"
@@ -183,24 +183,30 @@ EOF
 
 fi
 
-#TODO : shell
-
+# shell
+shell=`awk -F "=" '$1=="shell" {print $2}' $configfile`
+if [ "$shell" = "ohmyzsh" ] || [ -z "$shell" ]; then
+    $install_dir/ohmyzsh.sh
+fi
 
 # NetworkManager
 ssid=`awk -F "=" '$1=="ssid" {print $2}' $configfile`
 psk=`awk -F "=" '$1=="psk" {print $2}' $configfile`
-type=`awk -F "=" '$1=="compute" {print $2}' $install_config`
+type=`awk -F "=" '$1=="compute" {print $2}' $configfile`
 
 pacman -S --noconfirm networkmanager network-manager-applet nm-connection-editor dhcpcd
 systemctl enable NetworkManager
 systemctl enable dhcpcd
 systemctl disable NetworkManager-wait-online
 systemctl disable wpa_supplicant
-systemctl stop wpa_supplicant
+#systemctl stop wpa_supplicant
 
 if [ "$type" = "laptop" ]; then
     sleep 3
-    nmcli device wifi connect $ssid password $psk
+    userhome="/home/$username"
+    sed -i '/^exec/i\\nmcli device wifi connect $ssid password $psk' $userhome/.xinitrc
+
+    #sed -i nmcli device wifi connect $ssid password $psk
     sleep 5
 fi
 
