@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-02-01 08:52:58
+ # @LastEditTime: 2021-02-01 09:50:35
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ### 
 
@@ -106,13 +106,6 @@ echo $username:$userpasswd | chpasswd
 #echo y | makepkg -si
 #cd $current_dir
 
-# NetworkManager 
-pacman -S --noconfirm networkmanager network-manager-applet dhcpcd
-systemctl enable NetworkManager
-systemctl enable dhcpcd
-systemctl disable NetworkManager-wait-online
-
-
 # ALSA
 # ALSA is a set of built-in Linux kernel modules. Therefore, manual installation is not necessary.
 # alsa-utils contains :
@@ -156,9 +149,11 @@ else
     echo -e "The archLinux minimal system installation is complete !\n"
 fi
 
-#TODO ：常用应用(选装)
+# other software
 software_list=`awk -F "=" '$1=="software" {print $2}' $install_config`
-pacman -S --noconfirm $software_list
+if [ -n "$software_list" ]; then
+    pacman -S --noconfirm $software_list
+fi
 
 # Touchpad libinput (laptop)
 type=`awk -F "=" '$1=="compute" {print $2}' $install_config`
@@ -187,6 +182,25 @@ EOF
     #pacman -S --noconfirm bluez bluez-utils blueman bluedevil
 
 fi
+
+# NetworkManager
+ssid=`awk -F "=" '$1=="ssid" {print $2}' $configfile`
+psk=`awk -F "=" '$1=="psk" {print $2}' $configfile`
+type=`awk -F "=" '$1=="compute" {print $2}' $install_config`
+
+pacman -S --noconfirm networkmanager network-manager-applet nm-connection-editor dhcpcd
+systemctl enable NetworkManager
+systemctl enable dhcpcd
+systemctl disable NetworkManager-wait-online
+systemctl disable wpa_supplicant
+
+if [ "$type" = "laptop" ]; then
+    sleep 3
+    nmcli device wifi connect $ssid password $psk
+    sleep 5
+fi
+
+
 
 echo -e "The archLinux and $desktop installation is complete !\n"
 echo -e "\n"
