@@ -1,8 +1,8 @@
-#/bin/bash
+#!/bin/bash
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-02-01 13:17:26
+ # @LastEditTime: 2021-02-01 21:15:50
  # @FilePath: \archlinuxInstall\ohmyzsh.sh
 ### 
 

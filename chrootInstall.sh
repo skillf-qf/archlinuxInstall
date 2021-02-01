@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-02-01 14:28:42
+ # @LastEditTime: 2021-02-01 21:17:51
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ### 
 
@@ -184,7 +184,7 @@ if [ ! -d "/etc/rc.local.d" ]; then
 	mkdir -p "/etc/rc.local.d"
 fi
 
-cat > /etc/rc.local <<EOF
+cat > "/etc/rc.local" <<EOF
 #!/bin/sh
 # /etc/rc.local
 if test -d /etc/rc.local.d; then
@@ -194,10 +194,10 @@ if test -d /etc/rc.local.d; then
     unset rcscript
 fi
 EOF
-
+chmod a+x /etc/rc.local
 cp $install_dir/bootrun.sh /etc/rc.local.d/
 cp $install_dir/config/service/rc-local.service /usr/lib/systemd/system/
-
+systemctl enable rc-local
 chown -R $username:users /home/$username
 
 echo -e "The archLinux and $desktop installation is complete !\n"
