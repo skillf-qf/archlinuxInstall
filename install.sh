@@ -2,13 +2,15 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-02-01 11:48:31
+ # @LastEditTime: 2021-02-02 02:28:37
  # @FilePath: \archlinuxInstall\install.sh
 ### 
 
 # Print the command. The script ends when the command fails.
 # -o pipefail : As soon as a subcommand fails, the entire pipeline command fails and the script terminates.
 set -euxo pipefail
+
+setfonts /usr/share/kbd/consolefonts/LatGrkCyr-12x22.psfu.gz
 
 configfile="./config/install.conf"
 

@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-02-01 21:17:51
+ # @LastEditTime: 2021-02-02 12:04:54
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ### 
 
@@ -168,7 +168,7 @@ EOF
 
 fi
 
-# shell
+# root shell
 shell=`awk -F "=" '$1=="shell" {print $2}' $configfile`
 if [ "$shell" = "ohmyzsh" ] || [ -z "$shell" ]; then
     $install_dir/ohmyzsh.sh
@@ -180,26 +180,26 @@ systemctl enable NetworkManager
 systemctl enable dhcpcd
 systemctl disable NetworkManager-wait-online
 
-if [ ! -d "/etc/rc.local.d" ]; then
-	mkdir -p "/etc/rc.local.d"
-fi
+# Configure starts the configuration service for the first time
+rm -rf /home/$username/.config/systemd
+mkdir -p /home/$username/.config/systemd/user/default.target.wants
+cp $install_dir/config/service/bootrun.service /home/$username/.config/systemd/user/bootrun.service
+ln -s /home/$username/.config/systemd/user/bootrun.service /home/$username/.config/systemd/user/default.target.wants/bootrun.service
 
-cat > "/etc/rc.local" <<EOF
-#!/bin/sh
-# /etc/rc.local
-if test -d /etc/rc.local.d; then
-    for rcscript in /etc/rc.local.d/*.sh; do
-        test -r "${rcscript}" && sh ${rcscript}
-    done
-    unset rcscript
-fi
-EOF
-chmod a+x /etc/rc.local
-cp $install_dir/bootrun.sh /etc/rc.local.d/
-cp $install_dir/config/service/rc-local.service /usr/lib/systemd/system/
-systemctl enable rc-local
+# Copy the file to the user folder 
+rm -rf /home/$username/chrootinstall
+cp -r /chrootinstall /home/$username/
+ 
+# Change the file user permissions in the user's home directory
 chown -R $username:users /home/$username
 
-echo -e "The archLinux and $desktop installation is complete !\n"
-echo -e "\n"
-echo -e "Enjoy!\n"
+echo -e "The system will reboot for the final configuration step !\n"
+
+echo -e "\n\n"
+for time in `seq 5 -1 0`; do
+    echo -n "Restarting for the last configuration $time press A to stop it ..."
+    echo -n -e "\r\r"
+    sleep 1
+done
+
+reboot
