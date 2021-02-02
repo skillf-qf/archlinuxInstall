@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-27 10:30:18
- # @LastEditTime: 2021-02-01 11:01:28
+ # @LastEditTime: 2021-02-03 04:17:31
  # @FilePath: \archlinuxInstall\bspwm.sh
 ### 
 
@@ -22,14 +22,18 @@ function replacestr()
 	sed -i "/super + Return/a\  $2" $1
 }
 
-install_dir="/chrootinstall"
+install_dir="/archlinuxInstall"
 configfile="$install_dir/config/install.conf"
-user=`awk -F "=" '$1=="username" {print $2}' $configfile`
-userhome="/home/$user"
+logfile="$install_dir/archlinuxInstall.log"
+
+username=`awk -F "=" '$1=="username" {print $2}' $configfile`
+userhome="/home/$username"
 download="$userhome/Downloads"
 
+echo `date` ": Install the prerequisite software required for BSPWM Tile Window Manager ..." >> $logfile
 pacman -S --noconfirm xorg xorg-xinit bspwm sxhkd sudo wget ttf-fira-code pkg-config \
 								make gcc picom feh zsh ranger git
+echo `date` ": xorg xorg-xinit bspwm sxhkd sudo wget ttf-fira-code pkg-config make gcc picom feh zsh ranger git successfully installed !" >> $logfile
 
 # bspwm config file 
 if [ -s "$install_dir/config/bspwm/bspwmrc"  ]; then
@@ -43,9 +47,12 @@ if [ -s "$install_dir/config/bspwm/sxhkdrc"  ]; then
 else
 	install -Dm644 /usr/share/doc/bspwm/examples/sxhkdrc $userhome/.config/sxhkd/sxhkdrc
 fi
+echo `date` ": Copy the bspwmrc and sxhkdrc configuration files ..." >> $logfile
 
 # install teiminal : default  -> st
 terminal=`awk -F "=" '$1=="terminal" {print $2}' $configfile`
+echo `date` ": Installation terminal $terminal ..." >> $logfile
+
 if [ ! -d "$download" ]; then
 	mkdir -p "$download"
 fi
@@ -75,8 +82,10 @@ else
 		replacestr $userhome/.config/sxhkd/sxhkdrc st
 	fi
 fi
+echo `date` ": Installation of terminal $terminal was successful !" >> $logfile
 
 # start startx
+echo `date` ": Configure the user to automatically start startx after successful login ..." >> $logfile
 if [ -s "$install_dir/config/bash/.bash_profile"  ]; then
 	cp $install_dir/config/bash/.bash_profile $userhome/
 else
@@ -88,6 +97,7 @@ EOF
 fi
 
 # start bspwm
+echo `date` ": Run bspwm directly after configuring startx to boot ..." >> $logfile
 if [ -s "$install_dir/config/xorg-xinit/.xinitrc"  ]; then
 	cp $install_dir/config/xorg-xinit/.xinitrc $userhome/
 else
@@ -98,20 +108,22 @@ else
 fi
 
 # autologin
+echo `date` ": Configure the user to automatically log in the account without password ..." >> $logfile
 mkdir -p /etc/systemd/system/getty@tty1.service.d
 if [ -s "$install_dir/config/autologin/override.conf"  ]; then
 	cp $install_dir/config/autologin/override.conf /etc/systemd/system/getty@tty1.service.d/
 else
 	cat > /etc/systemd/system/getty@tty1.service.d/override.conf <<EOF
 	[Service]
-	# 这行不能少，否则启动不了
+	# This row cannot be smaller, otherwise it will not start
 	ExecStart=
-	# username 替换当前自动登录的用户名字
+	# username : Replace the name of the currently auto-logged user
 	ExecStart=-/usr/bin/agetty --autologin $username --noclear %I $TERM
 EOF
 fi
 
 #  Wallpaper
+echo `date` ": Copy the wallpaper to $userhome/.picture" >> $logfile
 if [ ! -d "$userhome/.picture" ]; then
 	mkdir -p $userhome/.picture
 fi
@@ -119,6 +131,7 @@ if [ -s "$install_dir/wallpaper/wallpaper.jpg"  ]; then
 	cp $install_dir/wallpaper/wallpaper.jpg $userhome/.picture
 fi
 
+echo `date` ": The bspwm installation configuration is complete !" >> $logfile
 
 ## Chinese font
 #pacman -S --noconfirm wqy-zenhei wqy-bitmapfont wqy-microhei firefox-i18n-zh-cn firefox-i18n-zh-tw

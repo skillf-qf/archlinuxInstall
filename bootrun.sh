@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-02-02 23:31:15
+ # @LastEditTime: 2021-02-03 05:21:44
  # @FilePath: \archlinuxInstall\bootrun.sh
 ### 
 
@@ -10,10 +10,9 @@
 # -o pipefail : As soon as a subcommand fails, the entire pipeline command fails and the script terminates.
 set -euxo pipefail
 
-install_dir="$HOME/chrootinstall"
+install_dir="$HOME/archlinuxInstall"
 configfile="$install_dir/config/install.conf"
-user=`awk -F "=" '$1=="username" {print $2}' $configfile`
-#userpasswd=`awk -F "=" '$1=="userpasswd" {print $2}' $configfile`
+logfile="$install_dir/archlinuxInstall.log"
 
 download="$HOME/Downloads"
 
@@ -23,47 +22,52 @@ desktop=`awk -F "=" '$1=="desktop" {print $2}' $configfile`
 type=`awk -F "=" '$1=="compute" {print $2}' $configfile`
 
 set +e
-echo `date` ": ##########################################" >> $HOME/bootrun.log
+bridge_list=`ls /sys/class/net`
 # Connection Network
 if [ "$type" = "laptop" ]; then
     
     bridge=`echo $bridge_list | awk -F " " '{print $3}'`
 
     # set bridge
+    echo `date` ": Enable the $bridge ..." >> $logfile
     while ! sudo ip link set up dev $bridge; do
 	    sleep 3
     done
-    echo `date` ": Start the $bridge successfully!" >> $HOME/bootrun.log
+    echo `date` ": $bridge enabled successfully !" >> $logfile
     
     # connect wifi
+    echo `date` ": Try to connect to wifi ..." >> $logfile
     while ! nmcli device wifi connect $ssid password $psk; do
 	    sleep 3
     done
+    echo `date` ": Successfully connected to wifi !" >> $logfile
 
     while ! ping -c 3 www.baidu.com; do
 	    sleep 3
     done
-    echo `date` ": WiFi Connection Successfully!" >> $HOME/bootrun.log
+    echo `date` ": Wifi network connected !" >> $logfile
 
 elif [ "$type" = "desktop" ]; then
 
     bridge=`echo $bridge_list | awk -F " " '{print $1}'`
 
     # set bridge
+    echo `date` ": Enable the $bridge ..." >> $logfile
     while ! sudo ip link set up dev $bridge; do
 	    sleep 3
     done
-    echo `date` ": Start the $bridge successfully!" >> $HOME/bootrun.log
-    
-    # connect wired
-    while ! nmcli device wifi connect $ssid password $psk; do
-	    sleep 3
-    done
+    echo `date` ": $bridge enabled successfully !" >> $logfile
 
+    # connect wired
+    #while ! nmcli device wifi connect $ssid password $psk; do
+	#    sleep 3
+    #done
+    
+    dhcpcd $bridge
     while ! ping -c 3 www.baidu.com; do
 	    sleep 3
     done
-    echo `date` ": Wired Connection Successfully!" >> $HOME/bootrun.log
+    echo `date` ": Wired network connected !" >> $logfile
  
 fi
 set -e
@@ -71,10 +75,12 @@ set -e
 # user shell
 shell=`awk -F "=" '$1=="shell" {print $2}' $configfile`
 if [ "$shell" = "ohmyzsh" ] || [ -z "$shell" ]; then
+    echo `date` ": Install and configure the $shell for $USER ..." >> $logfile
     $install_dir/ohmyzsh.sh
 fi
 
 # yay
+echo `date` ": Download and install yay ..." >> $logfile
 sudo pacman -S  --noconfirm --needed base-devel git
 # Speed up makepkg compilation
 sudo sed -i 's/^#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j$(nproc)\"/g' /etc/makepkg.conf
@@ -84,17 +90,23 @@ if [ ! -d "$download" ]; then
 fi
 
 cd $download
+rm -rf $download/yay
 git clone https://aur.archlinux.org/yay.git
 cd $download/yay
-echo y | makepkg -si
+while ! echo y | makepkg -si; do
+    sleep 3
+done
+echo `date` ": yay installation complete !" >> $logfile
 
 # Remove the auto start service
-sudo systemctl --user disable bootrun.service
-sudo rm -rf /home/$username/.config/systemd/user/*
+echo `date` ": Remove the auto start service ..." >> $logfile
+systemctl --user disable bootrun.service
+rm -rf /home/$username/.config/systemd/user/*
 
+echo `date` ": Set root permissions to have a password ..." >> $logfile
 sudo sed -i 's/^%wheel ALL=(ALL) NOPASSWD: ALL/# %wheel ALL=(ALL) NOPASSWD: ALL/g' /etc/sudoers 
 
-cat >> $HOME/bootrun.log <<EOF
+cat >> $logfile <<EOF
 
 The archLinux and $desktop installation is complete !
 
