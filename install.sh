@@ -10,7 +10,7 @@
 # -o pipefail : As soon as a subcommand fails, the entire pipeline command fails and the script terminates.
 set -euxo pipefail
 
-setfonts /usr/share/kbd/consolefonts/LatGrkCyr-12x22.psfu.gz
+setfont /usr/share/kbd/consolefonts/LatGrkCyr-12x22.psfu.gz
 
 configfile="./config/install.conf"
 

@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-02-02 12:04:54
+ # @LastEditTime: 2021-02-02 23:22:46
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ### 
 
@@ -46,9 +46,9 @@ EOF
 # Microcode
 cpu_processor=`lscpu | grep "Intel"`
 if [ -n "$cpu_processor" ]; then
-    pacman -S --noconfirm intel-ucode
+    pacman -S --noconfirm --needed intel-ucode
 else
-    pacman -S --noconfirm amd-ucode
+    pacman -S --noconfirm --needed amd-ucode
 fi
 
 # Initramfs
@@ -60,11 +60,11 @@ echo root:$rootpasswd | chpasswd
 
 # Boot loader
 # Verify the boot mode
-pacman -S --noconfirm grub
+pacman -S --noconfirm --needed grub
 
 if ls /sys/firmware/efi/efivars > /dev/null; then
     # UEFI systems
-    pacman -S --noconfirm efibootmgr
+    pacman -S --noconfirm --needed efibootmgr
     grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
 else
     # BIOS systems
@@ -75,7 +75,7 @@ fi
 # check MS Windows
 system=`awk -F "=" '$1=="system" {print $2}' $configfile`
 if [ "$system" = "dual" ]; then
-    pacman -S --noconfirm os-prober
+    pacman -S --noconfirm --needed os-prober
     os-prober
     sleep 1
 fi
@@ -95,20 +95,20 @@ echo $username:$userpasswd | chpasswd
 # alsa-utils contains :
 #   alsamixer : provides a more intuitive ncurses based interface for audio device configuration.
 #   amixer :  a shell command to change audio settings,
-pacman -S --noconfirm alsa-utils  
+pacman -S --noconfirm --needed alsa-utils  
 
 # GPU open source
 # Intel
 if lspci | grep VGA | grep Intel; then
-    pacman -S --noconfirm xf86-video-intel
+    pacman -S --noconfirm --needed xf86-video-intel
 fi
 # AMD
 if lspci | grep VGA | grep AMD; then
-    pacman -S --noconfirm xf86-video-amdgpu
+    pacman -S --noconfirm --needed xf86-video-amdgpu
 fi	
 # NVIDIA
 if lspci | grep VGA | grep NVIDIA; then
-    pacman -S --noconfirm nvidia
+    pacman -S --noconfirm --needed nvidia
 fi
 
  # The Chinese Arch Linux Community Warehouse
@@ -121,7 +121,7 @@ EOF
 pacman -Syy
 
 #  sudo 
-pacman -S --noconfirm sudo
+pacman -S --noconfirm --needed sudo
 sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/g' /etc/sudoers 
 sed -i 's/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/g' /etc/sudoers 
 
@@ -137,13 +137,13 @@ fi
 # other software
 software_list=`awk -F "=" '$1=="software" {print $2}' $configfile`
 if [ -n "$software_list" ]; then
-    pacman -S --noconfirm $software_list
+    pacman -S --noconfirm --needed $software_list
 fi
 
 # Touchpad libinput (laptop)
 type=`awk -F "=" '$1=="compute" {print $2}' $configfile`
 if [ "$type" = "laptop" ]; then
-    pacman -S --noconfirm xf86-input-libinput xorg-xinput
+    pacman -S --noconfirm --needed xf86-input-libinput xorg-xinput
     # default configuration from /usr/share/X11/xorg.conf.d/40-libinput.conf
     if [ -s "$install_dir/config/touchpad/30-touchpad.conf"  ]; then
         cp $install_dir/config/touchpad/30-touchpad.conf /etc/X11/xorg.conf.d/
@@ -164,7 +164,7 @@ EndSection
 EOF
     fi
     #TODO ：Bluetooth（laptop）
-    #pacman -S --noconfirm bluez bluez-utils blueman bluedevil
+    #pacman -S --noconfirm --needed bluez bluez-utils blueman bluedevil
 
 fi
 
@@ -175,7 +175,7 @@ if [ "$shell" = "ohmyzsh" ] || [ -z "$shell" ]; then
 fi
 
 # NetworkManager
-pacman -S --noconfirm networkmanager network-manager-applet nm-connection-editor dhcpcd
+pacman -S --noconfirm --needed networkmanager network-manager-applet nm-connection-editor dhcpcd
 systemctl enable NetworkManager
 systemctl enable dhcpcd
 systemctl disable NetworkManager-wait-online
