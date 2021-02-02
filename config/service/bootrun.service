@@ -2,7 +2,7 @@
 Description="Start configuration service for the first time"
 
 [Service]
-ExecStart=/bin/bash /home/skillf/chrootinstall/bootrun.sh
+ExecStart=/bin/bash /home/skillf/archlinuxInstall/bootrun.sh
 
 [Install]
 WantedBy=default.target

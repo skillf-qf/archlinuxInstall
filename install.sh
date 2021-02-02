@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-02-03 04:59:33
+ # @LastEditTime: 2021-02-03 05:29:51
  # @FilePath: \archlinuxInstall\install.sh
 ### 
 
@@ -13,7 +13,7 @@ set -euxo pipefail
 # Set tty font
 setfont /usr/share/kbd/consolefonts/LatGrkCyr-12x22.psfu.gz
 
-install_dir="/root"
+install_dir="/root/archlinuxInstall"
 configfile="$install_dir/config/install.conf"
 logfile="$install_dir/archlinuxInstall.log"
 

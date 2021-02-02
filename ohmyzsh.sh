@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-02-03 04:38:14
+ # @LastEditTime: 2021-02-03 05:46:07
  # @FilePath: \archlinuxInstall\ohmyzsh.sh
 ### 
 
@@ -39,13 +39,13 @@ rm -rf $HOME/.zsh*
 echo n | $download/ohmyzsh/tools/install.sh
 
 # change zsh
-echo `date` ": Change the user shell ..." >> $logfile
+echo `date` ": Change the $USER shell ..." >> $logfile
 if [ "$USER" = "$user" ]; then
 	sudo sed -i 's/home\/$USER:\/bin\/bash/home\/$USER:\/bin\/zsh/g' /etc/passwd
 	cp $userhome/.bash_profile $userhome/.zprofile
  	sed -i 's/bash/zsh/g' $userhome/.zprofile
 else
-	sed -i 's/home\/$USER:\/bin\/bash/home\/$USER:\/bin\/zsh/g' /etc/passwd
+	sed -i 's/$USER:\/bin\/bash/$USER:\/bin\/zsh/g' /etc/passwd
 	# Change prompt
 	sed -i 's/\$ \%{\$reset_color\%}/\# \%{\$reset_color\%}/g' $HOME/.oh-my-zsh/themes/ys.zsh-theme
 fi
