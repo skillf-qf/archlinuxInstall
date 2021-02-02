@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-02-03 06:14:27
+ # @LastEditTime: 2021-02-03 06:34:41
  # @FilePath: \archlinuxInstall\ohmyzsh.sh
 ### 
 
@@ -11,15 +11,15 @@
 set -euxo pipefail
 
 install_dir="/archlinuxInstall"
+if [ "$USER" != "root" ]; then
+	install_dir="$HOME/archlinuxInstall"
+fi
+
 configfile="$install_dir/config/install.conf"
 logfile="$install_dir/archlinuxInstall.log"
 
 username=`awk -F "=" '$1=="username" {print $2}' $configfile`
 download="$HOME/Downloads"
-
-if [ "$USER" = "$username" ]; then
-	install_dir="$HOME/archlinuxInstall"
-fi
 
 shell=`awk -F "=" '$1=="shell" {print $2}' $configfile`
 if [ ! -d "$download" ]; then

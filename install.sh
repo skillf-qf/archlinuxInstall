@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-02-03 05:29:51
+ # @LastEditTime: 2021-02-03 06:27:00
  # @FilePath: \archlinuxInstall\install.sh
 ### 
 
@@ -182,6 +182,7 @@ fi
 echo `date` ": Change root into the /mnt system and execute the installation script ..." >> $logfile
 cp $logfile $chrootinstall/
 arch-chroot /mnt /archlinuxInstall/$scriptfile
+set +x
 
 echo -e "\n\n"
 echo -e "The system will reboot for the final configuration step !\n"
