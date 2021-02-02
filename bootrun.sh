@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-02-03 06:37:43
+ # @LastEditTime: 2021-02-03 06:44:29
  # @FilePath: \archlinuxInstall\bootrun.sh
 ### 
 
@@ -103,7 +103,7 @@ echo `date` ": Remove the auto start service ..." >> $logfile
 systemctl --user disable bootrun.service
 rm -rf $HOME/.config/systemd/user/*
 
-echo `date` ": Set root permissions to have a password ..." >> $logfile
+echo `date` ": Set sudo permissions to have a password ..." >> $logfile
 sudo sed -i 's/^%wheel ALL=(ALL) NOPASSWD: ALL/# %wheel ALL=(ALL) NOPASSWD: ALL/g' /etc/sudoers 
 
 cat >> $logfile <<EOF

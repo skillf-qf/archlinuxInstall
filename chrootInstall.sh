@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-02-03 05:16:33
+ # @LastEditTime: 2021-02-03 06:44:43
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ### 
 
@@ -147,7 +147,7 @@ EOF
 pacman -Syy
 
 #  sudo 
-echo `date` ": Install sudo and set root permissions to be password-free ..." >> $logfile
+echo `date` ": Install sudo and set sudo permissions to be password-free ..." >> $logfile
 pacman -S --noconfirm --needed sudo
 sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/g' /etc/sudoers 
 sed -i 's/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/g' /etc/sudoers 
