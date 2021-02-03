@@ -85,7 +85,7 @@ network={
     psk="$wifiPSK"
 }
 EOF
-    echo -e "wifi.conf generated successfully !\n" 
+    echo -e "\n\n\033[33mwifi.conf generated successfully !\033[0m\n" 
     echo `date` ": wifi.conf generated successfully !" >> $logfile
     
     rfkill unblock wifi
@@ -216,14 +216,15 @@ cp $logfile $chrootinstall/
 arch-chroot /mnt /archlinuxInstall/$scriptfile
 set +x
 
-echo -e "\n\n"
-echo -e "The system will reboot for the final configuration step !\n"
-echo -e "\n\n"
+echo -e "\n\nThe system will reboot for the final configuration step !\n\n"
 for time in `seq 5 -1 0`; do
-    echo -n "Restarting for the last configuration $time press Ctrl+c to stop it ...\n\n\n"
-    echo -n -e "\r\r"
+    echo -n -e "\033[33mRestarting for the last configuration $time press Ctrl+c to stop it ...\033[0m\r"
     sleep 1
 done
+
+# Unmount all mount partitions
+umount -R /mnt
+sleep 1
 
 reboot
 
