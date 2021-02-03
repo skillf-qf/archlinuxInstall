@@ -218,7 +218,7 @@ set +x
 
 echo -e "\n\nThe system will reboot for the final configuration step !\n\n"
 for time in `seq 5 -1 0`; do
-    echo -n -e "\033[33mRestarting for the last configuration $time press Ctrl+c to stop it ...\033[0m\r"
+    echo -e "\033[33mRestarting for the last configuration $time press Ctrl+c to stop it ...\033[0m\r"
     sleep 1
 done
 
