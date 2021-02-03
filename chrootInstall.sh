@@ -8,7 +8,9 @@
 
 # Print the command. The script ends when the command fails.
 # -o pipefail : As soon as a subcommand fails, the entire pipeline command fails and the script terminates.
-set -euxo pipefail
+set -euo pipefail
+# Please uncomment it to see how it works
+#set -x
 
 install_dir="/archlinuxInstall"
 configfile="$install_dir/config/install.conf"
