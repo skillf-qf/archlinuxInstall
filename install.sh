@@ -8,7 +8,9 @@
 
 # Print the command. The script ends when the command fails.
 # -o pipefail : As soon as a subcommand fails, the entire pipeline command fails and the script terminates.
-set -euxo pipefail
+set -euo pipefail
+# Please uncomment it to see how it works
+#set -x
 
 # Set tty font
 setfont /usr/share/kbd/consolefonts/LatGrkCyr-12x22.psfu.gz
@@ -18,7 +20,7 @@ configfile="$install_dir/config/install.conf"
 logfile="$install_dir/archlinuxInstall.log"
 
 computer_platform=`awk -F "=" '$1=="computer_platform" {print $2}' $configfile`
-network_connection_type=`awk -F "=" '$1=="computer_platform" {print $2}' $configfile`
+network_connection_type=`awk -F "=" '$1=="network_connection_type" {print $2}' $configfile`
 system=`awk -F "=" '$1=="system" {print $2}' $configfile`
 ssid=`awk -F "=" '$1=="ssid" {print $2}' $configfile`
 psk=`awk -F "=" '$1=="psk" {print $2}' $configfile`
@@ -50,7 +52,7 @@ done
 if [ ${#not_empty_arry[*]} -gt 0 ]; then
     echo -e "\n===========================================================================================\n"
     echo -e "\033[31mERROR: The following variables cannot be empty !\033[0m"  
-    echo -e "\033[31m Please modify the variable in file : \033[33marchlinuxInstall/config/install.conf \033[0m\n"
+    echo -e "\033[31mPlease modify the variable in file : \033[33marchlinuxInstall/config/install.conf \033[0m\n"
     for var in ${not_empty_arry[*]}; do
         echo $var
     done
