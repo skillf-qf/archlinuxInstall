@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-27 10:30:18
- # @LastEditTime: 2021-02-03 04:17:31
+ # @LastEditTime: 2021-02-03 09:53:55
  # @FilePath: \archlinuxInstall\bspwm.sh
 ### 
 
@@ -118,7 +118,7 @@ else
 	# This row cannot be smaller, otherwise it will not start
 	ExecStart=
 	# username : Replace the name of the currently auto-logged user
-	ExecStart=-/usr/bin/agetty --autologin $username --noclear %I $TERM
+	ExecStart=-/usr/bin/agetty --autologin %u --noclear %I \$TERM
 EOF
 fi
 
