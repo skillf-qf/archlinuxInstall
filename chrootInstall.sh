@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-02-03 06:44:43
+ # @LastEditTime: 2021-02-03 08:40:40
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ### 
 
@@ -202,9 +202,9 @@ fi
 
 # root shell
 shell=`awk -F "=" '$1=="shell" {print $2}' $configfile`
-if [ "$shell" = "ohmyzsh" ] || [ -z "$shell" ]; then
+if [ -n "$shell" ]; then
     echo `date` ": Install and configure the $shell for $USER ..." >> $logfile
-    $install_dir/ohmyzsh.sh
+    $install_dir/$shell.sh
 fi
 
 # NetworkManager

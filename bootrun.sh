@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-02-03 06:44:29
+ # @LastEditTime: 2021-02-03 08:40:16
  # @FilePath: \archlinuxInstall\bootrun.sh
 ### 
 
@@ -74,9 +74,9 @@ set -e
 
 # user shell
 shell=`awk -F "=" '$1=="shell" {print $2}' $configfile`
-if [ "$shell" = "ohmyzsh" ] || [ -z "$shell" ]; then
+if [ -n "$shell" ]; then
     echo `date` ": Install and configure the $shell for $USER ..." >> $logfile
-    $install_dir/ohmyzsh.sh
+    $install_dir/$shell.sh
 fi
 
 # yay
