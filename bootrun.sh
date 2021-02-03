@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-02-03 08:40:16
+ # @LastEditTime: 2021-02-03 09:27:49
  # @FilePath: \archlinuxInstall\bootrun.sh
 ### 
 
@@ -113,3 +113,5 @@ The archLinux and $desktop installation is complete !
 Enjoy!
 
 EOF
+
+reboot
