@@ -10,6 +10,9 @@
 # -o pipefail : As soon as a subcommand fails, the entire pipeline command fails and the script terminates.
 set -euxo pipefail
 
+# Set tty font
+setfont /usr/share/kbd/consolefonts/LatGrkCyr-12x22.psfu.gz
+
 install_dir="/root/archlinuxInstall"
 configfile="$install_dir/config/install.conf"
 logfile="$install_dir/archlinuxInstall.log"
@@ -38,31 +41,24 @@ empty_var_list=`awk '/=/' $configfile | awk -F "=" '$2=="" {print $1}'`
 not_empty_arry=()
 num=0
 for empty_var in $empty_var_list; do
-    if [[ "$var_list" =~ $empty_var ]]; then
-        not_empty_arry[num]="$empty_var="
-        let num++
+    if [[ $var_list =~ $empty_var ]]; then
+        not_empty_arry[$num]="$empty_var="
+        num=`expr $num + 1`
     fi
 done
 
 if [ ${#not_empty_arry[*]} -gt 0 ]; then
-    echo -e "\n"
-    echo "==================================================="
-    echo -e "\n" 
-    echo "ERROR: The following variables cannot be empty !"  
-    echo "Please modify the variable in file \"./archlinuxInstall/config/install.conf\""
-
-    for var in ${array[*]}; do
-        echo $i 
+    echo -e "\n===========================================================================================\n"
+    echo -e "\033[31mERROR: The following variables cannot be empty !\033[0m"  
+    echo -e "\033[31m Please modify the variable in file : \033[33marchlinuxInstall/config/install.conf \033[0m\n"
+    for var in ${not_empty_arry[*]}; do
+        echo $var
     done
-    echo -e "\n"
-    echo "==================================================="   
+    echo -e "\n===========================================================================================\n\n"
     exit
 fi
 
-# Set tty font
-setfont /usr/share/kbd/consolefonts/LatGrkCyr-12x22.psfu.gz
-
-echo `date` ": ===================================================" > $logfile
+echo `date` ": ===========================================================================================" > $logfile
 
 # Connect to the internet
 if [ "$network_connection_type" = "wireless" ]; then
@@ -141,7 +137,7 @@ if [ -n "$root" ]; then
     mount /dev/$root /mnt
     echo `date` ": Format partition /dev/$root and mount it to partition /mnt !" >> $logfile
 else
-    echo "ERROR: root partition does not exist !"
+    echo -e "\033[031mERROR: root partition does not exist !\033[0m"
     echo `date` ": ERROR: root partition does not exist !" >> $logfile
     exit
 fi
@@ -167,7 +163,7 @@ if [ -n "$boot" ]; then
         rm -rf /mnt/boot/*linux
     fi
 else
-    echo "ERROR: boot partition does not exist !"
+    echo -e "\033[31mERROR: boot partition does not exist !\033[0m"
     echo `date` ": ERROR: boot partition does not exist !" >> $logfile
     exit
 fi
@@ -210,7 +206,7 @@ scriptfile="chrootInstall.sh"
 if [ -s $scriptfile ]; then
     cp -r ./* $chrootinstall/
 else
-    echo "ERROR: $scriptfile is empty !"
+    echo -e "\033[31mERROR: $scriptfile is empty !\033[0m"
     exit
 fi
 echo `date` ": Change root into the /mnt system and execute the installation script ..." >> $logfile

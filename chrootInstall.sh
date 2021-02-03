@@ -42,7 +42,7 @@ if [ -n "$hostname" ]; then
     echo `date` ": Create the hostname file ..." >> $logfile
 
 else
-    echo "ERROR: hostname cannot be empty !"
+    echo -e "\033[31mERROR: hostname cannot be empty !\033[0m"
     echo `date` ": ERROR: hostname cannot be empty !" >> $logfile
     exit
 fi
