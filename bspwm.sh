@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-27 10:30:18
- # @LastEditTime: 2021-02-03 09:53:55
+ # @LastEditTime: 2021-02-03 10:11:25
  # @FilePath: \archlinuxInstall\bspwm.sh
 ### 
 
@@ -109,18 +109,15 @@ fi
 
 # autologin
 echo `date` ": Configure the user to automatically log in the account without password ..." >> $logfile
+rm -rf /etc/systemd/system/getty@tty1.service.d
 mkdir -p /etc/systemd/system/getty@tty1.service.d
-if [ -s "$install_dir/config/autologin/override.conf"  ]; then
-	cp $install_dir/config/autologin/override.conf /etc/systemd/system/getty@tty1.service.d/
-else
-	cat > /etc/systemd/system/getty@tty1.service.d/override.conf <<EOF
-	[Service]
-	# This row cannot be smaller, otherwise it will not start
-	ExecStart=
-	# username : Replace the name of the currently auto-logged user
-	ExecStart=-/usr/bin/agetty --autologin %u --noclear %I \$TERM
+cat > /etc/systemd/system/getty@tty1.service.d/override.conf <<EOF
+[Service]
+# This row cannot be smaller, otherwise it will not start
+ExecStart=
+# username : Replace the name of the currently auto-logged user
+ExecStart=-/usr/bin/agetty --autologin $username --noclear %I \$TERM
 EOF
-fi
 
 #  Wallpaper
 echo `date` ": Copy the wallpaper to $userhome/.picture" >> $logfile

@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-02-03 06:27:00
+ # @LastEditTime: 2021-02-03 13:21:38
  # @FilePath: \archlinuxInstall\install.sh
 ### 
 
@@ -10,21 +10,62 @@
 # -o pipefail : As soon as a subcommand fails, the entire pipeline command fails and the script terminates.
 set -euxo pipefail
 
-# Set tty font
-setfont /usr/share/kbd/consolefonts/LatGrkCyr-12x22.psfu.gz
-
 install_dir="/root/archlinuxInstall"
 configfile="$install_dir/config/install.conf"
 logfile="$install_dir/archlinuxInstall.log"
 
-echo `date` ": ##########################################" > $logfile
-
-# Connect to the internet
-type=`awk -F "=" '$1=="compute" {print $2}' $configfile`
+computer_platform=`awk -F "=" '$1=="computer_platform" {print $2}' $configfile`
+network_connection_type=`awk -F "=" '$1=="computer_platform" {print $2}' $configfile`
+system=`awk -F "=" '$1=="system" {print $2}' $configfile`
 ssid=`awk -F "=" '$1=="ssid" {print $2}' $configfile`
 psk=`awk -F "=" '$1=="psk" {print $2}' $configfile`
+hostname=`awk -F "=" '$1=="hostname" {print $2}' $configfile`
+username=`awk -F "=" '$1=="username" {print $2}' $configfile`
+userpasswd=`awk -F "=" '$1=="userpasswd" {print $2}' $configfile`
+rootpasswd=`awk -F "=" '$1=="rootpasswd" {print $2}' $configfile`
+root=`awk -F "=" '$1=="root" {print $2}' $configfile`
+boot=`awk -F "=" '$1=="boot" {print $2}' $configfile`
+home=`awk -F "=" '$1=="home" {print $2}' $configfile`
+swap=`awk -F "=" '$1=="swap" {print $2}' $configfile`
 
-if [ "$type" = "laptop" ]; then
+var_list="\
+        computer_platform network_connection_type system ssid psk  \
+        hostname username userpasswd rootpasswd \
+        root boot \
+        "
+empty_var_list=`awk '/=/' $configfile | awk -F "=" '$2=="" {print $1}'`
+
+not_empty_arry=()
+num=0
+for empty_var in $empty_var_list; do
+    if [[ "$var_list" =~ $empty_var ]]; then
+        not_empty_arry[num]="$empty_var="
+        let num++
+    fi
+done
+
+if [ ${#not_empty_arry[*]} -gt 0 ]; then
+    echo -e "\n"
+    echo "==================================================="
+    echo -e "\n" 
+    echo "ERROR: The following variables cannot be empty !"  
+    echo "Please modify the variable in file \"./archlinuxInstall/config/install.conf\""
+
+    for var in ${array[*]}; do
+        echo $i 
+    done
+    echo -e "\n"
+    echo "==================================================="   
+    exit
+fi
+
+# Set tty font
+setfont /usr/share/kbd/consolefonts/LatGrkCyr-12x22.psfu.gz
+
+echo `date` ": ===================================================" > $logfile
+
+# Connect to the internet
+if [ "$network_connection_type" = "wireless" ]; then
     if [ -n $ssid ] && [ -n $psk ] ; then
         wifiSSID=$ssid
         wifiPSK=$psk
@@ -65,7 +106,7 @@ EOF
 fi
 
 ping -c 3 www.baidu.com
-echo `date` ": $type network connection successful !" >> $logfile
+echo `date` ": $network_connection_type network connection successful !" >> $logfile
 
 # Update mirrors
 echo `date` ": Try to get the latest image source and sort it by speed ..." >> $logfile
@@ -88,11 +129,6 @@ timedatectl set-ntp true
 echo `date` ": Update system time successfully !" >> $logfile
 
 # Disks
-root=`awk -F "=" '$1=="root" {print $2}' $configfile`
-boot=`awk -F "=" '$1=="boot" {print $2}' $configfile`
-home=`awk -F "=" '$1=="home" {print $2}' $configfile`
-swap=`awk -F "=" '$1=="swap" {print $2}' $configfile`
-
 set +e
 umount /dev/$boot
 umount /dev/$home
@@ -115,25 +151,20 @@ if [ ! -d "/mnt/boot" ]; then
     echo `date` ": Create /mnt/boot mount point !" >> $logfile
 fi
 
-system=`awk -F "=" '$1=="system" {print $2}' $configfile`
 if [ -n "$boot" ]; then
-    if [ "$system" != "dual" ];then
+    if [ "$system" = "single" ];then
         echo `date` ": The installation target system is a single system ..." >> $logfile
         echo y | mkfs.fat -F32 /dev/$boot
         mount /dev/$boot /mnt/boot
         echo `date` ": Partition /dev/$boot is formatted and mounted to /mnt/boot !" >> $logfile
-    else
+    elif [ "$system" = "dual" ];then
         echo `date` ": The installation target system is dual system ..." >> $logfile
         mount /dev/$boot /mnt/boot
         echo `date` ": Partition /dev/$boot is mounted only to /mnt/boot !" >> $logfile
         # Remove everything except EFI 
-        if [ -d "/mnt/boot/grub" ]; then
-            rm -rf /mnt/boot/grub
-        fi
-        if ls /mnt/boot/*.img > /dev/null 2>&1; then
-            rm -rf /mnt/boot/*.img
-            rm -rf /mnt/boot/*linux
-        fi
+        rm -rf /mnt/boot/grub
+        rm -rf /mnt/boot/*.img
+        rm -rf /mnt/boot/*linux
     fi
 else
     echo "ERROR: boot partition does not exist !"
@@ -178,6 +209,9 @@ scriptfile="chrootInstall.sh"
  
 if [ -s $scriptfile ]; then
     cp -r ./* $chrootinstall/
+else
+    echo "ERROR: $scriptfile is empty !"
+    exit
 fi
 echo `date` ": Change root into the /mnt system and execute the installation script ..." >> $logfile
 cp $logfile $chrootinstall/
@@ -188,7 +222,7 @@ echo -e "\n\n"
 echo -e "The system will reboot for the final configuration step !\n"
 echo -e "\n\n"
 for time in `seq 5 -1 0`; do
-    echo -n "Restarting for the last configuration $time press Ctrl+c to stop it ..."
+    echo -n "Restarting for the last configuration $time press Ctrl+c to stop it ...\n\n\n"
     echo -n -e "\r\r"
     sleep 1
 done

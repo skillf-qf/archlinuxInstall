@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-02-03 09:27:49
+ # @LastEditTime: 2021-02-03 10:30:26
  # @FilePath: \archlinuxInstall\bootrun.sh
 ### 
 
@@ -19,12 +19,12 @@ download="$HOME/Downloads"
 ssid=`awk -F "=" '$1=="ssid" {print $2}' $configfile`
 psk=`awk -F "=" '$1=="psk" {print $2}' $configfile`
 desktop=`awk -F "=" '$1=="desktop" {print $2}' $configfile`
-type=`awk -F "=" '$1=="compute" {print $2}' $configfile`
+network_connection_type=`awk -F "=" '$1=="network_connection_type" {print $2}' $configfile`
 
 set +e
 bridge_list=`ls /sys/class/net`
 # Connection Network
-if [ "$type" = "laptop" ]; then
+if [ "$network_connection_type" = "wireless" ]; then
     
     bridge=`echo $bridge_list | awk -F " " '{print $3}'`
 
@@ -47,7 +47,7 @@ if [ "$type" = "laptop" ]; then
     done
     echo `date` ": Wifi network connected !" >> $logfile
 
-elif [ "$type" = "desktop" ]; then
+elif [ "$network_connection_type" = "wired" ]; then
 
     bridge=`echo $bridge_list | awk -F " " '{print $1}'`
 

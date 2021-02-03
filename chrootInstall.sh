@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-02-03 08:40:40
+ # @LastEditTime: 2021-02-03 10:27:47
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ### 
 
@@ -171,8 +171,8 @@ if [ -n "$software_list" ]; then
 fi
 
 # Touchpad libinput (laptop)
-type=`awk -F "=" '$1=="compute" {print $2}' $configfile`
-if [ "$type" = "laptop" ]; then
+computer_platform=`awk -F "=" '$1=="computer_platform" {print $2}' $configfile`
+if [ "$computer_platform" = "laptop" ]; then
     echo `date` ": Install and configure the TouchPad ..." >> $logfile
     pacman -S --noconfirm --needed xf86-input-libinput xorg-xinput
     # default configuration from /usr/share/X11/xorg.conf.d/40-libinput.conf
