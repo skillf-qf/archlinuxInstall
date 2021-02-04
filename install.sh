@@ -103,7 +103,11 @@ EOF
     sleep 3
 fi
 
-ping -c 3 www.baidu.com
+set +e
+while ! ping -c 3 www.baidu.com; do
+    sleep 3
+done
+set -e
 echo `date` ": $network_connection_type network connection successful !" >> $logfile
 
 # Update mirrors
@@ -231,7 +235,7 @@ set +x
 
 echo -e "\n\nThe system will reboot for the final configuration step !\n\n"
 for time in `seq 5 -1 0`; do
-    echo -e "\033[33mRestarting for the last configuration $time press Ctrl+c to stop it ...\033[0m\r"
+    echo -e "\033[33mRestarting for the last configuration $time press Ctrl+c to stop it ...\033[0m\r\r"
     sleep 1
 done
 
