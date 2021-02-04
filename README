@@ -1,0 +1,24 @@
+
+Installation
+------------
+You should clone the source code first
+
+    git clone https://https://github.com/skillf-qf/archlinuxInstall.git
+
+And put the source code into the Arch installation disk ...
+
+Modify the parameters of the "archlinuxInstall/config/install.conf" variable
+
+    vim archlinuxInstall/config/install.conf
+
+Note : Please take a close look at the parameter comments of install.conf
+
+Finally, execute the installation script
+    ./install.sh
+
+The installation process will be restarted twice. 
+After the first restart, the final installation configuration will be executed. 
+Please wait patiently. At this time, the terminal printing installation process will be automatically opened. 
+The second restart indicates that the whole installation process has been completed
+
+Good Luck  !
