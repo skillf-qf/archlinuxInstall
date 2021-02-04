@@ -40,7 +40,7 @@ echo `date` ": Download and install ohmyzsh ..." >> $logfile
 
 while ! git clone https://github.com/skillf-qf/ohmyzsh.git $download/ohmyzsh; do
 	echo `date` ": \"git clone ohmyzsh.git\" tries to reconnect ..." >> $logfile
-	echo -e "\033[31m\"git clone ohmyzsh.git\" tries to reconnect ...\033[0m\n" >> $logfile
+	echo -e "\033[31m\"git clone ohmyzsh.git\" tries to reconnect ...\033[0m\n"
 	sleep 3
 done
 
@@ -68,7 +68,7 @@ rm -rf $HOME/.zsh
 
 while ! git clone https://github.com/skillf-qf/zsh-autosuggestions.git $zshsuggestions_dir; do
 	echo `date` ": \"git clone zsh-autosuggestions.git\" tries to reconnect ..." >> $logfile
-	echo -e "\033[31m\"git clone zsh-autosuggestions.git\" tries to reconnect ...\033[0m\n" >> $logfile
+	echo -e "\033[31m\"git clone zsh-autosuggestions.git\" tries to reconnect ...\033[0m\n"
 	sleep 3
 done
 
@@ -83,7 +83,7 @@ rm -rf $download/powerlinefonts
 
 while ! git clone https://github.com/skillf-qf/fonts.git $download/powerlinefonts; do
 	echo `date` ": \"git clone fonts.git\" tries to reconnect ..." >> $logfile
-	echo -e "\033[31m\"git clone fonts.git\" tries to reconnect ...\033[0m\n" >> $logfile
+	echo -e "\033[31m\"git clone fonts.git\" tries to reconnect ...\033[0m\n"
 	sleep 3
 done
 

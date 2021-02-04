@@ -48,23 +48,23 @@ if [ "$network_connection_type" = "wireless" ]; then
     echo `date` ": Enable the $bridge ..." >> $logfile
     while ! sudo ip link set up dev $bridge  > $terminal_id; do
     	echo `date` ": \"ip link\" tries to re-enable $bridge ..." >> $logfile
-    	echo -e "\033[31m\"ip link\" tries to re-enable $bridge ...\033[0m\n" >> $logfile
+    	echo -e "\033[31m\"ip link\" tries to re-enable $bridge ...\033[0m\n" > $terminal_id
 	    sleep 3
     done
     echo `date` ": $bridge enabled successfully !" >> $logfile
     
     # connect wifi
     echo `date` ": Try to connect to wifi ..." >> $logfile
-    while ! nmcli device wifi connect $ssid password $psk  > $terminal_id; do
+    while ! nmcli device wifi connect $ssid password $psk > $terminal_id; do
     	echo `date` ": \"nmcli\" tries to reconnect to WiFi ..." >> $logfile
-    	echo -e "\033[31m\"nmcli\" tries to reconnect to WiFi ...\033[0m\n" >> $logfile
+    	echo -e "\033[31m\"nmcli\" tries to reconnect to WiFi ...\033[0m\n" > $terminal_id
 	    sleep 3
     done
     echo `date` ": Successfully connected to wifi !" >> $logfile
 
     while ! ping -c 3 www.baidu.com > $terminal_id; do
         echo `date` ": \"ping\" tries to reconnect to the network ..." >> $logfile
-        echo -e "\033[31m\"ping\" tries to reconnect to the network ...\033[0m\n" >> $logfile
+        echo -e "\033[31m\"ping\" tries to reconnect to the network ...\033[0m\n" > $terminal_id
 	    sleep 3
     done
     echo `date` ": Wifi network connected !" >> $logfile
@@ -77,7 +77,7 @@ elif [ "$network_connection_type" = "wired" ]; then
     echo `date` ": Enable the $bridge ..." >> $logfile
     while ! sudo ip link set up dev $bridge > $terminal_id; do
     	echo `date` ": \"ip link\" tries to re-enable $bridge ..." >> $logfile
-    	echo -e "\033[31m\"ip link\" tries to re-enable $bridge ...\033[0m\n" >> $logfile
+    	echo -e "\033[31m\"ip link\" tries to re-enable $bridge ...\033[0m\n" > $terminal_id
 	    sleep 3
     done
     echo `date` ": $bridge enabled successfully !" >> $logfile
@@ -85,14 +85,14 @@ elif [ "$network_connection_type" = "wired" ]; then
     # connect wired
     #while ! nmcli device wifi connect $ssid password $psk; do
     #	echo `date` ": \"nmcli\" tries to reconnect to WiFi ..." >> $logfile
-    #	echo -e "\033[31m\"nmcli\" tries to reconnect to WiFi ...\033[0m\n" >> $logfile
+    #	echo -e "\033[31m\"nmcli\" tries to reconnect to WiFi ...\033[0m\n" > $terminal_id
 	#    sleep 3
     #done
     
     dhcpcd $bridge
     while ! ping -c 3 www.baidu.com > $terminal_id; do
         echo `date` ": \"ping\" tries to reconnect to the network ..." >> $logfile
-        echo -e "\033[31m\"ping\" tries to reconnect to the network ...\033[0m\n" >> $logfile
+        echo -e "\033[31m\"ping\" tries to reconnect to the network ...\033[0m\n" > $terminal_id
 	    sleep 3
     done
     echo `date` ": Wired network connected !" >> $logfile
@@ -104,11 +104,13 @@ set -e
 shell=`awk -F "=" '$1=="shell" {print $2}' $configfile`
 if [ -n "$shell" ]; then
     echo `date` ": Install and configure the $shell for $USER ..." >> $logfile
+    echo "\033[33mInstall and configure the $shell for $USER ...\033[0m" > $terminal_id
     $install_dir/$shell.sh  > $terminal_id
 fi
 
 # yay
 echo `date` ": Download and install yay ..." >> $logfile
+echo -e "\033[33mDownload and install yay ...\033[0m" > $terminal_id
 sudo pacman -S  --noconfirm --needed base-devel git  > $terminal_id
 # Speed up makepkg compilation
 sudo sed -i 's/^#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j$(nproc)\"/g' /etc/makepkg.conf
@@ -119,12 +121,17 @@ fi
 
 cd $download
 rm -rf $download/yay
-git clone https://aur.archlinux.org/yay.git > $terminal_id
+
+while ! git clone https://aur.archlinux.org/yay.git > $terminal_id; do
+	echo `date` ": \"git clone yay.git\" tries to reconnect ..." >> $logfile
+	echo -e "\033[31m\"git clone yay.git\" tries to reconnect ...\033[0m\n" > $terminal_id
+    sleep 3
+done
+
 cd $download/yay
 while ! echo y | makepkg -si  > $terminal_id; do
     echo `date` ": \"makepkg\" tries to recompile yay ..." >> $logfile
-    echo -e "\033[31m\"makepkg\" tries to recompile yay ...\033[0m\n" >> $logfile
-
+    echo -e "\033[31m\"makepkg\" tries to recompile yay ...\033[0m\n" > $terminal_id
     sleep 3
 done
 echo `date` ": yay installation complete !" >> $logfile

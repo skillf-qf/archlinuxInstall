@@ -66,7 +66,7 @@ if [ "$terminal" = "st" ] || [ -z "$terminal" ]; then
 
 	while ! git clone https://github.com/skillf-qf/st.git $download/st; do
 		echo `date` ": \"git clone st.git\" tries to reconnect ..." >> $logfile
-		echo -e "\033[31m\"git clone st.git\" tries to reconnect ...\033[0m\n" >> $logfile
+		echo -e "\033[31m\"git clone st.git\" tries to reconnect ...\033[0m\n"
 		sleep 3
 	done
 
@@ -85,7 +85,7 @@ else
 
 		while ! git clone https://github.com/skillf-qf/st.git $download/st; do
 			echo `date` ": \"git clone st.git\" tries to reconnect ..." >> $logfile
-			echo -e "\033[31m\"git clone st.git\" tries to reconnect ...\033[0m\n" >> $logfile
+			echo -e "\033[31m\"git clone st.git\" tries to reconnect ...\033[0m\n"
 			sleep 3
 		done
 

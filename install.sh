@@ -106,7 +106,7 @@ fi
 set +e
 while ! ping -c 3 www.baidu.com; do
         echo `date` ": \"ping\" tries to reconnect to the network ..." >> $logfile
-        echo -e "\033[31m\"ping\" tries to reconnect to the network ...\033[0m\n" >> $logfile
+        echo -e "\033[31m\"ping\" tries to reconnect to the network ...\033[0m\n"
     sleep 3
 done
 set -e
@@ -122,7 +122,7 @@ counter=0
 while ! reflector --country China --latest 10 --protocol https --sort rate >> mirrorlist.temp; do
     if [ $counter -lt 10 ];then
     	echo `date` ": \"reflector\" tries to reconnect to the network ..." >> $logfile
-    	echo -e "\033[31m\"reflector\" tries to reconnect to the network ...\033[0m\n" >> $logfile
+    	echo -e "\033[31m\"reflector\" tries to reconnect to the network ...\033[0m\n"
         sleep 3
         counter=`expr $counter + 1`
     else
