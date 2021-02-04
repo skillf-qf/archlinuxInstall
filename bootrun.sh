@@ -12,6 +12,10 @@ set -euo pipefail
 # Please uncomment it to see how it works
 #set -x
 
+# step 2. Import the DISPLAY variable into systemd in the startup script (eg: bootrun.sh) and open the terminal with a delay of a few seconds
+systemctl --user import-environment
+sleep 5
+
 install_dir="$HOME/archlinuxInstall"
 configfile="$install_dir/config/install.conf"
 logfile="$install_dir/archlinuxInstall.log"
@@ -27,7 +31,7 @@ terminal=`awk -F "=" '$1=="terminal" {print $2}' $configfile`
 # Print the string to the new terminal
 # The device number of the new "terminal": /dev/pts/0
 # If you want to run it locally, you can simply change it to: /dev/null or filename
-terminal_id=/dev/pts/0
+terminal_id='/dev/pts/0' 
 $terminal &
 sleep 2
 echo -e  "\033[33mThe final step of the installation will continue, please be patient while it completes ...\033[0m" > $terminal_id
@@ -103,7 +107,7 @@ fi
 
 cd $download
 rm -rf $download/yay
-git clone https://aur.archlinux.org/yay.git
+git clone https://aur.archlinux.org/yay.git > $terminal_id
 cd $download/yay
 while ! echo y | makepkg -si  > $terminal_id; do
     sleep 3
@@ -126,4 +130,9 @@ Enjoy!
 
 EOF
 
-reboot
+# Reload
+if [ $terminal = "bspwm" ]; then
+    bspc quit
+else
+    reboot
+fi

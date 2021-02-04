@@ -111,7 +111,20 @@ echo `date` ": Try to get the latest image source and sort it by speed ..." >> $
 cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
 echo -e "\n##======================================================" > mirrorlist.temp
 
-reflector --country China --latest 10 --protocol https --sort rate >> mirrorlist.temp
+set +e
+counter=0
+while ! reflector --country China --latest 10 --protocol https --sort rate >> mirrorlist.temp; do
+    if [ $counter -lt 10 ];then
+        sleep 3
+        counter=`expr $counter + 1`
+    else
+        echo -e "\033[31mERROR: Network error, please check network and try again !\033[0m"  
+        exit
+    fi
+done
+set -e
+
+#reflector --country China --latest 10 --protocol https --sort rate >> mirrorlist.temp
 # If the above is not available please uncomment below and comment above as well
 #curl -sSL 'https://www.archlinux.org/mirrorlist/?country=CN&protocol=https&ip_version=4&use_mirror_status=on' | sed '/^## China/d; s/^#Server/Server/g' >> mirrorlist.temp
 

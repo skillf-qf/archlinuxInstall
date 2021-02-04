@@ -225,6 +225,13 @@ mkdir -p /home/$username/.config/systemd/user/default.target.wants
 cp $install_dir/config/service/bootrun.service /home/$username/.config/systemd/user/bootrun.service
 ln -s /home/$username/.config/systemd/user/bootrun.service /home/$username/.config/systemd/user/default.target.wants/bootrun.service
 
+# Import DISPLAY variable into systemd
+# Solution to open the terminal error : "can't open display"
+# step 1. Add the DISPLAY variable file to all user services folders
+# step 2. Import the DISPLAY variable into systemd in the startup script (eg: bootrun.sh) and open the terminal with a delay of a few seconds
+mkdir -p /home/$username/.config/environment.d
+echo "DISPLAY=:0" > /home/$username/.config/environment.d/display.conf
+
 # Copy the file to the user folder 
 echo `date` ": Copy the installation script to the /home/$username$install_dir ..." >> $logfile
 rm -rf /home/$username$install_dir
