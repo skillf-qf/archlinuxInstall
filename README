@@ -23,4 +23,16 @@ The second restart indicates that the whole installation process has been comple
 
 You can use " journalctl --user-unit bootrun.service " command to view the configuration of the bootstrap script.
 
+sxhkd
+------------
+Shortcuts are configured using sxhkd. 
+Sxhkd is a simple X hotkey daemon, by the developer of bspwm, that reacts to input events by executing commands.
+The shortcut key to open "st" terminal under bspwm is "Super + Return" .
+The shortcut key configuration file is in "$HOME/.config/sxhkd/sxhkdrc" .
+
+bspwm
+------------
+The bspwm configuration file is in "$HOME/.config/bspwm/bspwmrc" .
+
+
 Good Luck  !
