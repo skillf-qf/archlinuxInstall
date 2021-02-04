@@ -47,6 +47,8 @@ if [ "$network_connection_type" = "wireless" ]; then
     # set bridge
     echo `date` ": Enable the $bridge ..." >> $logfile
     while ! sudo ip link set up dev $bridge  > $terminal_id; do
+    	echo `date` ": \"ip link\" tries to re-enable $bridge ..." >> $logfile
+    	echo -e "\033[31m\"ip link\" tries to re-enable $bridge ...\033[0m\n" >> $logfile
 	    sleep 3
     done
     echo `date` ": $bridge enabled successfully !" >> $logfile
@@ -54,11 +56,15 @@ if [ "$network_connection_type" = "wireless" ]; then
     # connect wifi
     echo `date` ": Try to connect to wifi ..." >> $logfile
     while ! nmcli device wifi connect $ssid password $psk  > $terminal_id; do
+    	echo `date` ": \"nmcli\" tries to reconnect to WiFi ..." >> $logfile
+    	echo -e "\033[31m\"nmcli\" tries to reconnect to WiFi ...\033[0m\n" >> $logfile
 	    sleep 3
     done
     echo `date` ": Successfully connected to wifi !" >> $logfile
 
     while ! ping -c 3 www.baidu.com > $terminal_id; do
+        echo `date` ": \"ping\" tries to reconnect to the network ..." >> $logfile
+        echo -e "\033[31m\"ping\" tries to reconnect to the network ...\033[0m\n" >> $logfile
 	    sleep 3
     done
     echo `date` ": Wifi network connected !" >> $logfile
@@ -70,17 +76,23 @@ elif [ "$network_connection_type" = "wired" ]; then
     # set bridge
     echo `date` ": Enable the $bridge ..." >> $logfile
     while ! sudo ip link set up dev $bridge > $terminal_id; do
+    	echo `date` ": \"ip link\" tries to re-enable $bridge ..." >> $logfile
+    	echo -e "\033[31m\"ip link\" tries to re-enable $bridge ...\033[0m\n" >> $logfile
 	    sleep 3
     done
     echo `date` ": $bridge enabled successfully !" >> $logfile
 
     # connect wired
     #while ! nmcli device wifi connect $ssid password $psk; do
+    #	echo `date` ": \"nmcli\" tries to reconnect to WiFi ..." >> $logfile
+    #	echo -e "\033[31m\"nmcli\" tries to reconnect to WiFi ...\033[0m\n" >> $logfile
 	#    sleep 3
     #done
     
     dhcpcd $bridge
     while ! ping -c 3 www.baidu.com > $terminal_id; do
+        echo `date` ": \"ping\" tries to reconnect to the network ..." >> $logfile
+        echo -e "\033[31m\"ping\" tries to reconnect to the network ...\033[0m\n" >> $logfile
 	    sleep 3
     done
     echo `date` ": Wired network connected !" >> $logfile
@@ -110,6 +122,9 @@ rm -rf $download/yay
 git clone https://aur.archlinux.org/yay.git > $terminal_id
 cd $download/yay
 while ! echo y | makepkg -si  > $terminal_id; do
+    echo `date` ": \"makepkg\" tries to recompile yay ..." >> $logfile
+    echo -e "\033[31m\"makepkg\" tries to recompile yay ...\033[0m\n" >> $logfile
+
     sleep 3
 done
 echo `date` ": yay installation complete !" >> $logfile
@@ -130,9 +145,16 @@ Enjoy!
 
 EOF
 
+echo -e  "\n\nThe archLinux and $desktop installation is complete !"
+echo -e  "\n\nEnjoy!\n\n\n"
+
 # Reload
-if [ $terminal = "bspwm" ]; then
+if [ $desktop = "bspwm" ]; then
+    echo -e  "\033[33mRestart the bspwm ...\033[0m\n\n" > $terminal_id
+    sleep 3
     bspc quit
 else
+    echo -e  "\033[33mSystem reboot ...\033[0m\n\n" > $terminal_id
+    sleep 3
     reboot
 fi

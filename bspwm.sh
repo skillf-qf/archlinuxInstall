@@ -63,7 +63,13 @@ if [ "$terminal" = "st" ] || [ -z "$terminal" ]; then
 	
 	# st terminal
 	current_dir=`pwd`
-	git clone https://github.com/skillf-qf/st.git $download/st
+
+	while ! git clone https://github.com/skillf-qf/st.git $download/st; do
+		echo `date` ": \"git clone st.git\" tries to reconnect ..." >> $logfile
+		echo -e "\033[31m\"git clone st.git\" tries to reconnect ...\033[0m\n" >> $logfile
+		sleep 3
+	done
+
 	sleep 2
 	cd $download/st
 	make clean install
@@ -76,7 +82,13 @@ else
 	else
 		# default terminal
 		current_dir=`pwd`
-		git clone https://github.com/skillf-qf/st.git $download/st
+
+		while ! git clone https://github.com/skillf-qf/st.git $download/st; do
+			echo `date` ": \"git clone st.git\" tries to reconnect ..." >> $logfile
+			echo -e "\033[31m\"git clone st.git\" tries to reconnect ...\033[0m\n" >> $logfile
+			sleep 3
+		done
+
 		sleep 2
 		cd $download/st
 		make clean install

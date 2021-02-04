@@ -37,7 +37,13 @@ fi
 echo `date` ": Zsh shell installation is complete !" >> $logfile
 rm -rf $download/ohmyzsh
 echo `date` ": Download and install ohmyzsh ..." >> $logfile
-git clone https://github.com/skillf-qf/ohmyzsh.git $download/ohmyzsh
+
+while ! git clone https://github.com/skillf-qf/ohmyzsh.git $download/ohmyzsh; do
+	echo `date` ": \"git clone ohmyzsh.git\" tries to reconnect ..." >> $logfile
+	echo -e "\033[31m\"git clone ohmyzsh.git\" tries to reconnect ...\033[0m\n" >> $logfile
+	sleep 3
+done
+
 chmod a+x $download/ohmyzsh/tools/uninstall.sh
 echo y | $download/ohmyzsh/tools/uninstall.sh
 rm -rf $HOME/.zsh*
@@ -59,7 +65,13 @@ fi
 echo `date` ": Install zsh-autosuggestions | Add ohmyzsh history time | Change ohmyzsh Theme: ys ..." >> $logfile
 zshsuggestions_dir="$HOME/.zsh/zsh-autosuggestions"
 rm -rf $HOME/.zsh
-git clone https://github.com/skillf-qf/zsh-autosuggestions.git $zshsuggestions_dir
+
+while ! git clone https://github.com/skillf-qf/zsh-autosuggestions.git $zshsuggestions_dir; do
+	echo `date` ": \"git clone zsh-autosuggestions.git\" tries to reconnect ..." >> $logfile
+	echo -e "\033[31m\"git clone zsh-autosuggestions.git\" tries to reconnect ...\033[0m\n" >> $logfile
+	sleep 3
+done
+
 sed -i "/^# ZSH_CUSTOM/a\\ZSH_CUSTOM=`echo $zshsuggestions_dir`" $HOME/.zshrc
 sed -i '/^# HIST_STAMPS/a\\HIST_STAMPS=\"\%Y-\%m-\%d \%H:\%M:\%S  \" ' $HOME/.zshrc
 sed -i 's/^ZSH_THEME/# ZSH_THEME/g ' $HOME/.zshrc
@@ -68,7 +80,13 @@ sed -i '/^# ZSH_THEME=/a\\ZSH_THEME="ys"' $HOME/.zshrc
 # powerline fonts
 echo `date` ": Install powerline fonts ..." >> $logfile
 rm -rf $download/powerlinefonts
-git clone https://github.com/skillf-qf/fonts.git $download/powerlinefonts
+
+while ! git clone https://github.com/skillf-qf/fonts.git $download/powerlinefonts; do
+	echo `date` ": \"git clone fonts.git\" tries to reconnect ..." >> $logfile
+	echo -e "\033[31m\"git clone fonts.git\" tries to reconnect ...\033[0m\n" >> $logfile
+	sleep 3
+done
+
 chmod a+x $download/powerlinefonts/uninstall.sh
 $download/powerlinefonts/uninstall.sh
 $download/powerlinefonts/install.sh
