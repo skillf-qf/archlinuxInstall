@@ -21,4 +21,6 @@ After the first restart, the final installation configuration will be executed.
 Please wait patiently. At this time, the terminal printing installation process will be automatically opened. 
 The second restart indicates that the whole installation process has been completed
 
+You can use " journalctl --user-unit bootrun.service " command to view the configuration of the bootstrap script.
+
 Good Luck  !
