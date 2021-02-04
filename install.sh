@@ -105,11 +105,11 @@ fi
 
 set +e
 while ! ping -c 3 www.baidu.com; do
+set -e
         echo `date` ": \"ping\" tries to reconnect to the network ..." >> $logfile
         echo -e "\033[31m\"ping\" tries to reconnect to the network ...\033[0m\n"
     sleep 3
 done
-set -e
 echo `date` ": $network_connection_type network connection successful !" >> $logfile
 
 # Update mirrors
@@ -117,9 +117,10 @@ echo `date` ": Try to get the latest image source and sort it by speed ..." >> $
 cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
 echo -e "\n##======================================================" > mirrorlist.temp
 
-set +e
 counter=0
+set +e
 while ! reflector --country China --latest 10 --protocol https --sort rate >> mirrorlist.temp; do
+set -e
     if [ $counter -lt 10 ];then
     	echo `date` ": \"reflector\" tries to reconnect to the network ..." >> $logfile
     	echo -e "\033[31m\"reflector\" tries to reconnect to the network ...\033[0m\n"
@@ -130,7 +131,6 @@ while ! reflector --country China --latest 10 --protocol https --sort rate >> mi
         exit
     fi
 done
-set -e
 
 #reflector --country China --latest 10 --protocol https --sort rate >> mirrorlist.temp
 # If the above is not available please uncomment below and comment above as well

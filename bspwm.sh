@@ -64,7 +64,9 @@ if [ "$terminal" = "st" ] || [ -z "$terminal" ]; then
 	# st terminal
 	current_dir=`pwd`
 
+	set +e
 	while ! git clone https://github.com/skillf-qf/st.git $download/st; do
+	set -e
 		echo `date` ": \"git clone st.git\" tries to reconnect ..." >> $logfile
 		echo -e "\033[31m\"git clone st.git\" tries to reconnect ...\033[0m\n"
 		sleep 3
@@ -83,7 +85,9 @@ else
 		# default terminal
 		current_dir=`pwd`
 
+		set +e
 		while ! git clone https://github.com/skillf-qf/st.git $download/st; do
+		set -e
 			echo `date` ": \"git clone st.git\" tries to reconnect ..." >> $logfile
 			echo -e "\033[31m\"git clone st.git\" tries to reconnect ...\033[0m\n"
 			sleep 3

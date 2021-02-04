@@ -36,8 +36,6 @@ $terminal &
 sleep 2
 echo -e  "\033[33mThe final step of the installation will continue, please be patient while it completes ...\033[0m" > $terminal_id
 
-
-set +e
 bridge_list=`ls /sys/class/net`
 # Connection Network
 if [ "$network_connection_type" = "wireless" ]; then
@@ -46,7 +44,9 @@ if [ "$network_connection_type" = "wireless" ]; then
 
     # set bridge
     echo `date` ": Enable the $bridge ..." >> $logfile
+    set +e
     while ! sudo ip link set up dev $bridge  > $terminal_id; do
+    set -e
     	echo `date` ": \"ip link\" tries to re-enable $bridge ..." >> $logfile
     	echo -e "\033[31m\"ip link\" tries to re-enable $bridge ...\033[0m\n" > $terminal_id
 	    sleep 3
@@ -55,14 +55,18 @@ if [ "$network_connection_type" = "wireless" ]; then
     
     # connect wifi
     echo `date` ": Try to connect to wifi ..." >> $logfile
+    set +e
     while ! nmcli device wifi connect $ssid password $psk > $terminal_id; do
+    set -e
     	echo `date` ": \"nmcli\" tries to reconnect to WiFi ..." >> $logfile
     	echo -e "\033[31m\"nmcli\" tries to reconnect to WiFi ...\033[0m\n" > $terminal_id
 	    sleep 3
     done
     echo `date` ": Successfully connected to wifi !" >> $logfile
 
+    set +e
     while ! ping -c 3 www.baidu.com > $terminal_id; do
+    set -e
         echo `date` ": \"ping\" tries to reconnect to the network ..." >> $logfile
         echo -e "\033[31m\"ping\" tries to reconnect to the network ...\033[0m\n" > $terminal_id
 	    sleep 3
@@ -75,7 +79,9 @@ elif [ "$network_connection_type" = "wired" ]; then
 
     # set bridge
     echo `date` ": Enable the $bridge ..." >> $logfile
+    set +e
     while ! sudo ip link set up dev $bridge > $terminal_id; do
+    set -e
     	echo `date` ": \"ip link\" tries to re-enable $bridge ..." >> $logfile
     	echo -e "\033[31m\"ip link\" tries to re-enable $bridge ...\033[0m\n" > $terminal_id
 	    sleep 3
@@ -83,22 +89,27 @@ elif [ "$network_connection_type" = "wired" ]; then
     echo `date` ": $bridge enabled successfully !" >> $logfile
 
     # connect wired
+    # set +e
     #while ! nmcli device wifi connect $ssid password $psk; do
+    # set -e
     #	echo `date` ": \"nmcli\" tries to reconnect to WiFi ..." >> $logfile
     #	echo -e "\033[31m\"nmcli\" tries to reconnect to WiFi ...\033[0m\n" > $terminal_id
 	#    sleep 3
     #done
-    
+
     dhcpcd $bridge
+
+    set +e
     while ! ping -c 3 www.baidu.com > $terminal_id; do
+    set -e
         echo `date` ": \"ping\" tries to reconnect to the network ..." >> $logfile
         echo -e "\033[31m\"ping\" tries to reconnect to the network ...\033[0m\n" > $terminal_id
 	    sleep 3
     done
+
     echo `date` ": Wired network connected !" >> $logfile
  
 fi
-set -e
 
 # user shell
 shell=`awk -F "=" '$1=="shell" {print $2}' $configfile`
@@ -122,14 +133,19 @@ fi
 cd $download
 rm -rf $download/yay
 
+set +e
 while ! git clone https://aur.archlinux.org/yay.git > $terminal_id; do
+set -e
 	echo `date` ": \"git clone yay.git\" tries to reconnect ..." >> $logfile
 	echo -e "\033[31m\"git clone yay.git\" tries to reconnect ...\033[0m\n" > $terminal_id
     sleep 3
 done
 
 cd $download/yay
+
+set +e
 while ! echo y | makepkg -si  > $terminal_id; do
+set -e
     echo `date` ": \"makepkg\" tries to recompile yay ..." >> $logfile
     echo -e "\033[31m\"makepkg\" tries to recompile yay ...\033[0m\n" > $terminal_id
     sleep 3

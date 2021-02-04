@@ -38,7 +38,9 @@ echo `date` ": Zsh shell installation is complete !" >> $logfile
 rm -rf $download/ohmyzsh
 echo `date` ": Download and install ohmyzsh ..." >> $logfile
 
+set +e
 while ! git clone https://github.com/skillf-qf/ohmyzsh.git $download/ohmyzsh; do
+set -e
 	echo `date` ": \"git clone ohmyzsh.git\" tries to reconnect ..." >> $logfile
 	echo -e "\033[31m\"git clone ohmyzsh.git\" tries to reconnect ...\033[0m\n"
 	sleep 3
@@ -66,7 +68,9 @@ echo `date` ": Install zsh-autosuggestions | Add ohmyzsh history time | Change o
 zshsuggestions_dir="$HOME/.zsh/zsh-autosuggestions"
 rm -rf $HOME/.zsh
 
+set +e
 while ! git clone https://github.com/skillf-qf/zsh-autosuggestions.git $zshsuggestions_dir; do
+set -e
 	echo `date` ": \"git clone zsh-autosuggestions.git\" tries to reconnect ..." >> $logfile
 	echo -e "\033[31m\"git clone zsh-autosuggestions.git\" tries to reconnect ...\033[0m\n"
 	sleep 3
@@ -81,12 +85,13 @@ sed -i '/^# ZSH_THEME=/a\\ZSH_THEME="ys"' $HOME/.zshrc
 echo `date` ": Install powerline fonts ..." >> $logfile
 rm -rf $download/powerlinefonts
 
+set +e
 while ! git clone https://github.com/skillf-qf/fonts.git $download/powerlinefonts; do
+set -e
 	echo `date` ": \"git clone fonts.git\" tries to reconnect ..." >> $logfile
 	echo -e "\033[31m\"git clone fonts.git\" tries to reconnect ...\033[0m\n"
 	sleep 3
 done
-
 chmod a+x $download/powerlinefonts/uninstall.sh
 $download/powerlinefonts/uninstall.sh
 $download/powerlinefonts/install.sh

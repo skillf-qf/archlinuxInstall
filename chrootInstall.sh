@@ -190,7 +190,7 @@ Section "InputClass"
         MatchDevicePath "/dev/input/event*"
         MatchIsPointer "on"
         Option "Tapping" "on"
-        Option "DisableWhileTypeing" "on"
+        Option "DisablesTypeing" "on"
         Option "TappingButtonMap" "lmr"
         Option "TappingDrag" "on"
 EndSection
