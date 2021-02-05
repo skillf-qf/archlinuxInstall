@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-02-03 10:27:47
+ # @LastEditTime: 2021-02-06 06:52:46
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ### 
 
@@ -188,7 +188,7 @@ Section "InputClass"
         Identifier "touchpad"
         Driver "libinput"
         MatchDevicePath "/dev/input/event*"
-        MatchIsPointer "on"
+        MatchIsTouchpad "on"
         Option "Tapping" "on"
         Option "DisablesTypeing" "on"
         Option "TappingButtonMap" "lmr"
