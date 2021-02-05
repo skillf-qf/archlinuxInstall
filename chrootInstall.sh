@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-02-06 06:52:46
+ # @LastEditTime: 2021-02-06 07:08:10
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ### 
 
@@ -190,8 +190,8 @@ Section "InputClass"
         MatchDevicePath "/dev/input/event*"
         MatchIsTouchpad "on"
         Option "Tapping" "on"
-        Option "DisablesTypeing" "on"
-        Option "TappingButtonMap" "lmr"
+        Option "DisableWhileTyping" "on"
+        Option "ScrollMethod" "twofinger"
         Option "TappingDrag" "on"
 EndSection
 EOF
