@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-02-03 10:30:26
+ # @LastEditTime: 2021-02-06 14:00:58
  # @FilePath: \archlinuxInstall\bootrun.sh
 ### 
 
@@ -151,6 +151,9 @@ set -e
     sleep 3
 done
 echo `date` ": yay installation complete !" >> $logfile
+
+# fcitx-sogoupinyin
+yay -S --answerclean None --answerdiff None --noconfirm fcitx-sogoupinyin
 
 # Remove the auto start service
 echo `date` ": Remove the auto start service ..." >> $logfile

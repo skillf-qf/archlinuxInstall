@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-27 10:30:18
- # @LastEditTime: 2021-02-03 10:11:25
+ # @LastEditTime: 2021-02-06 14:29:57
  # @FilePath: \archlinuxInstall\bspwm.sh
 ### 
 
@@ -148,13 +148,14 @@ fi
 
 echo `date` ": The bspwm installation configuration is complete !" >> $logfile
 
-## Chinese font
-#pacman -S --noconfirm wqy-zenhei wqy-bitmapfont wqy-microhei firefox-i18n-zh-cn firefox-i18n-zh-tw
+## Chinese font | fcitx 
+pacman -S --noconfirm fcitx fcitx-configtool wqy-zenhei wqy-bitmapfont wqy-microhei firefox-i18n-zh-cn firefox-i18n-zh-tw
 #
-##TODO ：安装中文输入法
-#pacman -S --noconfirm fcitx
-#
-#sed -i '/# Last Check/r mirrorlist.temp' $userhome/.xinitrc
-#export GTK_IM_MODULE=fcitx
-#export QT_IM_MODULE=fcitx
-#export XMODIFIERS=@im=fcitx
+set +e
+fcitx_target=`sed -n '/fcitx/p' $userhome/.xinitrc`
+if [ -z "$fcitx_target" ]; then
+	sed -i "/bspwm/r $install_dir/config/fcitx/fcitx.conf" $userhome/.xinitrc
+	sed -i '/bspwm/d' $userhome/.xinitrc
+	sed -i '/fcitx &/a\exec bspwm' $userhome/.xinitrc
+fi
+set -e
