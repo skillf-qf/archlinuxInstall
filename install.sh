@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
