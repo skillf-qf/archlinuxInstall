@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-02-06 14:00:58
+ # @LastEditTime: 2021-05-04 19:40:43
  # @FilePath: \archlinuxInstall\bootrun.sh
 ### 
 
@@ -122,35 +122,35 @@ fi
 # yay
 echo `date` ": Download and install yay ..." >> $logfile
 echo -e "\033[33mDownload and install yay ...\033[0m" > $terminal_id
-sudo pacman -S  --noconfirm --needed base-devel git  > $terminal_id
+sudo pacman -S  --noconfirm --needed base-devel git yay  > $terminal_id
 # Speed up makepkg compilation
 sudo sed -i 's/^#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j$(nproc)\"/g' /etc/makepkg.conf
 
-if [ ! -d "$download" ]; then
-    mkdir -p "$download"
-fi
-
-cd $download
-rm -rf $download/yay
-
-set +e
-while ! git clone https://aur.archlinux.org/yay.git > $terminal_id; do
-set -e
-	echo `date` ": \"git clone yay.git\" tries to reconnect ..." >> $logfile
-	echo -e "\033[31m\"git clone yay.git\" tries to reconnect ...\033[0m\n" > $terminal_id
-    sleep 3
-done
-
-cd $download/yay
-
-set +e
-while ! echo y | makepkg -si  > $terminal_id; do
-set -e
-    echo `date` ": \"makepkg\" tries to recompile yay ..." >> $logfile
-    echo -e "\033[31m\"makepkg\" tries to recompile yay ...\033[0m\n" > $terminal_id
-    sleep 3
-done
-echo `date` ": yay installation complete !" >> $logfile
+#if [ ! -d "$download" ]; then
+#    mkdir -p "$download"
+#fi
+#
+#cd $download
+#rm -rf $download/yay
+#
+#set +e
+#while ! git clone https://aur.archlinux.org/yay.git > $terminal_id; do
+#set -e
+#	echo `date` ": \"git clone yay.git\" tries to reconnect ..." >> $logfile
+#	echo -e "\033[31m\"git clone yay.git\" tries to reconnect ...\033[0m\n" > $terminal_id
+#    sleep 3
+#done
+#
+#cd $download/yay
+#
+#set +e
+#while ! echo y | makepkg -si  > $terminal_id; do
+#set -e
+#    echo `date` ": \"makepkg\" tries to recompile yay ..." >> $logfile
+#    echo -e "\033[31m\"makepkg\" tries to recompile yay ...\033[0m\n" > $terminal_id
+#    sleep 3
+#done
+#echo `date` ": yay installation complete !" >> $logfile
 
 # fcitx-sogoupinyin
 yay -S --answerclean None --answerdiff None --noconfirm fcitx-sogoupinyin
