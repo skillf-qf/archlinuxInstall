@@ -2,9 +2,9 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-02-06 07:08:10
+ # @LastEditTime: 2021-10-19 10:02:29
  # @FilePath: \archlinuxInstall\chrootInstall.sh
-### 
+###
 
 # Print the command. The script ends when the command fails.
 # -o pipefail : As soon as a subcommand fails, the entire pipeline command fails and the script terminates.
@@ -57,8 +57,7 @@ cat >> /etc/hosts <<EOF
 EOF
 
 # Microcode
-cpu_processor=`lscpu | grep "Intel"`
-if [ -n "$cpu_processor" ]; then
+if lscpu | grep Intel; then
     pacman -S --noconfirm --needed intel-ucode
     echo `date` ": Intel Microcode installed successfully !" >> $logfile
 else
@@ -88,7 +87,7 @@ if ls /sys/firmware/efi/efivars > /dev/null; then
 else
     # BIOS systems
     boot=$(echo `awk -F "=" '$1=="boot" {print $2}' $configfile` | sed 's/[0-9]*$//')
-    grub-install --target=i386-pc /dev/$boot
+    grub-install --target=i386-pc /dev/$(echo $boot | sed 's/[0-9]*$//')
     echo `date` ": Install grub-install under BIOS boot !" >> $logfile
 fi
 
@@ -98,7 +97,8 @@ if [ "$system" = "dual" ]; then
     echo `date` ": Install os-prober for dual systems and check the WIN system ..." >> $logfile
     pacman -S --noconfirm --needed os-prober
     os-prober
-    sleep 1
+    echo "GRUB_DISABLE_OS_PROBER=false" >> /etc/default/grub
+    source /etc/default/grub
 fi
 
 # Generate the main configuration file
@@ -118,7 +118,7 @@ echo `date` ": Create a user account and set a password !" >> $logfile
 # alsa-utils contains :
 #   alsamixer : provides a more intuitive ncurses based interface for audio device configuration.
 #   amixer :  a shell command to change audio settings,
-pacman -S --noconfirm --needed alsa-utils  
+pacman -S --noconfirm --needed alsa-utils
 echo `date` ": Install the sound card driver alsa-utils !" >> $logfile
 
 # GPU open source
@@ -131,7 +131,7 @@ fi
 if lspci | grep VGA | grep AMD; then
     pacman -S --noconfirm --needed xf86-video-amdgpu
     echo `date` ": Install AMD GPU Open Source Driver \"xf86-video-amdgpu\" !" >> $logfile
-fi	
+fi
 # NVIDIA
 if lspci | grep VGA | grep NVIDIA; then
     pacman -S --noconfirm --needed nvidia
@@ -148,11 +148,11 @@ Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/\$arch
 EOF
 pacman -Syy
 
-#  sudo 
+#  sudo
 echo `date` ": Install sudo and set sudo permissions to be password-free ..." >> $logfile
 pacman -S --noconfirm --needed sudo
-sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/g' /etc/sudoers 
-sed -i 's/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/g' /etc/sudoers 
+sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/g' /etc/sudoers
+sed -i 's/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/g' /etc/sudoers
 
 # desktop
 desktop=`awk -F "=" '$1=="desktop" {print $2}' $configfile`
@@ -181,7 +181,7 @@ if [ "$computer_platform" = "laptop" ]; then
     if [ -s "$install_dir/config/touchpad/30-touchpad.conf"  ]; then
         cp $install_dir/config/touchpad/30-touchpad.conf /etc/X11/xorg.conf.d/
     else
-        cp /usr/share/X11/xorg.conf.d/40-libinput.conf /etc/X11/xorg.conf.d/30-touchpad.conf 
+        cp /usr/share/X11/xorg.conf.d/40-libinput.conf /etc/X11/xorg.conf.d/30-touchpad.conf
         $install_dir/deleteline.sh /etc/X11/xorg.conf.d/30-touchpad.conf  "^Section"
         cat >> /etc/X11/xorg.conf.d/30-touchpad.conf <<EOF
 Section "InputClass"
@@ -232,11 +232,11 @@ ln -s /home/$username/.config/systemd/user/bootrun.service /home/$username/.conf
 mkdir -p /home/$username/.config/environment.d
 echo "DISPLAY=:0" > /home/$username/.config/environment.d/display.conf
 
-# Copy the file to the user folder 
+# Copy the file to the user folder
 echo `date` ": Copy the installation script to the /home/$username$install_dir ..." >> $logfile
 rm -rf /home/$username$install_dir
 cp -r $install_dir /home/$username/
- 
+
 # Change the file user permissions in the user's home directory
 echo `date` ": Change the file \"$username:users\" permissions in the user's home directory ..." >> $logfile
 chown -R $username:users /home/$username
