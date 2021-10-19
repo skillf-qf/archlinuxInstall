@@ -2,9 +2,9 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-02-03 13:21:38
+ # @LastEditTime: 2021-10-19 12:36:17
  # @FilePath: \archlinuxInstall\install.sh
-### 
+###
 
 # Print the command. The script ends when the command fails.
 # -o pipefail : As soon as a subcommand fails, the entire pipeline command fails and the script terminates.
@@ -51,7 +51,7 @@ done
 
 if [ ${#not_empty_arry[*]} -gt 0 ]; then
     echo -e "\n===========================================================================================\n"
-    echo -e "\033[31mERROR: The following variables cannot be empty !\033[0m"  
+    echo -e "\033[31mERROR: The following variables cannot be empty !\033[0m"
     echo -e "\033[31mPlease modify the variable in file : \033[33marchlinuxInstall/config/install.conf \033[0m\n"
     for var in ${not_empty_arry[*]}; do
         echo $var
@@ -67,7 +67,7 @@ if [ "$network_connection_type" = "wireless" ]; then
     if [ -n $ssid ] && [ -n $psk ] ; then
         wifiSSID=$ssid
         wifiPSK=$psk
-    else    
+    else
         read -r -p "The wifi ssid or wifi psk is empty. Is it automatically generated? [y/n]" confirm
         if [[ ! "$confirm" =~ ^(n|N) ]]; then
             read -r -p "Input your wifi ssid: " wifiSSID
@@ -85,9 +85,9 @@ network={
     psk="$wifiPSK"
 }
 EOF
-    echo -e "\n\n\033[33mwifi.conf generated successfully !\033[0m\n" 
+    echo -e "\n\n\033[33mwifi.conf generated successfully !\033[0m\n"
     echo `date` ": wifi.conf generated successfully !" >> $logfile
-    
+
     rfkill unblock wifi
     ip link set dev wlan0 up
     #  check wpa_supplicant PID
@@ -99,7 +99,7 @@ EOF
     fi
     set -e
     wpa_supplicant -B -i wlan0 -c /etc/wpa_supplicant/wifi.conf
-    dhcpcd wlan0    
+    dhcpcd wlan0
     sleep 3
 fi
 
@@ -127,7 +127,7 @@ set -e
         sleep 3
         counter=`expr $counter + 1`
     else
-        echo -e "\033[31mERROR: Network error, please check network and try again !\033[0m"  
+        echo -e "\033[31mERROR: Network error, please check network and try again !\033[0m"
         exit
     fi
 done
@@ -180,7 +180,7 @@ if [ -n "$boot" ]; then
         echo `date` ": The installation target system is dual system ..." >> $logfile
         mount /dev/$boot /mnt/boot
         echo `date` ": Partition /dev/$boot is mounted only to /mnt/boot !" >> $logfile
-        # Remove everything except EFI 
+        # Remove everything except EFI
         rm -rf /mnt/boot/grub
         rm -rf /mnt/boot/*.img
         rm -rf /mnt/boot/*linux
@@ -205,7 +205,7 @@ set +e
 swapstatus=`swapon -s | grep "$swap"`
 set -e
 
-if [[ -n "$swap" ]] && [[ ! -n "$swapstatus" ]]; then
+if [[ -n "$swap" ]] && [[ -z "$swapstatus" ]]; then
     mkswap /dev/$swap
     swapon /dev/$swap
     echo `date` ": Create swap partition /dev/$swap and enable it !" >> $logfile
@@ -225,7 +225,7 @@ chrootinstall="/mnt/archlinuxInstall"
 rm -rf $chrootinstall
 mkdir -p $chrootinstall
 scriptfile="chrootInstall.sh"
- 
+
 if [ -s $scriptfile ]; then
     cp -r ./* $chrootinstall/
 else
@@ -248,4 +248,3 @@ umount -R /mnt
 sleep 1
 
 reboot
-
