@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-10-20 01:17:23
+ # @LastEditTime: 2021-10-20 02:49:26
  # @FilePath: \archlinuxInstall\install.sh
 ###
 
@@ -173,7 +173,7 @@ fi
 if ls /sys/firmware/efi/efivars > /dev/null; then
     echo `date` ": The installation target system is a single system ..." >> $logfile
 
-    if [ "$system" = "single" ];then
+    if [ "$system" = "single" ]; then
         echo y | mkfs.fat -F32 /dev/$boot
     fi
     mount /dev/$boot /mnt/boot
@@ -183,20 +183,25 @@ if ls /sys/firmware/efi/efivars > /dev/null; then
     rm -rf /mnt/boot/*.img
     rm -rf /mnt/boot/*linux
 else
+    if echo $boot | grep nvme > /dev/null; then
+        str="p[0-9]"
+    else
+        str="[0-9]"
+    fi
+    boot_disk=/dev/$(echo $boot | sed "s/$str*$//")
     if fdisk -l $boot_disk | grep gpt > /dev/null;then
-
-        if echo $boot | grep nvme > /dev/null;then
-            str="p"
-        fi
-        boot_disk=/dev/$(echo $boot | sed "s/$str[0-9]*$//")
+        #boot_disk=/dev/$(echo $boot | sed "s/$str[0-9]*$//")
         boot_partition_number=`echo $boot | grep -Eo '[0-9]+$'`
 
+        set +e
         biosboot_other=`fdisk -l $boot_disk | grep "BIOS boot" | awk -F " " '{if(NR==1) print $1}'`
-        if [  -n biosboot_other ]; then
+        set -e
+
+        if [ -n "$biosboot_other" ]; then
             biosboot_other_number=`echo $biosboot_other | grep -Eo '[0-9]+$'`
         fi
 
-        if [ -z "$biosboot_other" ];then
+        if [ -z "$biosboot_other" ]; then
             echo "d
 $boot_partition_number
 n
@@ -207,7 +212,7 @@ t
 $boot_partition_number
 4
 w
-" | fdisk $ boot_disk
+" | fdisk $boot_disk
             partition_number=$boot_partition_number
         else
             partition_number=$biosboot_other_number
