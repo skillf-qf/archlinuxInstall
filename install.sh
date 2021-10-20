@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-10-20 10:32:37
+ # @LastEditTime: 2021-10-20 21:40:03
  # @FilePath: \archlinuxInstall\install.sh
 ###
 
@@ -208,6 +208,7 @@ else
         fi
 
         if [ -z "$biosboot_other" ]; then
+            echo `date` ": Create a 1M BIOS boot partition..." >> $logfile
             echo "d
 $boot_partition_number
 n
@@ -223,7 +224,7 @@ w
         else
             partition_number=$biosboot_other_number
         fi
-
+        echo `date` ": Activate the BIOS Boot partition..." >> $logfile
         parted $boot_disk set $partition_number bios_grub on
 
     fi
