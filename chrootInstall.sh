@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-10-19 10:02:29
+ # @LastEditTime: 2021-10-20 12:52:29
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ###
 
@@ -97,6 +97,7 @@ if [ "$system" = "dual" ]; then
     echo `date` ": Install os-prober for dual systems and check the WIN system ..." >> $logfile
     pacman -S --noconfirm --needed os-prober
     os-prober
+    echo `date` ": Enable OS-prober in GRUB ..." >> $logfile
     echo "GRUB_DISABLE_OS_PROBER=false" >> /etc/default/grub
     source /etc/default/grub
 fi
