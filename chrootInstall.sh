@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-10-20 16:39:54
+ # @LastEditTime: 2021-10-20 16:48:21
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ###
 
@@ -162,6 +162,15 @@ pacman -S --noconfirm --needed sudo
 sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/g' /etc/sudoers
 sed -i 's/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/g' /etc/sudoers
 
+# NetworkManager
+echo `date` ": Install the NetworkManager ..." >> $logfile
+pacman -S --noconfirm --needed networkmanager network-manager-applet nm-connection-editor dhcpcd
+echo `date` ": The installation of NetworkManager is complete !" >> $logfile
+echo `date` ": Enable NetworkManager and dhcpcd, and disable service NetworkManager-wait-online ..." >> $logfile
+systemctl enable NetworkManager
+systemctl enable dhcpcd
+systemctl disable NetworkManager-wait-online
+
 # desktop
 desktop=`awk -F "=" '$1=="desktop" {print $2}' $configfile`
 if [ -n "$desktop" ]; then
@@ -216,15 +225,6 @@ if [ -n "$shell" ]; then
     echo `date` ": Install and configure the $shell for $USER ..." >> $logfile
     $install_dir/$shell.sh
 fi
-
-# NetworkManager
-echo `date` ": Install the NetworkManager ..." >> $logfile
-pacman -S --noconfirm --needed networkmanager network-manager-applet nm-connection-editor dhcpcd
-echo `date` ": The installation of NetworkManager is complete !" >> $logfile
-echo `date` ": Enable NetworkManager and dhcpcd, and disable service NetworkManager-wait-online ..." >> $logfile
-systemctl enable NetworkManager
-systemctl enable dhcpcd
-systemctl disable NetworkManager-wait-online
 
 # Create the first boot configuration service
 echo `date` ": Create the first boot configuration servicee ..." >> $logfile
