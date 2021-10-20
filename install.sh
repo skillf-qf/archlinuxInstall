@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-10-20 21:40:03
+ # @LastEditTime: 2021-10-20 22:37:49
  # @FilePath: \archlinuxInstall\install.sh
 ###
 
@@ -155,6 +155,7 @@ umount /dev/$root
 set -e
 echo `date` ": Read the partition information and process the mounted partition !" >> $logfile
 
+# root
 if [ -n "$root" ]; then
     echo y | mkfs.ext4 /dev/$root
     mount /dev/$root /mnt
@@ -165,9 +166,7 @@ else
     exit
 fi
 
-#TODO
-
-# booted
+# /boot
 # 注意在EFI系统上，Windows只能安装到GPT磁盘
 
 if ls /sys/firmware/efi/efivars > /dev/null; then
@@ -230,79 +229,7 @@ w
     fi
 fi
 
-#if ls /sys/firmware/efi/efivars > /dev/null; then
-#    # UEFI systems
-#    if [ ! -d "/mnt/boot" ]; then
-#        mkdir -p /mnt/boot
-#        echo `date` ": Create /mnt/boot mount point !" >> $logfile
-#    fi
-#    echo `date` ": The installation target system is dual system ..." >> $logfile
-#    echo y | mkfs.fat -F32 /dev/$boot
-#    mount /dev/$boot /mnt/boot
-#    echo `date` ": Partition /dev/$boot is mounted only to /mnt/boot !" >> $logfile
-#    # Remove everything except EFI
-#    rm -rf /mnt/boot/grub
-#    rm -rf /mnt/boot/*.img
-#    rm -rf /mnt/boot/*linux
-#
-#else
-#    # BIOS systems
-#    if fdisk -l $boot_disk | grep gpt > /dev/null;then
-#
-#        if echo $boot | grep nvme > /dev/null;then
-#            str="p"
-#        fi
-#        boot_disk=/dev/$(echo $boot | sed "s/$str[0-9]*$//")
-#        boot_partition_number=`echo $boot | grep -Eo '[0-9]+$'`
-#
-#        biosboot_other=`fdisk -l $boot_disk | grep "BIOS boot" | awk -F " " '{if(NR==1) print $1}'`
-#        if [  -n biosboot_other ]; then
-#            biosboot_other_number=`echo $biosboot_other | grep -Eo '[0-9]+$'`
-#        fi
-#
-#        if [ -z "$biosboot_other" ];then
-#            echo "d
-#$boot_partition_number
-#n
-#$boot_partition_number
-#
-#+1M
-#t
-#$boot_partition_number
-#4
-#w
-#" | fdisk $ boot_disk
-#            partition_number=$boot_partition_number
-#        else
-#            partition_number=$biosboot_other_number
-#        fi
-#
-#        parted $boot_disk set $partition_number bios_grub on
-#
-#    fi
-#fi
-#
-#if [ -n "$boot" ]; then
-#    if [ "$system" = "single" ];then
-#        echo `date` ": The installation target system is a single system ..." >> $logfile
-#        echo y | mkfs.fat -F32 /dev/$boot
-#        mount /dev/$boot /mnt/boot
-#        echo `date` ": Partition /dev/$boot is formatted and mounted to /mnt/boot !" >> $logfile
-#    elif [ "$system" = "dual" ];then
-#        echo `date` ": The installation target system is dual system ..." >> $logfile
-#        mount /dev/$boot /mnt/boot
-#        echo `date` ": Partition /dev/$boot is mounted only to /mnt/boot !" >> $logfile
-#        # Remove everything except EFI
-#        rm -rf /mnt/boot/grub
-#        rm -rf /mnt/boot/*.img
-#        rm -rf /mnt/boot/*linux
-#    fi
-#else
-#    echo -e "\033[31mERROR: boot partition does not exist !\033[0m"
-#    echo `date` ": ERROR: boot partition does not exist !" >> $logfile
-#    exit
-#fi
-
+# /home
 if [ ! -d "/mnt/home" ]; then
     mkdir -p /mnt/home
     echo `date` ": Create /mnt/home mount point !" >> $logfile
@@ -313,6 +240,7 @@ if [ -n "$home" ]; then
     echo `date` ": Partition /dev/$home is formatted and mounted to /mnt/home !" >> $logfile
 fi
 
+# swap
 set +e
 swapstatus=`swapon -s | grep "$swap"`
 set -e
