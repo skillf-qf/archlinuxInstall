@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-10-20 20:38:57
+ # @LastEditTime: 2021-10-20 20:53:25
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ###
 
@@ -78,6 +78,7 @@ echo `date` ": Set the password for the root account !" >> $logfile
 # Verify the boot mode
 pacman -S --noconfirm --needed grub
 echo `date` ": Install the multi-boot loader GRUB !" >> $logfile
+system=`awk -F "=" '$1=="system" {print $2}' $configfile`
 
 if ls /sys/firmware/efi/efivars > /dev/null; then
     # UEFI systems
@@ -110,7 +111,6 @@ else
 fi
 
 # check MS Windows
-system=`awk -F "=" '$1=="system" {print $2}' $configfile`
 if [ "$system" = "dual" ]; then
 
     echo `date` ": Install os-prober for dual systems and check the Windows system ..." >> $logfile
