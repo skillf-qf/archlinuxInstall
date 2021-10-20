@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-10-20 12:52:29
+ # @LastEditTime: 2021-10-20 16:39:54
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ###
 
@@ -86,8 +86,15 @@ if ls /sys/firmware/efi/efivars > /dev/null; then
     echo `date` ": Install efibootmgr and grub-install under UEFI boot !" >> $logfile
 else
     # BIOS systems
-    boot=$(echo `awk -F "=" '$1=="boot" {print $2}' $configfile` | sed 's/[0-9]*$//')
-    grub-install --target=i386-pc /dev/$(echo $boot | sed 's/[0-9]*$//')
+    boot=`awk -F "=" '$1=="boot" {print $2}' $configfile`
+
+    if echo $boot | grep nvme > /dev/null; then
+        str="p[0-9]"
+    else
+        str="[0-9]"
+    fi
+    boot_disk=/dev/$(echo $boot | sed "s/$str*$//")
+    grub-install --target=i386-pc $boot_disk
     echo `date` ": Install grub-install under BIOS boot !" >> $logfile
 fi
 
