@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-10-20 10:47:46
- # @LastEditTime: 2021-10-20 10:58:15
+ # @LastEditTime: 2021-10-20 11:18:29
  # @FilePath: \archlinuxInstall\test\creat_bios_boot_partition.sh
 ###
 
@@ -20,7 +20,7 @@ disk=/dev/$(echo $bp | sed "s/$str*$//")
 #echo $disk
 #exit
 
-partition=`fdisk -l $disk | grep "BIOS boot" | awk -F '{if(NR==1) print $1}'`
+partition=`fdisk -l $disk | grep "BIOS boot" | awk -F " " '{if(NR==1) print $1}'`
 
 bpn=`echo $bp | grep -Eo '[0-9]+$'`
 partition_number=`echo $partition | grep -Eo '[0-9]+$'`
