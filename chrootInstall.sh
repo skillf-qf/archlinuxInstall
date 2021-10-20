@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-10-20 16:48:21
+ # @LastEditTime: 2021-10-20 20:38:57
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ###
 
@@ -96,12 +96,24 @@ else
     boot_disk=/dev/$(echo $boot | sed "s/$str*$//")
     grub-install --target=i386-pc $boot_disk
     echo `date` ": Install grub-install under BIOS boot !" >> $logfile
+
+    if [ "$system" = "dual" ]; then
+        echo `date` ": Mount the Windows boot partition !" >> $logfile
+        pacman -S --noconfirm --needed ntfs-3g
+        set +e
+        win_bios_boot=`fdisk -l | grep NTFS | grep "*" | awk -F " " '{if(NR==1) print $1}'`
+        set -e
+        mkdir -p /boot/win_boot
+        ntfs-3g $win_bios_boot /boot/win_boot
+    fi
+
 fi
 
 # check MS Windows
 system=`awk -F "=" '$1=="system" {print $2}' $configfile`
 if [ "$system" = "dual" ]; then
-    echo `date` ": Install os-prober for dual systems and check the WIN system ..." >> $logfile
+
+    echo `date` ": Install os-prober for dual systems and check the Windows system ..." >> $logfile
     pacman -S --noconfirm --needed os-prober
     os-prober
     echo `date` ": Enable OS-prober in GRUB ..." >> $logfile
