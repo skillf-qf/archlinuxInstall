@@ -2,11 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
-<<<<<<< HEAD
- # @LastEditTime: 2021-10-20 10:05:22
-=======
- # @LastEditTime: 2021-10-20 02:49:26
->>>>>>> 171899322b313035d0a158d0b8eea7269d3dc404
+ # @LastEditTime: 2021-10-20 10:32:37
  # @FilePath: \archlinuxInstall\install.sh
 ###
 
@@ -175,7 +171,6 @@ fi
 # 注意在EFI系统上，Windows只能安装到GPT磁盘
 
 if ls /sys/firmware/efi/efivars > /dev/null; then
-<<<<<<< HEAD
     echo `date` ": UEFI boot found and ready to create EFI partition..." >> $logfile
     if [ ! -d "/mnt/boot" ]; then
         mkdir -p /mnt/boot
@@ -183,10 +178,6 @@ if ls /sys/firmware/efi/efivars > /dev/null; then
     fi
 
     echo `date` ": The installation target system is a single system ..." >> $logfile
-=======
-    echo `date` ": The installation target system is a single system ..." >> $logfile
-
->>>>>>> 171899322b313035d0a158d0b8eea7269d3dc404
     if [ "$system" = "single" ]; then
         echo y | mkfs.fat -F32 /dev/$boot
     fi
@@ -197,10 +188,7 @@ if ls /sys/firmware/efi/efivars > /dev/null; then
     rm -rf /mnt/boot/*.img
     rm -rf /mnt/boot/*linux
 else
-<<<<<<< HEAD
     echo `date` ": This system will boot using BIOS..." >> $logfile
-=======
->>>>>>> 171899322b313035d0a158d0b8eea7269d3dc404
     if echo $boot | grep nvme > /dev/null; then
         str="p[0-9]"
     else
