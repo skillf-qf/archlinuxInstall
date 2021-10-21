@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-10-21 15:37:46
+ # @LastEditTime: 2021-10-21 15:51:33
  # @FilePath: \archlinuxInstall\install.sh
 ###
 
@@ -93,9 +93,9 @@ EOF
     sleep 3
 fi
 
-set +e
+#set +e
 while ! ping -c 3 www.baidu.com > /dev/null; do
-set -e
+#set -e
     echo `date` ": \"ping\" tries to reconnect to the network ..." >> $logfile
     echo -e "\033[31m\"ping\" tries to reconnect to the network ...\033[0m\n"
     sleep 1
@@ -108,9 +108,9 @@ cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
 echo -e "\n##======================================================" > mirrorlist.temp
 
 counter=0
-set +e
+#set +e
 while ! reflector --country China --latest 10 --protocol https --sort rate >> mirrorlist.temp; do
-set -e
+#set -e
     if [ $counter -lt 10 ];then
     	echo `date` ": \"reflector\" tries to reconnect to the network ..." >> $logfile
     	echo -e "\033[31m\"reflector\" tries to reconnect to the network ...\033[0m\n"

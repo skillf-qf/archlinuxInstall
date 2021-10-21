@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-10-21 15:43:36
+ # @LastEditTime: 2021-10-21 15:45:53
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ###
 
@@ -114,7 +114,6 @@ else
         ntfs-3g $bios_boot /boot/win_bios_boot
         system="dual"
     fi
-
 fi
 
 # check MS Windows
