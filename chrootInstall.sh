@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-10-21 14:46:49
+ # @LastEditTime: 2021-10-21 15:43:36
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ###
 
@@ -39,15 +39,8 @@ echo "LANG=en_US.UTF-8" > /etc/locale.conf
 
 # localhost Network configuration
 hostname=`awk -F "=" '$1=="hostname" {print $2}' $configfile`
-if [ -n "$hostname" ]; then
-    echo $hostname > /etc/hostname
-    echo `date` ": Create the hostname file ..." >> $logfile
-
-else
-    echo -e "\033[31mERROR: hostname cannot be empty !\033[0m"
-    echo `date` ": ERROR: hostname cannot be empty !" >> $logfile
-    exit
-fi
+echo $hostname > /etc/hostname
+echo `date` ": Create the hostname file ..." >> $logfile
 
 echo `date` ": Add matching entries to hosts ..." >> $logfile
 cat >> /etc/hosts <<EOF
@@ -66,8 +59,8 @@ else
 fi
 
 # Initramfs
-mkinitcpio -P
-echo `date` ": mkinitcpio -P recreate the initramfs image !" >> $logfile
+#mkinitcpio -P
+#echo `date` ": mkinitcpio -P recreate the initramfs image !" >> $logfile
 
 # Root password
 rootpasswd=`awk -F "=" '$1=="rootpasswd" {print $2}' $configfile`

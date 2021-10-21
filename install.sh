@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-10-21 14:54:02
+ # @LastEditTime: 2021-10-21 15:37:46
  # @FilePath: \archlinuxInstall\install.sh
 ###
 
@@ -33,7 +33,7 @@ home=`awk -F "=" '$1=="home" {print $2}' $configfile`
 swap=`awk -F "=" '$1=="swap" {print $2}' $configfile`
 
 var_list="\
-        computer_platform network_connection_type  \
+        computer_platform network_connection_type \
         hostname username userpasswd rootpasswd \
         root boot \
         "
@@ -67,25 +67,13 @@ echo `date` ": =================================================================
 
 # Connect to the internet
 if [ "$network_connection_type" == "wireless" ]; then
-    if [ -n $ssid ] && [ -n $psk ] ; then
-        wifiSSID=$ssid
-        wifiPSK=$psk
-    else
-        read -r -p "The wifi ssid or wifi psk is empty. Is it automatically generated? [y/n]" confirm
-        if [[ ! "$confirm" =~ ^(n|N) ]]; then
-            read -r -p "Input your wifi ssid: " wifiSSID
-            read -r -p "Input your wifi psk: " wifiPSK
-        else
-            exit
-        fi
-    fi
     cat > /etc/wpa_supplicant/wifi.conf <<EOF
 ctrl_interface=/run/wpa_supplicant
 update_config=1
 
 network={
-    ssid="$wifiSSID"
-    psk="$wifiPSK"
+    ssid="$ssid"
+    psk="$psk"
 }
 EOF
     echo -e "\n\n\033[33mwifi.conf generated successfully !\033[0m\n"
@@ -96,22 +84,21 @@ EOF
     #  check wpa_supplicant PID
     set +e
     ps -aux|grep wpa_supplicant
-    if  [ $? -eq 0 ]; then
-        killall wpa_supplicant
-        sleep 1
-    fi
+    killall wpa_supplicant
+    sleep 1
     set -e
+
     wpa_supplicant -B -i wlan0 -c /etc/wpa_supplicant/wifi.conf
     dhcpcd wlan0
     sleep 3
 fi
 
 set +e
-while ! ping -c 3 www.baidu.com; do
+while ! ping -c 3 www.baidu.com > /dev/null; do
 set -e
-        echo `date` ": \"ping\" tries to reconnect to the network ..." >> $logfile
-        echo -e "\033[31m\"ping\" tries to reconnect to the network ...\033[0m\n"
-    sleep 3
+    echo `date` ": \"ping\" tries to reconnect to the network ..." >> $logfile
+    echo -e "\033[31m\"ping\" tries to reconnect to the network ...\033[0m\n"
+    sleep 1
 done
 echo `date` ": $network_connection_type network connection successful !" >> $logfile
 
@@ -171,7 +158,7 @@ fi
 
 # /boot
 # Note that With UEFI booting, Windows can only be installed to a GPT disk.
-
+# Note that With BIOS booting, Windows can only be installed to a MBR disk.
 if ls /sys/firmware/efi/efivars > /dev/null; then
     echo `date` ": UEFI boot found and ready to create EFI partition..." >> $logfile
     if [ ! -d "/mnt/boot" ]; then
@@ -241,25 +228,24 @@ w
 fi
 
 # /home
-if [ ! -d "/mnt/home" ]; then
-    mkdir -p /mnt/home
-    echo `date` ": Create /mnt/home mount point !" >> $logfile
-fi
 if [ -n "$home" ]; then
+    if [ ! -d "/mnt/home" ]; then
+        mkdir -p /mnt/home
+        echo `date` ": Create /mnt/home mount point !" >> $logfile
+    fi
     echo y | mkfs.ext4 /dev/$home
     mount /dev/$home /mnt/home
     echo `date` ": Partition /dev/$home is formatted and mounted to /mnt/home !" >> $logfile
 fi
 
 # swap
-set +e
-swapstatus=`swapon -s | grep "$swap"`
-set -e
-
-if [ -n "$swap" ] && [ -z "$swapstatus" ]; then
+if [ -n "$swap" ]; then
+    echo `date` ": Create swap partition /dev/$swap and enable it !" >> $logfile
+    set +e
+    swapstatus=`swapon -s | grep "$swap"`
+    set -e
     mkswap /dev/$swap
     swapon /dev/$swap
-    echo `date` ": Create swap partition /dev/$swap and enable it !" >> $logfile
 fi
 
 # Install essential packages
