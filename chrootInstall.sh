@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-10-20 20:53:25
+ # @LastEditTime: 2021-10-21 14:46:49
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ###
 
@@ -78,16 +78,28 @@ echo `date` ": Set the password for the root account !" >> $logfile
 # Verify the boot mode
 pacman -S --noconfirm --needed grub
 echo `date` ": Install the multi-boot loader GRUB !" >> $logfile
-system=`awk -F "=" '$1=="system" {print $2}' $configfile`
+#system=`awk -F "=" '$1=="system" {print $2}' $configfile`
+boot=`awk -F "=" '$1=="boot" {print $2}' $configfile`
 
 if ls /sys/firmware/efi/efivars > /dev/null; then
     # UEFI systems
     pacman -S --noconfirm --needed efibootmgr
     grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
     echo `date` ": Install efibootmgr and grub-install under UEFI boot !" >> $logfile
+
+    set +e
+    efi_boot=`fdisk -l | grep "EFI System" | awk -F " " '{print $1}'`
+    set -e
+
+    if [ -n "$efi_boot" ] && [ "$efi_boot" != "/dev/$boot" ]; then
+        echo `date` ": Mount the Windows EFI boot partition !" >> $logfile
+        mkdir -p /boot/win_efi_boot
+        mount $efi_boot /boot/win_efi_boot
+        system="dual"
+    fi
+
 else
     # BIOS systems
-    boot=`awk -F "=" '$1=="boot" {print $2}' $configfile`
 
     if echo $boot | grep nvme > /dev/null; then
         str="p[0-9]"
@@ -98,21 +110,22 @@ else
     grub-install --target=i386-pc $boot_disk
     echo `date` ": Install grub-install under BIOS boot !" >> $logfile
 
-    if [ "$system" = "dual" ]; then
-        echo `date` ": Mount the Windows boot partition !" >> $logfile
+    set +e
+    bios_boot=`fdisk -l | grep NTFS | grep "*" | awk -F " " '{if(NR==1) print $1}'`
+    set -e
+
+    if [ -n "$bios_boot" ]; then
+        echo `date` ": Mount the Windows BIOS boot partition !" >> $logfile
         pacman -S --noconfirm --needed ntfs-3g
-        set +e
-        win_bios_boot=`fdisk -l | grep NTFS | grep "*" | awk -F " " '{if(NR==1) print $1}'`
-        set -e
-        mkdir -p /boot/win_boot
-        ntfs-3g $win_bios_boot /boot/win_boot
+        mkdir -p /boot/win_bios_boot
+        ntfs-3g $bios_boot /boot/win_bios_boot
+        system="dual"
     fi
 
 fi
 
 # check MS Windows
-if [ "$system" = "dual" ]; then
-
+if [ "$system" == "dual" ]; then
     echo `date` ": Install os-prober for dual systems and check the Windows system ..." >> $logfile
     pacman -S --noconfirm --needed os-prober
     os-prober

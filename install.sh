@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-10-20 22:37:49
+ # @LastEditTime: 2021-10-21 14:54:02
  # @FilePath: \archlinuxInstall\install.sh
 ###
 
@@ -21,7 +21,6 @@ logfile="$install_dir/archlinuxInstall.log"
 
 computer_platform=`awk -F "=" '$1=="computer_platform" {print $2}' $configfile`
 network_connection_type=`awk -F "=" '$1=="network_connection_type" {print $2}' $configfile`
-system=`awk -F "=" '$1=="system" {print $2}' $configfile`
 ssid=`awk -F "=" '$1=="ssid" {print $2}' $configfile`
 psk=`awk -F "=" '$1=="psk" {print $2}' $configfile`
 hostname=`awk -F "=" '$1=="hostname" {print $2}' $configfile`
@@ -34,10 +33,14 @@ home=`awk -F "=" '$1=="home" {print $2}' $configfile`
 swap=`awk -F "=" '$1=="swap" {print $2}' $configfile`
 
 var_list="\
-        computer_platform network_connection_type system ssid psk  \
+        computer_platform network_connection_type  \
         hostname username userpasswd rootpasswd \
         root boot \
         "
+if [ "$network_connection_type" == "wireless" ]; then
+    var_list="$var_list ssid psk"
+fi
+
 empty_var_list=`awk '/=/' $configfile | awk -F "=" '$2=="" {print $1}'`
 
 not_empty_arry=()
@@ -63,7 +66,7 @@ fi
 echo `date` ": ===========================================================================================" > $logfile
 
 # Connect to the internet
-if [ "$network_connection_type" = "wireless" ]; then
+if [ "$network_connection_type" == "wireless" ]; then
     if [ -n $ssid ] && [ -n $psk ] ; then
         wifiSSID=$ssid
         wifiPSK=$psk
@@ -167,7 +170,7 @@ else
 fi
 
 # /boot
-# 注意在EFI系统上，Windows只能安装到GPT磁盘
+# Note that With UEFI booting, Windows can only be installed to a GPT disk.
 
 if ls /sys/firmware/efi/efivars > /dev/null; then
     echo `date` ": UEFI boot found and ready to create EFI partition..." >> $logfile
@@ -176,16 +179,24 @@ if ls /sys/firmware/efi/efivars > /dev/null; then
         echo `date` ": Create /mnt/boot mount point !" >> $logfile
     fi
 
+    set +e
+    efi_boot=`fdisk -l | grep "EFI System" | awk -F " " '{print $1}'`
+    set -e
+
     echo `date` ": The installation target system is a single system ..." >> $logfile
-    if [ "$system" = "single" ]; then
+    if [ "$efi_boot" == "/dev/$boot" ]; then
+        mount /dev/$boot /mnt/boot
+        echo `date` ": Partition /dev/$boot is mounted only to /mnt/boot !" >> $logfile
+        # Remove everything except EFI
+        rm -rf /mnt/boot/grub
+        rm -rf /mnt/boot/*.img
+        rm -rf /mnt/boot/*linux
+    else
         echo y | mkfs.fat -F32 /dev/$boot
+        mount /dev/$boot /mnt/boot
+        echo `date` ": Partition /dev/$boot is mounted only to /mnt/boot !" >> $logfile
     fi
-    mount /dev/$boot /mnt/boot
-    echo `date` ": Partition /dev/$boot is mounted only to /mnt/boot !" >> $logfile
-    # Remove everything except EFI
-    rm -rf /mnt/boot/grub
-    rm -rf /mnt/boot/*.img
-    rm -rf /mnt/boot/*linux
+
 else
     echo `date` ": This system will boot using BIOS..." >> $logfile
     if echo $boot | grep nvme > /dev/null; then
@@ -245,7 +256,7 @@ set +e
 swapstatus=`swapon -s | grep "$swap"`
 set -e
 
-if [[ -n "$swap" ]] && [[ -z "$swapstatus" ]]; then
+if [ -n "$swap" ] && [ -z "$swapstatus" ]; then
     mkswap /dev/$swap
     swapon /dev/$swap
     echo `date` ": Create swap partition /dev/$swap and enable it !" >> $logfile
