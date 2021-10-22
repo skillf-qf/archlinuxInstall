@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-10-22 12:34:20
+ # @LastEditTime: 2021-10-22 13:02:58
  # @FilePath: \archlinuxInstall\install.sh
 ###
 
@@ -199,7 +199,6 @@ else
     fi
     boot_disk=/dev/$(echo $boot | sed "s/$str*$//")
     if fdisk -l $boot_disk | grep gpt > /dev/null;then
-        #boot_disk=/dev/$(echo $boot | sed "s/$str[0-9]*$//")
         boot_partition_number=`echo $boot | grep -Eo '[0-9]+$'`
 
         set +e

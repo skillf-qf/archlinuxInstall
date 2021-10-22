@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-10-21 15:45:53
+ # @LastEditTime: 2021-10-22 13:01:33
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ###
 
@@ -84,10 +84,14 @@ if ls /sys/firmware/efi/efivars > /dev/null; then
     efi_boot=`fdisk -l | grep "EFI System" | awk -F " " '{print $1}'`
     set -e
 
-    if [ -n "$efi_boot" ] && [ "$efi_boot" != "/dev/$boot" ]; then
-        echo `date` ": Mount the Windows EFI boot partition !" >> $logfile
-        mkdir -p /boot/win_efi_boot
-        mount $efi_boot /boot/win_efi_boot
+    if [ -n "$efi_boot" ]; then
+
+        if [ "$efi_boot" != "/dev/$boot" ]; then
+            echo `date` ": Mount the Windows EFI partition to /boot/win_efi_boot !" >> $logfile
+            echo -e "\033[32mMount the Windows EFI partition to /boot/win_efi_boot !\033[0m\n"
+            mkdir -p /boot/win_efi_boot
+            mount $efi_boot /boot/win_efi_boot
+        fi
         system="dual"
     fi
 
