@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-10-22 13:01:33
+ # @LastEditTime: 2021-10-22 13:44:11
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ###
 
@@ -98,11 +98,9 @@ if ls /sys/firmware/efi/efivars > /dev/null; then
 else
     # BIOS systems
 
-    if echo $boot | grep nvme > /dev/null; then
-        str="p[0-9]"
-    else
-        str="[0-9]"
-    fi
+    str="[0-9]"
+    if echo $boot | grep nvme > /dev/null; then str="p"$str; fi
+
     boot_disk=/dev/$(echo $boot | sed "s/$str*$//")
     grub-install --target=i386-pc $boot_disk
     echo `date` ": Install grub-install under BIOS boot !" >> $logfile

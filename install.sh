@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-10-22 13:02:58
+ # @LastEditTime: 2021-10-22 13:52:08
  # @FilePath: \archlinuxInstall\install.sh
 ###
 
@@ -145,10 +145,12 @@ echo `date` ": Update system time successfully !" >> $logfile
 
 # Disks
 set +e
-umount /dev/$boot
-umount /dev/$home
-umount /dev/$root
+if [ -n "$boot" ]; then umount /dev/$boot; fi
+if [ -n "$home" ]; then umount /dev/$home; fi
+if [ -n "$root" ]; then umount /dev/$root; fi
+if swapon -s | grep /dev/$swap; then swapoff /dev/$swap; fi
 set -e
+
 echo `date` ": Read the partition information and process the mounted partition !" >> $logfile
 
 # root
@@ -192,11 +194,10 @@ if ls /sys/firmware/efi/efivars > /dev/null; then
 
 else
     echo `date` ": This system will boot using BIOS..." >> $logfile
-    if echo $boot | grep nvme > /dev/null; then
-        str="p[0-9]"
-    else
-        str="[0-9]"
-    fi
+
+    str="[0-9]"
+    if echo $boot | grep nvme > /dev/null; then str="p"$str; fi
+
     boot_disk=/dev/$(echo $boot | sed "s/$str*$//")
     if fdisk -l $boot_disk | grep gpt > /dev/null;then
         boot_partition_number=`echo $boot | grep -Eo '[0-9]+$'`
@@ -207,9 +208,8 @@ else
 
         if [ -n "$biosboot_other" ]; then
             biosboot_other_number=`echo $biosboot_other | grep -Eo '[0-9]+$'`
-        fi
-
-        if [ -z "$biosboot_other" ]; then
+            partition_number=$biosboot_other_number
+        else
             echo `date` ": Create a 1M BIOS boot partition..." >> $logfile
             echo "d
 $boot_partition_number
@@ -223,8 +223,6 @@ $boot_partition_number
 w
 " | fdisk $boot_disk
             partition_number=$boot_partition_number
-        else
-            partition_number=$biosboot_other_number
         fi
         echo `date` ": Activate the BIOS Boot partition..." >> $logfile
         parted $boot_disk set $partition_number bios_grub on
@@ -246,9 +244,6 @@ fi
 # swap
 if [ -n "$swap" ]; then
     echo `date` ": Create swap partition /dev/$swap and enable it !" >> $logfile
-    set +e
-    swapstatus=`swapon -s | grep "$swap"`
-    set -e
     mkswap /dev/$swap
     swapon /dev/$swap
 fi
