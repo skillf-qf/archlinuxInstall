@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-10-22 13:52:08
+ # @LastEditTime: 2021-10-22 16:16:24
  # @FilePath: \archlinuxInstall\install.sh
 ###
 
@@ -64,6 +64,18 @@ if [ ${#not_empty_arry[*]} -gt 0 ]; then
 fi
 
 echo `date` ": ===========================================================================================" > $logfile
+
+# Check boot
+if ls /sys/firmware/efi/efivars > /dev/null; then
+    set +e
+    biosboot_other=`fdisk -l $boot_disk | grep "BIOS boot" | awk -F " " '{if(NR==1) print $1}'`
+    set -e
+    if [ "$biosboot_other" == "/dev/$boot" ]; then
+        echo -e "\033[31mERROR: In Legacy mode, the Boot partition cannot be the same as the Windows boot partition!\033[0m"
+        echo -e "\033[31mERROR: The $biosboot_other partition already exists.Please select another one !\033[0m"
+        exit
+    fi
+fi
 
 # Connect to the internet
 if [ "$network_connection_type" == "wireless" ]; then
