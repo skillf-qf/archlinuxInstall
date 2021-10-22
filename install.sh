@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-10-21 15:51:33
+ # @LastEditTime: 2021-10-22 12:34:20
  # @FilePath: \archlinuxInstall\install.sh
 ###
 
@@ -93,17 +93,22 @@ EOF
     sleep 3
 fi
 
+echo `date` ": Attempt to connect to a $network_connection_type network ..." >> $logfile
+echo -e "\033[33mAttempt to connect to a $network_connection_type network ...\033[0m\n"
+
 #set +e
 while ! ping -c 3 www.baidu.com > /dev/null; do
 #set -e
-    echo `date` ": \"ping\" tries to reconnect to the network ..." >> $logfile
-    echo -e "\033[31m\"ping\" tries to reconnect to the network ...\033[0m\n"
+    echo `date` ": $network_connection_type network connection failed. The system is trying again ..." >> $logfile
+    echo -e "\033[31m$network_connection_type network connection failed. The system is trying again ...\033[0m\n"
     sleep 1
 done
 echo `date` ": $network_connection_type network connection successful !" >> $logfile
+echo -e "\033[32m$network_connection_type network connection successful !\033[0m\n"
 
 # Update mirrors
-echo `date` ": Try to get the latest image source and sort it by speed ..." >> $logfile
+echo `date` ": Gets the latest mirrors list ..." >> $logfile
+echo -e "\033[33mGets the latest mirrors list ...\033[0m\n"
 cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
 echo -e "\n##======================================================" > mirrorlist.temp
 
@@ -129,7 +134,8 @@ done
 echo -e "##======================================================\n" >> mirrorlist.temp
 sed -i '1r ./mirrorlist.temp' /etc/pacman.d/mirrorlist
 rm mirrorlist.temp
-echo `date` ": Latest image source obtained successfully !" >> $logfile
+echo `date` ": The mirrors list is successfully created !" >> $logfile
+echo -e "\033[32mThe mirrors list is successfully created !\033[0m\n"
 
 pacman -Syy
 
