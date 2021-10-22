@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-10-22 16:16:24
+ # @LastEditTime: 2021-10-22 16:18:33
  # @FilePath: \archlinuxInstall\install.sh
 ###
 
@@ -65,8 +65,8 @@ fi
 
 echo `date` ": ===========================================================================================" > $logfile
 
-# Check boot
-if ls /sys/firmware/efi/efivars > /dev/null; then
+# Check Legacy boot
+if ! ls /sys/firmware/efi/efivars > /dev/null; then
     set +e
     biosboot_other=`fdisk -l $boot_disk | grep "BIOS boot" | awk -F " " '{if(NR==1) print $1}'`
     set -e
