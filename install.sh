@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-10-24 17:28:26
+ # @LastEditTime: 2021-10-24 21:06:50
  # @FilePath: \archlinuxInstall\install.sh
 ###
 
@@ -220,7 +220,6 @@ if ls /sys/firmware/efi/efivars > /dev/null; then
     efi_boot=`fdisk -l | grep "EFI System" | awk -F " " '{print $1}'`
     set -e
 
-    echo `date` ": The installation target system is a single system ..." >> $logfile
     if [ "$efi_boot" == "/dev/$boot" ]; then
         mount /dev/$boot /mnt/boot
         echo `date` ": Partition /dev/$boot is mounted only to /mnt/boot !" >> $logfile
