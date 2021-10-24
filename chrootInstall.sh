@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-10-24 17:16:03
+ # @LastEditTime: 2021-10-24 17:34:10
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ###
 
@@ -73,7 +73,7 @@ pacman -S --noconfirm --needed grub
 echo `date` ": Install the multi-boot loader GRUB !" >> $logfile
 #system=`awk -F "=" '$1=="system" {print $2}' $configfile`
 boot=`awk -F "=" '$1=="boot" {print $2}' $configfile`
-
+root=`awk -F "=" '$1=="root" {print $2}' $configfile`
 if ls /sys/firmware/efi/efivars > /dev/null; then
     # UEFI systems
     pacman -S --noconfirm --needed efibootmgr
