@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-10-24 17:17:51
+ # @LastEditTime: 2021-10-24 17:28:26
  # @FilePath: \archlinuxInstall\install.sh
 ###
 
@@ -210,13 +210,12 @@ fi
 # /boot
 # Note that With UEFI booting, Windows can only be installed to a GPT disk.
 # Note that With BIOS booting, Windows can only be installed to a MBR disk.
+if [ ! -d "/mnt/boot" ]; then
+    mkdir -p /mnt/boot
+    echo `date` ": Create /mnt/boot mount point !" >> $logfile
+fi
 if ls /sys/firmware/efi/efivars > /dev/null; then
     echo `date` ": UEFI boot found and ready to create EFI partition..." >> $logfile
-    if [ ! -d "/mnt/boot" ]; then
-        mkdir -p /mnt/boot
-        echo `date` ": Create /mnt/boot mount point !" >> $logfile
-    fi
-
     set +e
     efi_boot=`fdisk -l | grep "EFI System" | awk -F " " '{print $1}'`
     set -e
