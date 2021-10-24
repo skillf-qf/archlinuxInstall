@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-10-22 13:44:11
+ # @LastEditTime: 2021-10-24 16:59:39
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ###
 
@@ -100,20 +100,24 @@ else
 
     str="[0-9]"
     if echo $boot | grep nvme > /dev/null; then str="p"$str; fi
-
-    boot_disk=/dev/$(echo $boot | sed "s/$str*$//")
-    grub-install --target=i386-pc $boot_disk
-    echo `date` ": Install grub-install under BIOS boot !" >> $logfile
+    root_disk=/dev/$(echo $root | sed "s/$str*$//")
 
     set +e
-    bios_boot=`fdisk -l | grep NTFS | grep "*" | awk -F " " '{if(NR==1) print $1}'`
+    biosboot_other=`fdisk -l | grep NTFS | grep "*" | awk -F " " '{if(NR==1) print $1}'`
     set -e
-
-    if [ -n "$bios_boot" ]; then
-        echo `date` ": Mount the Windows BIOS boot partition !" >> $logfile
+    if [ - z "$biosboot_other" ]; then
+        grub-install --target=i386-pc $root_disk
+        echo `date` ": Install grub-install under BIOS boot !" >> $logfile
+    else
+        echo `date` ": Install GRUB to the disk where Windows 10 resides !" >> $logfile
+        str="[0-9]"
+        if echo $biosboot_other | grep nvme > /dev/null; then str="p"$str; fi
+        biosboot_other_disk=`echo $biosboot_other | sed "s/$str*$//"`
+        grub-install --target=i386-pc $biosboot_other_disk
+        echo `date` ": Mount the Windows BIOS boot partition to /boot !" >> $logfile
         pacman -S --noconfirm --needed ntfs-3g
         mkdir -p /boot/win_bios_boot
-        ntfs-3g $bios_boot /boot/win_bios_boot
+        ntfs-3g $biosboot_other /boot/win_bios_boot
         system="dual"
     fi
 fi

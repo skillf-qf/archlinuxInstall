@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-10-22 16:18:33
+ # @LastEditTime: 2021-10-24 16:50:29
  # @FilePath: \archlinuxInstall\install.sh
 ###
 
@@ -68,12 +68,42 @@ echo `date` ": =================================================================
 # Check Legacy boot
 if ! ls /sys/firmware/efi/efivars > /dev/null; then
     set +e
-    biosboot_other=`fdisk -l $boot_disk | grep "BIOS boot" | awk -F " " '{if(NR==1) print $1}'`
+    biosboot_other=`fdisk -l | grep NTFS | grep "*" | awk -F " " '{if(NR==1) print $1}'`
     set -e
-    if [ "$biosboot_other" == "/dev/$boot" ]; then
-        echo -e "\033[31mERROR: In Legacy mode, the Boot partition cannot be the same as the Windows boot partition!\033[0m"
-        echo -e "\033[31mERROR: The $biosboot_other partition already exists.Please select another one !\033[0m"
-        exit
+    if [ - n "$biosboot_other" ]; then
+        if [ "$biosboot_other" == "/dev/$boot" ]; then
+            echo -e "\033[31mERROR: In Legacy mode, the Boot partition cannot be the same as the Windows boot partition!\033[0m"
+            echo -e "\033[31mERROR: The $biosboot_other partition already exists.Please select another one !\033[0m"
+            exit
+        fi
+    else
+        set +e
+        biosgrub_other=`fdisk -l $boot_disk | grep "BIOS boot" | awk -F " " '{if(NR==1) print $1}'`
+        set -e
+        if [ - z "$biosgrub_other" ]; then
+            if fdisk -l $root_disk | grep gpt > /dev/null;then
+                echo `date` ": Prepare to create the biOS_GRUB partition ..." >> $logfile
+                echo -e "\033[33mPrepare to create the biOS_GRUB partition ...\033[0m\n"
+                str="[0-9]"
+                if echo $root | grep nvme > /dev/null; then str="p"$str; fi
+                root_disk=/dev/$(echo $root | sed "s/$str*$//")
+                root_partition_number=`echo $root | grep -Eo '[0-9]+$'`
+                get_root_start_sectors=`parted $root_disk unit mb print | sed -n '8,$p' | \
+                                        awk '$1 == "'$root_partition_number'" {print $2}' | sed "s/MB$//"`
+                get_root_end_sectors=`parted $root_disk unit mb print | sed -n '8,$p' | \
+                                        awk '$1 == "'$root_partition_number'" {print $3}' | sed "s/MB$//"`
+                parted $root_disk rm $root_partition_number
+                parted $root_disk mkpart primary ext4 "$get_root_start_sectors"MB "$(($get_root_end_sectors-1))"MB
+                parted $root_disk mkpart primary ext3 "$(($get_root_end_sectors-1))"MB "$get_root_end_sectors"MB
+
+                get_bios_boot_number=`parted $root_disk unit mb print | sed -n '8,$p' | \
+                                        awk '$2 == "'$(($get_root_end_sectors-1))'MB" {print $1}'`
+
+                parted $root_disk set $get_bios_boot_number bios_grub on
+                echo -e "\n\n\033[32mThe biOS_GRUB partition is created successfully !\033[0m\n"
+                echo `date` ": The biOS_GRUB partition is created successfully !" >> $logfile
+            fi
+        fi
     fi
 fi
 
@@ -88,7 +118,7 @@ network={
     psk="$psk"
 }
 EOF
-    echo -e "\n\n\033[33mwifi.conf generated successfully !\033[0m\n"
+    echo -e "\n\n\033[32mwifi.conf generated successfully !\033[0m\n"
     echo `date` ": wifi.conf generated successfully !" >> $logfile
 
     rfkill unblock wifi
@@ -206,40 +236,49 @@ if ls /sys/firmware/efi/efivars > /dev/null; then
 
 else
     echo `date` ": This system will boot using BIOS..." >> $logfile
+    echo y | mkfs.ext4 /dev/$boot
+    mount /dev/$boot /mnt/boot
 
-    str="[0-9]"
-    if echo $boot | grep nvme > /dev/null; then str="p"$str; fi
-
-    boot_disk=/dev/$(echo $boot | sed "s/$str*$//")
-    if fdisk -l $boot_disk | grep gpt > /dev/null;then
-        boot_partition_number=`echo $boot | grep -Eo '[0-9]+$'`
-
-        set +e
-        biosboot_other=`fdisk -l $boot_disk | grep "BIOS boot" | awk -F " " '{if(NR==1) print $1}'`
-        set -e
-
-        if [ -n "$biosboot_other" ]; then
-            biosboot_other_number=`echo $biosboot_other | grep -Eo '[0-9]+$'`
-            partition_number=$biosboot_other_number
-        else
-            echo `date` ": Create a 1M BIOS boot partition..." >> $logfile
-            echo "d
-$boot_partition_number
-n
-$boot_partition_number
-
-+1M
-t
-$boot_partition_number
-4
-w
-" | fdisk $boot_disk
-            partition_number=$boot_partition_number
-        fi
-        echo `date` ": Activate the BIOS Boot partition..." >> $logfile
-        parted $boot_disk set $partition_number bios_grub on
-
-    fi
+    #set +e
+    #bios_boot=`fdisk -l | grep NTFS | grep "*" | awk -F " " '{if(NR==1) print $1}'`
+    #set -e
+    #
+    #
+    #str="[0-9]"
+    #if echo $boot | grep nvme > /dev/null; then str="p"$str; fi
+    #boot_disk=/dev/$(echo $boot | sed "s/$str*$//")
+    #boot_partition=`echo $boot | sed "s/$str*$//"`
+    #
+    #if [ - z "$bios_boot" ]; then
+    #   # Single system
+    #   if fdisk -l $boot_disk | grep gpt > /dev/null;then
+    #       boot_partition_number=`echo $boot | grep -Eo '[0-9]+$'`
+    #
+    #       set +e
+    #       biosboot_other=`fdisk -l $boot_disk | grep "BIOS boot" | awk -F " " '{if(NR==1) print $1}'`
+    #       set -e
+    #
+    #       if [ -n "$biosboot_other" ]; then
+    #            biosboot_other_number=`echo $biosboot_other | grep -Eo '[0-9]+$'`
+    #            partition_number=$biosboot_other_number
+    #       else
+    #            echo `date` ": Create a 1M BIOS boot partition..." >> $logfile
+    #            # Create a 1M BIOS boot partition
+    #            echo "d\n$boot_partition_number\nn\n$boot_partition_number\n\n+1M\nt\n$boot_partition_number\n4\nw\n" | fdisk $boot_disk
+    #            partition_number=$boot_partition_number
+    #       fi
+    #       echo `date` ": Activate the BIOS Boot partition..." >> $logfile
+    #       parted $boot_disk set $partition_number bios_grub on
+    #   fi
+    #
+    #
+    #
+    #else
+    #    # Dual system
+    #    #if fdisk -l $boot_disk | grep dos > /dev/null;then
+    #    echo y | mkfs.ext4 /dev/$boot
+    #    mount /dev/$boot /mnt/boot
+   #fi
 fi
 
 # /home
