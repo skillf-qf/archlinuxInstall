@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-10-24 16:59:39
+ # @LastEditTime: 2021-10-24 17:16:03
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ###
 
@@ -105,7 +105,7 @@ else
     set +e
     biosboot_other=`fdisk -l | grep NTFS | grep "*" | awk -F " " '{if(NR==1) print $1}'`
     set -e
-    if [ - z "$biosboot_other" ]; then
+    if [ -z "$biosboot_other" ]; then
         grub-install --target=i386-pc $root_disk
         echo `date` ": Install grub-install under BIOS boot !" >> $logfile
     else

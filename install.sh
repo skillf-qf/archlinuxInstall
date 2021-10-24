@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-10-24 16:50:29
+ # @LastEditTime: 2021-10-24 17:17:51
  # @FilePath: \archlinuxInstall\install.sh
 ###
 
@@ -70,23 +70,24 @@ if ! ls /sys/firmware/efi/efivars > /dev/null; then
     set +e
     biosboot_other=`fdisk -l | grep NTFS | grep "*" | awk -F " " '{if(NR==1) print $1}'`
     set -e
-    if [ - n "$biosboot_other" ]; then
+    if [ -n "$biosboot_other" ]; then
         if [ "$biosboot_other" == "/dev/$boot" ]; then
             echo -e "\033[31mERROR: In Legacy mode, the Boot partition cannot be the same as the Windows boot partition!\033[0m"
             echo -e "\033[31mERROR: The $biosboot_other partition already exists.Please select another one !\033[0m"
             exit
         fi
     else
+        str="[0-9]"
+        if echo $root | grep nvme > /dev/null; then str="p"$str; fi
+        root_disk=/dev/$(echo $root | sed "s/$str*$//")
+
         set +e
-        biosgrub_other=`fdisk -l $boot_disk | grep "BIOS boot" | awk -F " " '{if(NR==1) print $1}'`
+        biosgrub_other=`fdisk -l $root_disk | grep "BIOS boot" | awk -F " " '{if(NR==1) print $1}'`
         set -e
-        if [ - z "$biosgrub_other" ]; then
+        if [ -z "$biosgrub_other" ]; then
             if fdisk -l $root_disk | grep gpt > /dev/null;then
                 echo `date` ": Prepare to create the biOS_GRUB partition ..." >> $logfile
                 echo -e "\033[33mPrepare to create the biOS_GRUB partition ...\033[0m\n"
-                str="[0-9]"
-                if echo $root | grep nvme > /dev/null; then str="p"$str; fi
-                root_disk=/dev/$(echo $root | sed "s/$str*$//")
                 root_partition_number=`echo $root | grep -Eo '[0-9]+$'`
                 get_root_start_sectors=`parted $root_disk unit mb print | sed -n '8,$p' | \
                                         awk '$1 == "'$root_partition_number'" {print $2}' | sed "s/MB$//"`
