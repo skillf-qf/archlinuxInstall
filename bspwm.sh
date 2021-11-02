@@ -2,9 +2,9 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-27 10:30:18
- # @LastEditTime: 2021-02-06 14:29:57
+ # @LastEditTime: 2021-11-02 21:13:34
  # @FilePath: \archlinuxInstall\bspwm.sh
-### 
+###
 
 # Print the command. The script ends when the command fails.
 # -o pipefail : As soon as a subcommand fails, the entire pipeline command fails and the script terminates.
@@ -37,7 +37,7 @@ pacman -S --noconfirm xorg xorg-xinit bspwm sxhkd sudo wget ttf-fira-code pkg-co
 								make gcc picom feh zsh ranger git
 echo `date` ": xorg xorg-xinit bspwm sxhkd sudo wget ttf-fira-code pkg-config make gcc picom feh zsh ranger git successfully installed !" >> $logfile
 
-# bspwm config file 
+# bspwm config file
 if [ -s "$install_dir/config/bspwm/bspwmrc"  ]; then
 	install -Dm755 $install_dir/config/bspwm/bspwmrc $userhome/.config/bspwm/bspwmrc
 else
@@ -60,7 +60,7 @@ if [ ! -d "$download" ]; then
 fi
 
 if [ "$terminal" = "st" ] || [ -z "$terminal" ]; then
-	
+
 	# st terminal
 	current_dir=`pwd`
 
@@ -110,14 +110,14 @@ else
 	cat >> $userhome/.bash_profile <<EOF
 	if systemctl -q is-active graphical.target && [[ ! $DISPLAY && $XDG_VTNR -eq 1 ]]; then
 		exec startx
-	fi 
+	fi
 EOF
 fi
 
 # start bspwm
 echo `date` ": Run bspwm directly after configuring startx to boot ..." >> $logfile
-if [ -s "$install_dir/config/xorg-xinit/.xinitrc"  ]; then
-	cp $install_dir/config/xorg-xinit/.xinitrc $userhome/
+if [ -s "$install_dir/config/Xorg-xinit/.xinitrc"  ]; then
+	cp $install_dir/config/Xorg-xinit/.xinitrc $userhome/
 else
 	cp /etc/X11/xinit/xinitrc $userhome/.xinitrc
 	# Delete the last five lines
@@ -148,7 +148,7 @@ fi
 
 echo `date` ": The bspwm installation configuration is complete !" >> $logfile
 
-## Chinese font | fcitx 
+## Chinese font | fcitx
 pacman -S --noconfirm fcitx fcitx-configtool wqy-zenhei wqy-bitmapfont wqy-microhei firefox-i18n-zh-cn firefox-i18n-zh-tw
 #
 set +e

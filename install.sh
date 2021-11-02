@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-11-02 16:11:33
+ # @LastEditTime: 2021-11-03 00:08:14
  # @FilePath: \archlinuxInstall\install.sh
 ###
 
@@ -31,6 +31,9 @@ root=`awk -F "=" '$1=="root" {print $2}' $configfile`
 boot=`awk -F "=" '$1=="boot" {print $2}' $configfile`
 home=`awk -F "=" '$1=="home" {print $2}' $configfile`
 swap=`awk -F "=" '$1=="swap" {print $2}' $configfile`
+virtualmachine=`awk -F "=" '$1=="virtualmachine" {print $2}' $configfile`
+hostshare=`awk -F "=" '$1=="hostshare" {print $2}' $configfile`
+
 
 var_list="\
         computer_platform network_connection_type \
@@ -148,6 +151,20 @@ while ! ping -c 3 www.baidu.com > /dev/null; do
 done
 echo `date` ": $network_connection_type network connection successful !" >> $logfile
 echo -e "\033[32m$network_connection_type network connection successful !\033[0m\n"
+
+# Check VMware share folder
+if [ "$virtualmachine" == "VMware" ]; then
+    pacman -Sy
+    pacman -S --noconfirm open-vm-tools
+    if vmware-hgfsclient | grep $hostshare > /dev/null; then
+        echo `date` ": The VMware shared folder \"$hostshare\" has been enabled !" >> $logfile
+        echo -e "\033[32mThe VMware shared folder \"$hostshare\" has been enabled !\033[0m\n"
+    else
+        echo -e "\033[031mERROR: The VMware shared folder \"$hostshare\" is not enabled !\033[0m"
+        echo `date` ": ERROR: The VMware shared folder \"$hostshare\" is not enabled !" >> $logfile
+        exit 0
+    fi
+fi
 
 # Update mirrors
 echo `date` ": Gets the latest mirrors list ..." >> $logfile
