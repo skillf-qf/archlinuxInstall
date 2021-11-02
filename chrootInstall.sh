@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-10-24 17:34:10
+ # @LastEditTime: 2021-11-02 17:23:11
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ###
 
@@ -59,7 +59,7 @@ else
 fi
 
 # Initramfs
-#mkinitcpio -P
+#TODO :mkinitcpio -P (add VMware share folder)
 #echo `date` ": mkinitcpio -P recreate the initramfs image !" >> $logfile
 
 # Root password
@@ -82,6 +82,7 @@ if ls /sys/firmware/efi/efivars > /dev/null; then
 
     set +e
     efi_boot=`fdisk -l | grep "EFI System" | awk -F " " '{print $1}'`
+    #efi_boot=`fdisk -l | grep "EFI System" | awk -F " " '$1!="/dev/'$boot'" {print $1}'`
     set -e
 
     if [ -n "$efi_boot" ]; then

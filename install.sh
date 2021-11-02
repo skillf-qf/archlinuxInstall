@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-10-24 21:06:50
+ # @LastEditTime: 2021-11-02 16:11:33
  # @FilePath: \archlinuxInstall\install.sh
 ###
 
@@ -60,7 +60,7 @@ if [ ${#not_empty_arry[*]} -gt 0 ]; then
         echo $var
     done
     echo -e "\n===========================================================================================\n\n"
-    exit
+    exit 0
 fi
 
 echo `date` ": ===========================================================================================" > $logfile
@@ -74,7 +74,7 @@ if ! ls /sys/firmware/efi/efivars > /dev/null; then
         if [ "$biosboot_other" == "/dev/$boot" ]; then
             echo -e "\033[31mERROR: In Legacy mode, the Boot partition cannot be the same as the Windows boot partition!\033[0m"
             echo -e "\033[31mERROR: The $biosboot_other partition already exists.Please select another one !\033[0m"
-            exit
+            exit 0
         fi
     else
         str="[0-9]"
@@ -166,7 +166,7 @@ while ! reflector --country China --latest 10 --protocol https --sort rate >> mi
         counter=`expr $counter + 1`
     else
         echo -e "\033[31mERROR: Network error, please check network and try again !\033[0m"
-        exit
+        exit 0
     fi
 done
 
@@ -204,7 +204,7 @@ if [ -n "$root" ]; then
 else
     echo -e "\033[031mERROR: root partition does not exist !\033[0m"
     echo `date` ": ERROR: root partition does not exist !" >> $logfile
-    exit
+    exit 0
 fi
 
 # /boot
@@ -317,7 +317,7 @@ if [ -s $scriptfile ]; then
     cp -r ./* $chrootinstall/
 else
     echo -e "\033[31mERROR: $scriptfile is empty !\033[0m"
-    exit
+    exit 0
 fi
 echo `date` ": Change root into the /mnt system and execute the installation script ..." >> $logfile
 cp $logfile $chrootinstall/
