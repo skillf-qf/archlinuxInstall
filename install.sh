@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-11-03 17:47:35
+ # @LastEditTime: 2021-11-03 22:03:35
  # @FilePath: \archlinuxInstall\install.sh
 ###
 
@@ -46,7 +46,8 @@ if [ -z "$virtualmachine" ]; then
         var_list="$var_list ssid psk"
     fi
 else
-    var_list=`echo "$var_list hostshare guestshare" | sed -i 's/network_connection_type//'`
+    var_list=`echo "$var_list hostshare guestshare" | \
+                sed -i 's/computer_platform//' | sed -i 's/network_connection_type//'`
 fi
 
 empty_var_list=`awk '/=/' $configfile | awk -F "=" '$2=="" {print $1}'`
