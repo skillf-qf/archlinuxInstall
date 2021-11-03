@@ -47,7 +47,7 @@ if [ -z "$virtualmachine" ]; then
     fi
 else
     var_list=`echo "$var_list hostshare guestshare" | \
-                sed -i 's/computer_platform//' | sed -i 's/network_connection_type//'`
+                sed 's/computer_platform//' | sed 's/network_connection_type//'`
 fi
 
 empty_var_list=`awk '/=/' $configfile | awk -F "=" '$2=="" {print $1}'`

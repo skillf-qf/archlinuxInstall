@@ -60,7 +60,7 @@ fi
 
 # Enable the VM shared folder
 virtualmachine=`awk -F "=" '$1=="virtualmachine" {print $2}' $configfile`
-if [ -n "$virtualmachine"]; then
+if [ -n "$virtualmachine" ]; then
     echo `date` ": Enable $virtualmachine shared folders ..." >> $logfile
     echo -e "\033[33Enable $virtualmachine shared folders ...\033[0m\n"
     $install_dir/$virtualmachine.sh

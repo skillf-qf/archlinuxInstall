@@ -39,8 +39,8 @@ mkdir -p /home/$username/$guestshare
 
 cp $install_dir/config/VMware/guestshare-hostshare.service /etc/systemd/system/
 sed -i 's/^#user_allow_other/user_allow_other/' /etc/fuse.conf
-sed -i 's/<host-share-folder>/"'$hostshare'"/' /etc/systemd/system/guestshare-hostshare.service
-sed -i 's/<guest-share-folder>/"'$guestshare'"/' /etc/systemd/system/guestshare-hostshare.service
+sed -i "s/<host-share-folder>/$hostshare/" /etc/systemd/system/guestshare-hostshare.service
+sed -i "s/<guest-share-folder>/\/home\/$username\/$guestshare/" /etc/systemd/system/guestshare-hostshare.service
 
 systemctl enable guestshare-hostshare.service
 
