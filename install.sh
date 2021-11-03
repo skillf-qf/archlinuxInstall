@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-11-03 09:57:16
+ # @LastEditTime: 2021-11-03 17:47:35
  # @FilePath: \archlinuxInstall\install.sh
 ###
 
@@ -33,6 +33,7 @@ home=`awk -F "=" '$1=="home" {print $2}' $configfile`
 swap=`awk -F "=" '$1=="swap" {print $2}' $configfile`
 virtualmachine=`awk -F "=" '$1=="virtualmachine" {print $2}' $configfile`
 hostshare=`awk -F "=" '$1=="hostshare" {print $2}' $configfile`
+guestshare=`awk -F "=" '$1=="guestshare" {print $2}' $configfile`
 
 
 var_list="\
@@ -40,8 +41,12 @@ var_list="\
         hostname username userpasswd rootpasswd \
         root boot \
         "
-if [ "$network_connection_type" == "wireless" ]; then
-    var_list="$var_list ssid psk"
+if [ -z "$virtualmachine" ]; then
+    if [ "$network_connection_type" == "wireless" ]; then
+        var_list="$var_list ssid psk"
+    fi
+else
+    var_list=`echo "$var_list hostshare guestshare" | sed -i 's/network_connection_type//'`
 fi
 
 empty_var_list=`awk '/=/' $configfile | awk -F "=" '$2=="" {print $1}'`
