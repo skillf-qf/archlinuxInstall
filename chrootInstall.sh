@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-11-02 17:23:11
+ # @LastEditTime: 2021-11-03 17:31:29
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ###
 
@@ -58,9 +58,15 @@ else
     echo `date` ": AMD Microcode installed successfully !" >> $logfile
 fi
 
-# Initramfs
-#TODO :mkinitcpio -P (add VMware share folder)
-#echo `date` ": mkinitcpio -P recreate the initramfs image !" >> $logfile
+# Enable the VM shared folder
+virtualmachine=`awk -F "=" '$1=="virtualmachine" {print $2}' $configfile`
+if [ -n "$virtualmachine"]; then
+    echo `date` ": Enable $virtualmachine shared folders ..." >> $logfile
+    echo -e "\033[33Enable $virtualmachine shared folders ...\033[0m\n"
+    $install_dir/$virtualmachine.sh
+    echo `date` ": The $virtualmachine shared folder is enabled successfully !" >> $logfile
+    echo -e "\033[32mThe $virtualmachine shared folder is enabled successfully !\033[0m\n"
+fi
 
 # Root password
 rootpasswd=`awk -F "=" '$1=="rootpasswd" {print $2}' $configfile`

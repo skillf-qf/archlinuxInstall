@@ -1,7 +1,8 @@
+#!/bin/bash
 ###
  # @Author: skillf
  # @Date: 2021-11-02 21:20:10
- # @LastEditTime: 2021-11-03 00:18:09
+ # @LastEditTime: 2021-11-03 10:48:22
  # @FilePath: \archlinuxInstall\vmware.sh
 ###
 
@@ -15,8 +16,8 @@ install_dir="/archlinuxInstall"
 configfile="$install_dir/config/install.conf"
 #logfile="$install_dir/archlinuxInstall.log"
 username=`awk -F "=" '$1=="username" {print $2}' $configfile`
-guestshare=`awk -F "=" '$1=="guestshare" {print $2}' $configfile`
 hostshare=`awk -F "=" '$1=="hostshare" {print $2}' $configfile`
+guestshare=`awk -F "=" '$1=="guestshare" {print $2}' $configfile`
 
 # In-kernel drivers
 sed -i 's/^MODULES=()/MODULES=(vmw_balloon vmw_pvscsi vsock vmw_vsock_vmci_transport)/' /etc/mkinitcpio.conf

@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-27 10:30:18
- # @LastEditTime: 2021-11-03 00:24:26
+ # @LastEditTime: 2021-11-03 14:33:59
  # @FilePath: \archlinuxInstall\bspwm.sh
 ###
 
@@ -154,7 +154,7 @@ pacman -S --noconfirm fcitx fcitx-configtool wqy-zenhei wqy-bitmapfont wqy-micro
 set +e
 fcitx_target=`sed -n '/fcitx/p' $userhome/.xinitrc`
 if [ -z "$fcitx_target" ]; then
-	sed -i "/bspwm/r $install_dir/config/fcitx/fcitx.conf" $userhome/.xinitrc
+	sed -i '/bspwm/r "'$install_dir'"/config/fcitx/fcitx.conf' $userhome/.xinitrc
 	sed -i '/bspwm/d' $userhome/.xinitrc
 	sed -i '/fcitx &/a\exec bspwm' $userhome/.xinitrc
 fi
