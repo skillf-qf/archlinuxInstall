@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-11-03 22:03:35
+ # @LastEditTime: 2021-11-04 09:16:22
  # @FilePath: \archlinuxInstall\install.sh
 ###
 
@@ -48,6 +48,8 @@ if [ -z "$virtualmachine" ]; then
 else
     var_list=`echo "$var_list hostshare guestshare" | \
                 sed 's/computer_platform//' | sed 's/network_connection_type//'`
+
+    network_connection_type=$virtualmachine
 fi
 
 empty_var_list=`awk '/=/' $configfile | awk -F "=" '$2=="" {print $1}'`
