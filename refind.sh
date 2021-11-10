@@ -1,7 +1,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-07 17:49:15
- # @LastEditTime: 2021-11-10 22:53:16
+ # @LastEditTime: 2021-11-11 00:53:19
  # @FilePath: \archlinuxInstall\refind.sh
 ###
 
@@ -34,37 +34,38 @@ bootnum=`efibootmgr | grep "rEFInd Boot Manager" | awk -F " " '{print $1}'`
 set -e
 if [ -n "$bootnum" ]; then
 	efibootmgr -b `echo $bootnum | tr -cd "[0-9]"` -BD
+	echo `date` ": Delete the old boot entry \"rEFInd Boot Manager\"..." >> $logfile
 fi
 efibootmgr --create --disk /dev/$boot --loader /EFI/refind/refind_x64.efi --label "rEFInd Boot Manager" --verbose
+echo `date` ": Create a new boot entry \"rEFInd Boot Manager\"..." >> $logfile
 
-echo `date` ": Create the drivers_x64 directory and copy the drivers file to the ESP from the rEFInd installation directory..." >> $logfile
 mkdir -p $esp/EFI/refind/drivers_x64
 cp /usr/share/refind/drivers_x64/* $esp/EFI/refind/drivers_x64/
+echo `date` ": Create the drivers_x64 directory and copy the drivers file to the ESP from the rEFInd installation directory..." >> $logfile
 
-echo `date` ": Copy the configuration file refind.conf to ESP..." >> $logfile
 cp /usr/share/refind/refind.conf-sample $esp/EFI/refind/refind.conf
+echo `date` ": Copy the configuration file refind.conf to ESP..." >> $logfile
 
-echo `date` ": Copy icons and fonts to ESP..." >> $logfile
 cp -r /usr/share/refind/icons $esp/EFI/refind/
 cp -r /usr/share/refind/fonts $esp/EFI/refind/
+echo `date` ": Copy icons and fonts to ESP..." >> $logfile
 
 # Configuration
-echo `date` ": Uncomment extra_kernel_version_strings..." >> $logfile
 sed -i 's/^#extra_kernel_version_strings/extra_kernel_version_strings/' $esp/EFI/refind/refind.conf
+echo `date` ": Uncomment extra_kernel_version_strings..." >> $logfile
 
-echo `date` ": Generate configuration file refind_linux.conf..." >> $logfile
 mkrlconf --force
-
-echo `date` ": Add kernel pass parameters to file refind_linux.conf..." >> $logfile
+echo `date` ": Generate configuration file refind_linux.conf..." >> $logfile
 
 [[ `lscpu | grep Intel` ]] && cpu="intel"
 [[ `lscpu | grep AMD` ]] && cpu="amd"
 parameters="initrd=$cpu-ucode.img initrd=initramfs-%v.img"
 sed -i "1{s/add_efi_memmap/add_efi_memmap $parameters/}" /boot/refind_linux.conf
+echo `date` ": Add kernel pass parameters to file refind_linux.conf..." >> $logfile
 
 # Themes
-echo `date` ": Clone the rEFInd theme file: https://github.com/kgoettler/ursamajor-rEFInd.git..." >> $logfile
 mkdir -p $esp/EFI/refind/themes
+echo `date` ": Clone the rEFInd theme file: https://github.com/kgoettler/ursamajor-rEFInd.git..." >> $logfile
 
 set +e
 while ! git clone https://github.com/kgoettler/ursamajor-rEFInd.git $esp/EFI/refind/themes/ursamajor-rEFInd; do
