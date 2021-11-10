@@ -1,7 +1,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-07 17:49:15
- # @LastEditTime: 2021-11-10 17:26:26
+ # @LastEditTime: 2021-11-10 22:53:16
  # @FilePath: \archlinuxInstall\refind.sh
 ###
 
@@ -29,7 +29,9 @@ mkdir -p $esp/EFI/refind
 cp /usr/share/refind/refind_x64.efi $esp/EFI/refind/
 
 echo `date` ": Use efibootmgr to create boot entry in UEFI NVRAM..." >> $logfile
+set +e
 bootnum=`efibootmgr | grep "rEFInd Boot Manager" | awk -F " " '{print $1}'`
+set -e
 if [ -n "$bootnum" ]; then
 	efibootmgr -b `echo $bootnum | tr -cd "[0-9]"` -BD
 fi

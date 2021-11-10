@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-11-10 09:56:26
+ # @LastEditTime: 2021-11-10 23:57:23
  # @FilePath: \archlinuxInstall\ohmyzsh.sh
 ###
 
@@ -46,7 +46,7 @@ set -e
 	sleep 3
 done
 
-chmod a+x $download/ohmyzsh/tools/uninstall.sh
+chmod +x $download/ohmyzsh/tools/install.sh $download/ohmyzsh/tools/uninstall.sh
 echo y | $download/ohmyzsh/tools/uninstall.sh
 rm -rf $HOME/.zsh*
 echo n | $download/ohmyzsh/tools/install.sh
@@ -92,7 +92,7 @@ set -e
 	echo -e "\033[31m\"git clone fonts.git\" tries to reconnect ...\033[0m\n"
 	sleep 3
 done
-chmod a+x $download/powerlinefonts/uninstall.sh
+chmod +x $download/powerlinefonts/install.sh $download/powerlinefonts/uninstall.sh
 $download/powerlinefonts/uninstall.sh
 $download/powerlinefonts/install.sh
 

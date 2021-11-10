@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-11-10 14:58:28
+ # @LastEditTime: 2021-11-10 23:53:10
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ###
 
@@ -60,6 +60,7 @@ virtualmachine=`awk -F "=" '$1=="virtualmachine" {print $2}' $configfile`
 if [ -n "$virtualmachine" ]; then
     echo `date` ": Enable $virtualmachine shared folders ..." >> $logfile
     echo -e "\033[33Enable $virtualmachine shared folders ...\033[0m\n"
+    chmod +x $install_dir/$virtualmachine.sh
     $install_dir/$virtualmachine.sh
     echo `date` ": The $virtualmachine shared folder is enabled successfully !" >> $logfile
     echo -e "\033[32mThe $virtualmachine shared folder is enabled successfully !\033[0m\n"
@@ -73,6 +74,7 @@ echo `date` ": Set the password for the root account !" >> $logfile
 # Boot loader
 bootloader="grub"
 if ls /sys/firmware/efi/efivars > /dev/null; then bootloader="refind"; fi
+chmod +x $install_dir/$bootloader.sh
 $install_dir/$bootloader.sh
 
 # Adduser
@@ -116,11 +118,10 @@ SigLevel = Optional TrustAll
 # Tsinghua University
 Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/\$arch
 EOF
-pacman -Syyy
 
 # sudo
 echo `date` ": Install sudo and set sudo permissions to be password-free ..." >> $logfile
-pacman -S --noconfirm --needed sudo
+pacman -Syyy --noconfirm --needed sudo
 sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
 sed -i 's/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/' /etc/sudoers
 
@@ -137,6 +138,7 @@ systemctl disable NetworkManager-wait-online
 desktop=`awk -F "=" '$1=="desktop" {print $2}' $configfile`
 if [ -n "$desktop" ]; then
     echo `date` ": Start the installation and configuration of $desktop ..." >> $logfile
+    chmod +x $install_dir/$desktop.sh
     $install_dir/$desktop.sh
 else
     echo -e "The archLinux minimal system installation is complete !\n"
@@ -161,6 +163,7 @@ if [ "$computer_platform" = "laptop" ]; then
         cp $install_dir/config/touchpad/30-touchpad.conf /etc/X11/xorg.conf.d/
     else
         cp /usr/share/X11/xorg.conf.d/40-libinput.conf /etc/X11/xorg.conf.d/30-touchpad.conf
+        chmod +x $install_dir/deleteline.sh
         $install_dir/deleteline.sh /etc/X11/xorg.conf.d/30-touchpad.conf  "^Section"
         cat >> /etc/X11/xorg.conf.d/30-touchpad.conf <<EOF
 Section "InputClass"
@@ -185,6 +188,7 @@ fi
 shell=`awk -F "=" '$1=="shell" {print $2}' $configfile`
 if [ -n "$shell" ]; then
     echo `date` ": Install and configure the $shell for $USER ..." >> $logfile
+    chmod +x $install_dir/$shell.sh
     $install_dir/$shell.sh
 fi
 

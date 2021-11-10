@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-11-10 17:01:33
+ # @LastEditTime: 2021-11-10 23:47:14
  # @FilePath: \archlinuxInstall\install.sh
 ###
 
@@ -233,7 +233,8 @@ fi
 # Note that With UEFI booting, Windows can only be installed to a GPT disk.
 # Note that With BIOS booting, Windows can only be installed to a MBR disk.
 if ls /sys/firmware/efi/efivars > /dev/null; then
-    echo `date` ": Create /mnt/boot mount point !" >> $logfile
+    echo `date` ": This system will boot using UEFI..." >> $logfile
+    echo `date` ": Create a mount point /mnt/boot/efi for ESP !" >> $logfile
     [[ ! -d "/mnt/boot" ]] && mkdir -p /mnt/boot/efi
 
     echo `date` ": UEFI boot found and ready to create EFI partition..." >> $logfile
@@ -241,67 +242,17 @@ if ls /sys/firmware/efi/efivars > /dev/null; then
     efi_boot=`fdisk -l | grep "EFI System" | awk -F " " '{print $1}'`
     set -e
 
-    if [ "$efi_boot" == "/dev/$boot" ]; then
-        mount /dev/$boot /mnt/boot
-        echo `date` ": Partition /dev/$boot is mounted only to /mnt/boot !" >> $logfile
-        # Remove everything except EFI
-        rm -rf /mnt/boot/grub
-        rm -rf /mnt/boot/*.img
-        rm -rf /mnt/boot/*linux
-    else
-        echo y | mkfs.fat -F32 /dev/$boot
-        mount /dev/$boot /mnt/boot
-        echo `date` ": Partition /dev/$boot is mounted only to /mnt/boot !" >> $logfile
-    fi
+    [[ "$efi_boot" != "/dev/$boot" ]] && echo y | mkfs.fat -F32 /dev/$boot
+    mount /dev/$boot /mnt/boot/efi
+    echo `date` ": Mount partition /dev/$boot to /mnt/boot/efi !" >> $logfile
 
 else
+    echo `date` ": This system will boot using BIOS..." >> $logfile
     echo `date` ": Create /mnt/boot mount point !" >> $logfile
     [[ ! -d "/mnt/boot" ]] && mkdir -p /mnt/boot
-
-    echo `date` ": This system will boot using BIOS..." >> $logfile
     echo y | mkfs.ext4 /dev/$boot
     mount /dev/$boot /mnt/boot
-
-    #set +e
-    #bios_boot=`fdisk -l | grep NTFS | grep "*" | awk -F " " '{if(NR==1) print $1}'`
-    #set -e
-    #
-    #
-    #str="[0-9]"
-    #if echo $boot | grep nvme > /dev/null; then str="p"$str; fi
-    #boot_disk=/dev/$(echo $boot | sed "s/$str*$//")
-    #boot_partition=`echo $boot | sed "s/$str*$//"`
-    #
-    #if [ - z "$bios_boot" ]; then
-    #   # Single system
-    #   if fdisk -l $boot_disk | grep gpt > /dev/null;then
-    #       boot_partition_number=`echo $boot | grep -Eo '[0-9]+$'`
-    #
-    #       set +e
-    #       biosboot_other=`fdisk -l $boot_disk | grep "BIOS boot" | awk -F " " '{if(NR==1) print $1}'`
-    #       set -e
-    #
-    #       if [ -n "$biosboot_other" ]; then
-    #            biosboot_other_number=`echo $biosboot_other | grep -Eo '[0-9]+$'`
-    #            partition_number=$biosboot_other_number
-    #       else
-    #            echo `date` ": Create a 1M BIOS boot partition..." >> $logfile
-    #            # Create a 1M BIOS boot partition
-    #            echo "d\n$boot_partition_number\nn\n$boot_partition_number\n\n+1M\nt\n$boot_partition_number\n4\nw\n" | fdisk $boot_disk
-    #            partition_number=$boot_partition_number
-    #       fi
-    #       echo `date` ": Activate the BIOS Boot partition..." >> $logfile
-    #       parted $boot_disk set $partition_number bios_grub on
-    #   fi
-    #
-    #
-    #
-    #else
-    #    # Dual system
-    #    #if fdisk -l $boot_disk | grep dos > /dev/null;then
-    #    echo y | mkfs.ext4 /dev/$boot
-    #    mount /dev/$boot /mnt/boot
-   #fi
+    echo `date` ": Mount partition /dev/$boot to /mnt/boot !" >> $logfile
 fi
 
 # /home

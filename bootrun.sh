@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-10-21 15:55:48
+ # @LastEditTime: 2021-11-10 23:55:00
  # @FilePath: \archlinuxInstall\bootrun.sh
 ###
 
@@ -105,6 +105,7 @@ shell=`awk -F "=" '$1=="shell" {print $2}' $configfile`
 if [ -n "$shell" ]; then
     echo `date` ": Install and configure the $shell for $USER ..." >> $logfile
     echo "\033[33mInstall and configure the $shell for $USER ...\033[0m" > $terminal_id
+    chmod +x $install_dir/$shell.sh
     $install_dir/$shell.sh  > $terminal_id
 fi
 
