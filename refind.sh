@@ -1,7 +1,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-07 17:49:15
- # @LastEditTime: 2021-11-10 16:52:38
+ # @LastEditTime: 2021-11-10 17:26:26
  # @FilePath: \archlinuxInstall\refind.sh
 ###
 
@@ -58,7 +58,7 @@ echo `date` ": Add kernel pass parameters to file refind_linux.conf..." >> $logf
 [[ `lscpu | grep Intel` ]] && cpu="intel"
 [[ `lscpu | grep AMD` ]] && cpu="amd"
 parameters="initrd=$cpu-ucode.img initrd=initramfs-%v.img"
-sed -i "1{s/add_efi_memmap/add_efi_memmap $parameters/}" $esp/refind_linux.conf
+sed -i "1{s/add_efi_memmap/add_efi_memmap $parameters/}" /boot/refind_linux.conf
 
 # Themes
 echo `date` ": Clone the rEFInd theme file: https://github.com/kgoettler/ursamajor-rEFInd.git..." >> $logfile

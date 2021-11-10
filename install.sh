@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-11-10 16:51:44
+ # @LastEditTime: 2021-11-10 17:01:33
  # @FilePath: \archlinuxInstall\install.sh
 ###
 
@@ -163,8 +163,7 @@ echo -e "\033[32m$network_connection_type network connection successful !\033[0m
 
 # Check VMware share folder
 if [ "$virtualmachine" == "VMware" ]; then
-    pacman -Syyy
-    pacman -S --noconfirm open-vm-tools
+    pacman -Syyy --noconfirm open-vm-tools
     if ! vmware-hgfsclient | grep $hostshare > /dev/null; then
         echo -e "\033[031mERROR: The VMware shared folder \"$hostshare\" is not enabled !\033[0m"
         echo `date` ": ERROR: The VMware shared folder \"$hostshare\" is not enabled !" >> $logfile

@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-02 21:20:10
- # @LastEditTime: 2021-11-03 10:48:22
+ # @LastEditTime: 2021-11-10 17:23:19
  # @FilePath: \archlinuxInstall\vmware.sh
 ###
 
@@ -18,6 +18,7 @@ configfile="$install_dir/config/install.conf"
 username=`awk -F "=" '$1=="username" {print $2}' $configfile`
 hostshare=`awk -F "=" '$1=="hostshare" {print $2}' $configfile`
 guestshare=`awk -F "=" '$1=="guestshare" {print $2}' $configfile`
+servicename="$hostshare-$guestshare"
 
 # In-kernel drivers
 sed -i 's/^MODULES=()/MODULES=(vmw_balloon vmw_pvscsi vsock vmw_vsock_vmci_transport)/' /etc/mkinitcpio.conf
@@ -37,12 +38,25 @@ echo "needs_root_rights=yes" > /etc/X11/Xwrapper.config
 # Shared Folders with vmhgfs-fuse utility
 mkdir -p /home/$username/$guestshare
 
-cp $install_dir/config/VMware/guestshare-hostshare.service /etc/systemd/system/
 sed -i 's/^#user_allow_other/user_allow_other/' /etc/fuse.conf
-sed -i "s/<host-share-folder>/$hostshare/" /etc/systemd/system/guestshare-hostshare.service
-sed -i "s/<guest-share-folder>/\/home\/$username\/$guestshare/" /etc/systemd/system/guestshare-hostshare.service
+cat > /etc/systemd/system/$servicename.service <<EOF
+[Unit]
+Description=Load VMware shared folders
+Requires=vmware-vmblock-fuse.service
+After=vmware-vmblock-fuse.service
+ConditionPathExists=.host:/$hostshare
+ConditionVirtualization=vmware
 
-systemctl enable guestshare-hostshare.service
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/vmhgfs-fuse -o allow_other -o auto_unmount .host:/$hostshare /home/$username/$guestshare
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl enable $servicename.service
 
 # Time synchronization
 # Host machine as time source
