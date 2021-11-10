@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-11-04 09:16:22
+ # @LastEditTime: 2021-11-10 09:55:44
  # @FilePath: \archlinuxInstall\install.sh
 ###
 
@@ -194,7 +194,7 @@ done
 
 #reflector --country China --latest 10 --protocol https --sort rate >> mirrorlist.temp
 # If the above is not available please uncomment below and comment above as well
-#curl -sSL 'https://www.archlinux.org/mirrorlist/?country=CN&protocol=https&ip_version=4&use_mirror_status=on' | sed '/^## China/d; s/^#Server/Server/g' >> mirrorlist.temp
+#curl -sSL 'https://www.archlinux.org/mirrorlist/?country=CN&protocol=https&ip_version=4&use_mirror_status=on' | sed '/^## China/d; s/^#Server/Server/' >> mirrorlist.temp
 
 echo -e "##======================================================\n" >> mirrorlist.temp
 sed -i '1r ./mirrorlist.temp' /etc/pacman.d/mirrorlist
@@ -202,7 +202,7 @@ rm mirrorlist.temp
 echo `date` ": The mirrors list is successfully created !" >> $logfile
 echo -e "\033[32mThe mirrors list is successfully created !\033[0m\n"
 
-pacman -Syy
+pacman -Syyy
 
 # Update the system clock
 timedatectl set-ntp true

@@ -113,7 +113,7 @@ echo `date` ": Download and install yay ..." >> $logfile
 echo -e "\033[33mDownload and install yay ...\033[0m" > $terminal_id
 sudo pacman -S  --noconfirm --needed base-devel git yay  > $terminal_id
 # Speed up makepkg compilation
-sudo sed -i 's/^#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j$(nproc)\"/g' /etc/makepkg.conf
+sudo sed -i 's/^#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j$(nproc)\"/' /etc/makepkg.conf
 
 # fcitx-sogoupinyin
 yay -S --answerclean None --answerdiff None --noconfirm fcitx-sogoupinyin
@@ -124,7 +124,7 @@ systemctl --user disable bootrun.service  > $terminal_id
 rm -rf $HOME/.config/systemd/user/*  > $terminal_id
 
 echo `date` ": Set sudo permissions to have a password ..." >> $logfile
-sudo sed -i 's/^%wheel ALL=(ALL) NOPASSWD: ALL/# %wheel ALL=(ALL) NOPASSWD: ALL/g' /etc/sudoers
+sudo sed -i 's/^%wheel ALL=(ALL) NOPASSWD: ALL/# %wheel ALL=(ALL) NOPASSWD: ALL/' /etc/sudoers
 
 cat >> $logfile <<EOF
 

@@ -2,9 +2,9 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-02-03 07:15:04
+ # @LastEditTime: 2021-11-10 09:56:26
  # @FilePath: \archlinuxInstall\ohmyzsh.sh
-### 
+###
 
 # Print the command. The script ends when the command fails.
 # -o pipefail : As soon as a subcommand fails, the entire pipeline command fails and the script terminates.
@@ -60,7 +60,7 @@ if [ "$USER" = "$username" ]; then
 else
 	sed -i "s#$USER:/bin/bash#$USER:/bin/zsh#g" /etc/passwd
 	# Change root shell prompt
-	sed -i 's/\$ \%{\$reset_color\%}/\# \%{\$reset_color\%}/g' $HOME/.oh-my-zsh/themes/ys.zsh-theme
+	sed -i 's/\$ \%{\$reset_color\%}/\# \%{\$reset_color\%}/' $HOME/.oh-my-zsh/themes/ys.zsh-theme
 fi
 
 # install zsh-autosuggestions | add ohmyzsh history time | change ohmyzsh Theme: ys
@@ -78,7 +78,7 @@ done
 
 sed -i "/^# ZSH_CUSTOM/a\\ZSH_CUSTOM=`echo $zshsuggestions_dir`" $HOME/.zshrc
 sed -i '/^# HIST_STAMPS/a\\HIST_STAMPS=\"\%Y-\%m-\%d \%H:\%M:\%S  \" ' $HOME/.zshrc
-sed -i 's/^ZSH_THEME/# ZSH_THEME/g ' $HOME/.zshrc
+sed -i 's/^ZSH_THEME/# ZSH_THEME/ ' $HOME/.zshrc
 sed -i '/^# ZSH_THEME=/a\\ZSH_THEME="ys"' $HOME/.zshrc
 
 # powerline fonts
@@ -97,5 +97,3 @@ $download/powerlinefonts/uninstall.sh
 $download/powerlinefonts/install.sh
 
 echo `date` ": The ohmyzsh installation configuration is complete !" >> $logfile
-
-
