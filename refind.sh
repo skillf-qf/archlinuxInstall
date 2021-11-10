@@ -1,7 +1,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-07 17:49:15
- # @LastEditTime: 2021-11-10 11:37:32
+ # @LastEditTime: 2021-11-10 16:52:38
  # @FilePath: \archlinuxInstall\refind.sh
 ###
 
@@ -14,12 +14,11 @@ set -euo pipefail
 install_dir="/archlinuxInstall"
 configfile="$install_dir/config/install.conf"
 logfile="$install_dir/archlinuxInstall.log"
-esp="/boot"
+esp="/boot/efi"
 
 boot=`awk -F "=" '$1=="boot" {print $2}' $configfile`
 root=`awk -F "=" '$1=="root" {print $2}' $configfile`
 #system=`awk -F "=" '$1=="system" {print $2}' $configfile`
-
 
 pacman -S --noconfirm --needed refind efibootmgr git
 echo `date` ": Install the multi-boot loader rEFInd !" >> $logfile
@@ -30,6 +29,10 @@ mkdir -p $esp/EFI/refind
 cp /usr/share/refind/refind_x64.efi $esp/EFI/refind/
 
 echo `date` ": Use efibootmgr to create boot entry in UEFI NVRAM..." >> $logfile
+bootnum=`efibootmgr | grep "rEFInd Boot Manager" | awk -F " " '{print $1}'`
+if [ -n "$bootnum" ]; then
+	efibootmgr -b `echo $bootnum | tr -cd "[0-9]"` -BD
+fi
 efibootmgr --create --disk /dev/$boot --loader /EFI/refind/refind_x64.efi --label "rEFInd Boot Manager" --verbose
 
 echo `date` ": Create the drivers_x64 directory and copy the drivers file to the ESP from the rEFInd installation directory..." >> $logfile
@@ -55,7 +58,7 @@ echo `date` ": Add kernel pass parameters to file refind_linux.conf..." >> $logf
 [[ `lscpu | grep Intel` ]] && cpu="intel"
 [[ `lscpu | grep AMD` ]] && cpu="amd"
 parameters="initrd=$cpu-ucode.img initrd=initramfs-%v.img"
-sed -i '1{s/add_efi_memmap/add_efi_memmap "'$parameters'"/}' $esp/refind_linux.conf
+sed -i "1{s/add_efi_memmap/add_efi_memmap $parameters/}" $esp/refind_linux.conf
 
 # Themes
 echo `date` ": Clone the rEFInd theme file: https://github.com/kgoettler/ursamajor-rEFInd.git..." >> $logfile

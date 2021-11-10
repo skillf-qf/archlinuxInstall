@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-11-10 09:55:44
+ # @LastEditTime: 2021-11-10 16:51:44
  # @FilePath: \archlinuxInstall\install.sh
 ###
 
@@ -12,7 +12,8 @@ set -euo pipefail
 # Please uncomment it to see how it works
 #set -x
 
-# Set tty font
+# Temporarily set tty1 font
+# For permanent Settings, modify the /etc/vconsole.conf
 setfont /usr/share/kbd/consolefonts/LatGrkCyr-12x22.psfu.gz
 
 install_dir="/root/archlinuxInstall"
@@ -162,7 +163,7 @@ echo -e "\033[32m$network_connection_type network connection successful !\033[0m
 
 # Check VMware share folder
 if [ "$virtualmachine" == "VMware" ]; then
-    pacman -Sy
+    pacman -Syyy
     pacman -S --noconfirm open-vm-tools
     if ! vmware-hgfsclient | grep $hostshare > /dev/null; then
         echo -e "\033[031mERROR: The VMware shared folder \"$hostshare\" is not enabled !\033[0m"
@@ -232,11 +233,10 @@ fi
 # /boot
 # Note that With UEFI booting, Windows can only be installed to a GPT disk.
 # Note that With BIOS booting, Windows can only be installed to a MBR disk.
-if [ ! -d "/mnt/boot" ]; then
-    mkdir -p /mnt/boot
-    echo `date` ": Create /mnt/boot mount point !" >> $logfile
-fi
 if ls /sys/firmware/efi/efivars > /dev/null; then
+    echo `date` ": Create /mnt/boot mount point !" >> $logfile
+    [[ ! -d "/mnt/boot" ]] && mkdir -p /mnt/boot/efi
+
     echo `date` ": UEFI boot found and ready to create EFI partition..." >> $logfile
     set +e
     efi_boot=`fdisk -l | grep "EFI System" | awk -F " " '{print $1}'`
@@ -256,6 +256,9 @@ if ls /sys/firmware/efi/efivars > /dev/null; then
     fi
 
 else
+    echo `date` ": Create /mnt/boot mount point !" >> $logfile
+    [[ ! -d "/mnt/boot" ]] && mkdir -p /mnt/boot
+
     echo `date` ": This system will boot using BIOS..." >> $logfile
     echo y | mkfs.ext4 /dev/$boot
     mount /dev/$boot /mnt/boot

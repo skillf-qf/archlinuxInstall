@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-11-10 11:27:52
+ # @LastEditTime: 2021-11-10 14:58:28
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ###
 
@@ -72,7 +72,7 @@ echo `date` ": Set the password for the root account !" >> $logfile
 
 # Boot loader
 bootloader="grub"
-if ! ls /sys/firmware/efi/efivars > /dev/null; then bootloader="refind"; fi
+if ls /sys/firmware/efi/efivars > /dev/null; then bootloader="refind"; fi
 $install_dir/$bootloader.sh
 
 # Adduser
