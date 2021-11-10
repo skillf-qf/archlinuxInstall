@@ -1,7 +1,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-07 17:49:15
- # @LastEditTime: 2021-11-10 11:25:28
+ # @LastEditTime: 2021-11-10 11:37:32
  # @FilePath: \archlinuxInstall\refind.sh
 ###
 
@@ -21,7 +21,7 @@ root=`awk -F "=" '$1=="root" {print $2}' $configfile`
 #system=`awk -F "=" '$1=="system" {print $2}' $configfile`
 
 
-pacman -S --noconfirm --needed refind efibootmgr
+pacman -S --noconfirm --needed refind efibootmgr git
 echo `date` ": Install the multi-boot loader rEFInd !" >> $logfile
 
 # Manual installation
