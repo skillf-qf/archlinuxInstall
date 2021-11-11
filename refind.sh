@@ -1,7 +1,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-07 17:49:15
- # @LastEditTime: 2021-11-11 00:53:19
+ # @LastEditTime: 2021-11-11 17:40:37
  # @FilePath: \archlinuxInstall\refind.sh
 ###
 
@@ -20,8 +20,16 @@ boot=`awk -F "=" '$1=="boot" {print $2}' $configfile`
 root=`awk -F "=" '$1=="root" {print $2}' $configfile`
 #system=`awk -F "=" '$1=="system" {print $2}' $configfile`
 
+get_disk_part(){
+    local str="[0-9]"
+	if echo $1 | grep nvme > /dev/null; then str="p"$str; fi
+    local diskname=`echo $1 | sed "s/$str*$//"`
+	local partnum=`echo $1 | sed "s/$diskname//" | sed 's/p//'`
+    echo $diskname $partnum
+}
+
 pacman -S --noconfirm --needed refind efibootmgr git
-echo `date` ": Install the multi-boot loader rEFInd !" >> $logfile
+echo `date` ": Install the boot loader rEFInd !" >> $logfile
 
 # Manual installation
 echo `date` ": Create the rEFInd directory and copy the executable to the ESP..." >> $logfile
@@ -36,7 +44,12 @@ if [ -n "$bootnum" ]; then
 	efibootmgr -b `echo $bootnum | tr -cd "[0-9]"` -BD
 	echo `date` ": Delete the old boot entry \"rEFInd Boot Manager\"..." >> $logfile
 fi
-efibootmgr --create --disk /dev/$boot --loader /EFI/refind/refind_x64.efi --label "rEFInd Boot Manager" --verbose
+
+[[ -z "$boot" ]] && disk_part=`get_disk_part $root`
+[[ -n "$boot" ]] && disk_part=`get_disk_part $boot`
+boot_disk=`echo $disk_part | awk -F " " '{print $1}'`
+partnum=`echo $disk_part | awk -F " " '{print $2}'`
+efibootmgr --create --disk /dev/$boot_disk --part $partnum  --loader /EFI/refind/refind_x64.efi --label "rEFInd Boot Manager" --verbose
 echo `date` ": Create a new boot entry \"rEFInd Boot Manager\"..." >> $logfile
 
 mkdir -p $esp/EFI/refind/drivers_x64

@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-11-10 23:47:14
+ # @LastEditTime: 2021-11-11 11:03:42
  # @FilePath: \archlinuxInstall\install.sh
 ###
 
@@ -40,7 +40,7 @@ guestshare=`awk -F "=" '$1=="guestshare" {print $2}' $configfile`
 var_list="\
         computer_platform network_connection_type \
         hostname username userpasswd rootpasswd \
-        root boot \
+        root \
         "
 if [ -z "$virtualmachine" ]; then
     if [ "$network_connection_type" == "wireless" ]; then
@@ -98,8 +98,8 @@ if ! ls /sys/firmware/efi/efivars > /dev/null; then
         set -e
         if [ -z "$biosgrub_other" ]; then
             if fdisk -l $root_disk | grep gpt > /dev/null;then
-                echo `date` ": Prepare to create the biOS_GRUB partition ..." >> $logfile
-                echo -e "\033[33mPrepare to create the biOS_GRUB partition ...\033[0m\n"
+                echo `date` ": The current GPT partition is under BIOS boot. The bios_grub partition is created..." >> $logfile
+                echo -e "\033[33mThe current GPT partition is under BIOS boot. The bios_grub partition is created...\033[0m\n"
                 root_partition_number=`echo $root | grep -Eo '[0-9]+$'`
                 get_root_start_sectors=`parted $root_disk unit mb print | sed -n '8,$p' | \
                                         awk '$1 == "'$root_partition_number'" {print $2}' | sed "s/MB$//"`
@@ -113,8 +113,8 @@ if ! ls /sys/firmware/efi/efivars > /dev/null; then
                                         awk '$2 == "'$(($get_root_end_sectors-1))'MB" {print $1}'`
 
                 parted $root_disk set $get_bios_boot_number bios_grub on
-                echo -e "\n\n\033[32mThe biOS_GRUB partition is created successfully !\033[0m\n"
-                echo `date` ": The biOS_GRUB partition is created successfully !" >> $logfile
+                echo -e "\n\n\033[32mThe bios_grub partition is created successfully !\033[0m\n"
+                echo `date` ": The bios_grub partition is created successfully !" >> $logfile
             fi
         fi
     fi
@@ -236,23 +236,26 @@ if ls /sys/firmware/efi/efivars > /dev/null; then
     echo `date` ": This system will boot using UEFI..." >> $logfile
     echo `date` ": Create a mount point /mnt/boot/efi for ESP !" >> $logfile
     [[ ! -d "/mnt/boot" ]] && mkdir -p /mnt/boot/efi
+    if [ -n "$boot" ]; then
+        echo `date` ": UEFI boot found and ready to create EFI partition..." >> $logfile
+        set +e
+        efi_boot=`fdisk -l | grep "EFI System" | awk -F " " '{print $1}'`
+        set -e
 
-    echo `date` ": UEFI boot found and ready to create EFI partition..." >> $logfile
-    set +e
-    efi_boot=`fdisk -l | grep "EFI System" | awk -F " " '{print $1}'`
-    set -e
-
-    [[ "$efi_boot" != "/dev/$boot" ]] && echo y | mkfs.fat -F32 /dev/$boot
-    mount /dev/$boot /mnt/boot/efi
-    echo `date` ": Mount partition /dev/$boot to /mnt/boot/efi !" >> $logfile
+        [[ "$efi_boot" != "/dev/$boot" ]] && echo y | mkfs.fat -F32 /dev/$boot
+        mount /dev/$boot /mnt/boot/efi
+        echo `date` ": Mount partition /dev/$boot to /mnt/boot/efi !" >> $logfile
+    fi
 
 else
     echo `date` ": This system will boot using BIOS..." >> $logfile
     echo `date` ": Create /mnt/boot mount point !" >> $logfile
     [[ ! -d "/mnt/boot" ]] && mkdir -p /mnt/boot
-    echo y | mkfs.ext4 /dev/$boot
-    mount /dev/$boot /mnt/boot
-    echo `date` ": Mount partition /dev/$boot to /mnt/boot !" >> $logfile
+    if [ -n "$boot" ]; then
+        echo y | mkfs.ext4 /dev/$boot
+        mount /dev/$boot /mnt/boot
+        echo `date` ": Mount partition /dev/$boot to /mnt/boot !" >> $logfile
+    fi
 fi
 
 # /home
@@ -296,6 +299,7 @@ else
 fi
 echo `date` ": Change root into the /mnt system and execute the installation script ..." >> $logfile
 cp $logfile $chrootinstall/
+chmod +x $chrootinstall/$scriptfile
 arch-chroot /mnt /archlinuxInstall/$scriptfile
 set +x
 
