@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-11-10 23:53:10
+ # @LastEditTime: 2021-11-12 11:43:13
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ###
 
@@ -147,6 +147,14 @@ fi
 
 # other software
 software_list=`awk -F "=" '$1=="software" {print $2}' $configfile`
+pacman -Fy
+for package in $software_list; do
+    pacman -F $package && \
+    { pacman -S --noconfirm $package; \
+    echo `date` ": The $package package is successfully installed !" >> $logfile; } || \
+    echo `date` ": The $package package does not exist !" >> $logfile
+done
+
 if [ -n "$software_list" ]; then
     echo `date` ": Install additional software ..." >> $logfile
     pacman -S --noconfirm --needed $software_list
