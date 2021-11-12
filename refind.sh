@@ -1,7 +1,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-07 17:49:15
- # @LastEditTime: 2021-11-11 17:40:37
+ # @LastEditTime: 2021-11-12 09:36:33
  # @FilePath: \archlinuxInstall\refind.sh
 ###
 
@@ -68,12 +68,17 @@ sed -i 's/^#extra_kernel_version_strings/extra_kernel_version_strings/' $esp/EFI
 echo `date` ": Uncomment extra_kernel_version_strings..." >> $logfile
 
 mkrlconf --force
-echo `date` ": Generate configuration file refind_linux.conf..." >> $logfile
+echo `date` ": Create a Linux kernel configuration file refind_linux.conf for rEFInd..." >> $logfile
 
 [[ `lscpu | grep Intel` ]] && cpu="intel"
 [[ `lscpu | grep AMD` ]] && cpu="amd"
 parameters="initrd=$cpu-ucode.img initrd=initramfs-%v.img"
-sed -i "1{s/add_efi_memmap/add_efi_memmap $parameters/}" /boot/refind_linux.conf
+cat > /etc/wpa_supplicant/wifi.conf <<EOF
+"Boot using default options"     "ro root=/dev/$boot_disk$partnum rw add_efi_memmap $parameters"
+"Boot to single-user mode"     "ro root=/dev/$boot_disk$partnum rw add_efi_memmap $parameters single"
+"Boot with minimal options"     "ro root=/dev/$boot_disk$partnum"
+EOF
+
 echo `date` ": Add kernel pass parameters to file refind_linux.conf..." >> $logfile
 
 # Themes

@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-11-11 11:03:42
+ # @LastEditTime: 2021-11-12 09:04:47
  # @FilePath: \archlinuxInstall\install.sh
 ###
 
@@ -242,7 +242,7 @@ if ls /sys/firmware/efi/efivars > /dev/null; then
         efi_boot=`fdisk -l | grep "EFI System" | awk -F " " '{print $1}'`
         set -e
 
-        [[ "$efi_boot" != "/dev/$boot" ]] && echo y | mkfs.fat -F32 /dev/$boot
+        [[ "$efi_boot" != "/dev/$boot" ]] && `echo y | mkfs.fat -F32 /dev/$boot`
         mount /dev/$boot /mnt/boot/efi
         echo `date` ": Mount partition /dev/$boot to /mnt/boot/efi !" >> $logfile
     fi
