@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-11-10 23:57:23
+ # @LastEditTime: 2021-11-12 17:28:09
  # @FilePath: \archlinuxInstall\ohmyzsh.sh
 ###
 
@@ -12,44 +12,43 @@ set -euo pipefail
 # Please uncomment it to see how it works
 #set -x
 
-install_dir="/archlinuxInstall"
-if [ "$USER" != "root" ]; then
-	install_dir="$HOME/archlinuxInstall"
-fi
+[[ "$USER" == "root" ]] && \
+{ install_dir="/archlinuxInstall"; pacman -S --noconfirm --needed zsh; }
+
+[[ "$USER" == "$username" ]] && \
+{ install_dir="$HOME/archlinuxInstall"; sudo pacman -S --noconfirm --needed zsh; }
+
+echo `date` ": Zsh shell installation is complete !" >> $logfile
+
 
 configfile="$install_dir/config/install.conf"
 logfile="$install_dir/archlinuxInstall.log"
 
 username=`awk -F "=" '$1=="username" {print $2}' $configfile`
 download="$HOME/Downloads"
+ohmyzsh_dir="$download/ohmyzsh"
+zshsuggestions_dir="$HOME/.zsh/zsh-autosuggestions"
+powerlinefonts_dir="$download/powerlinefonts"
 
 shell=`awk -F "=" '$1=="shell" {print $2}' $configfile`
-if [ ! -d "$download" ]; then
-	mkdir -p "$download"
-fi
+[[ ! -d "$download" ]] && mkdir -p "$download"
 
 # ohmyzsh shell
-if [ "$USER" = "$username" ]; then
-	sudo pacman -S --noconfirm --needed zsh
-else
-	pacman -S --noconfirm --needed zsh
-fi
-echo `date` ": Zsh shell installation is complete !" >> $logfile
-rm -rf $download/ohmyzsh
+[ -d "$ohmyzsh_dir" ] && rm -rf $ohmyzsh_dir
 echo `date` ": Download and install ohmyzsh ..." >> $logfile
 
 set +e
-while ! git clone https://github.com/skillf-qf/ohmyzsh.git $download/ohmyzsh; do
+while ! git clone https://github.com/ohmyzsh/ohmyzsh.git $ohmyzsh_dir; do
 set -e
 	echo `date` ": \"git clone ohmyzsh.git\" tries to reconnect ..." >> $logfile
 	echo -e "\033[31m\"git clone ohmyzsh.git\" tries to reconnect ...\033[0m\n"
 	sleep 3
 done
 
-chmod +x $download/ohmyzsh/tools/install.sh $download/ohmyzsh/tools/uninstall.sh
-echo y | $download/ohmyzsh/tools/uninstall.sh
+chmod +x $ohmyzsh_dir/tools/install.sh $ohmyzsh_dir/tools/uninstall.sh
+echo y | $ohmyzsh_dir/tools/uninstall.sh
 rm -rf $HOME/.zsh*
-echo n | $download/ohmyzsh/tools/install.sh
+echo n | $ohmyzsh_dir/tools/install.sh
 
 # change zsh
 echo `date` ": Change the $USER shell ..." >> $logfile
@@ -63,13 +62,12 @@ else
 	sed -i 's/\$ \%{\$reset_color\%}/\# \%{\$reset_color\%}/' $HOME/.oh-my-zsh/themes/ys.zsh-theme
 fi
 
-# install zsh-autosuggestions | add ohmyzsh history time | change ohmyzsh Theme: ys
+# Install zsh-autosuggestions & Add ohmyzsh history time & Change ohmyzsh Theme: ys
 echo `date` ": Install zsh-autosuggestions | Add ohmyzsh history time | Change ohmyzsh Theme: ys ..." >> $logfile
-zshsuggestions_dir="$HOME/.zsh/zsh-autosuggestions"
-rm -rf $HOME/.zsh
+[[ -d "$HOME/.zsh" ]] && rm -rf $HOME/.zsh
 
 set +e
-while ! git clone https://github.com/skillf-qf/zsh-autosuggestions.git $zshsuggestions_dir; do
+while ! git clone https://github.com/zsh-users/zsh-autosuggestions.git $zshsuggestions_dir; do
 set -e
 	echo `date` ": \"git clone zsh-autosuggestions.git\" tries to reconnect ..." >> $logfile
 	echo -e "\033[31m\"git clone zsh-autosuggestions.git\" tries to reconnect ...\033[0m\n"
@@ -83,17 +81,18 @@ sed -i '/^# ZSH_THEME=/a\\ZSH_THEME="ys"' $HOME/.zshrc
 
 # powerline fonts
 echo `date` ": Install powerline fonts ..." >> $logfile
-rm -rf $download/powerlinefonts
+[[ -d "$powerlinefonts_dir" ]] && rm -rf $powerlinefonts_dir
 
 set +e
-while ! git clone https://github.com/skillf-qf/fonts.git $download/powerlinefonts; do
+while ! git clone https://github.com/powerline/fonts.git $powerlinefonts_dir; do
 set -e
 	echo `date` ": \"git clone fonts.git\" tries to reconnect ..." >> $logfile
 	echo -e "\033[31m\"git clone fonts.git\" tries to reconnect ...\033[0m\n"
 	sleep 3
 done
-chmod +x $download/powerlinefonts/install.sh $download/powerlinefonts/uninstall.sh
-$download/powerlinefonts/uninstall.sh
-$download/powerlinefonts/install.sh
+chmod +x $powerlinefonts_dir/install.sh $powerlinefonts_dir/uninstall.sh
+$powerlinefonts_dir/uninstall.sh
+$powerlinefonts_dir/install.sh
 
 echo `date` ": The ohmyzsh installation configuration is complete !" >> $logfile
+https://gitee.com/skillf/hardware-design.git
