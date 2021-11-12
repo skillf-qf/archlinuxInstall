@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-11-12 11:43:13
+ # @LastEditTime: 2021-11-12 11:51:31
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ###
 
@@ -147,6 +147,8 @@ fi
 
 # other software
 software_list=`awk -F "=" '$1=="software" {print $2}' $configfile`
+echo `date` ": Start installing additional packages..." >> $logfile
+echo -e "\033[33mStart installing additional packages...\033[0m\n"
 pacman -Fy
 for package in $software_list; do
     pacman -F $package && \
@@ -154,12 +156,9 @@ for package in $software_list; do
     echo `date` ": The $package package is successfully installed !" >> $logfile; } || \
     echo `date` ": The $package package does not exist !" >> $logfile
 done
+echo `date` ": All additional packages have been installed !" >> $logfile
+echo -e "\n\n\033[32mAll additional packages have been installed !\033[0m\n"
 
-if [ -n "$software_list" ]; then
-    echo `date` ": Install additional software ..." >> $logfile
-    pacman -S --noconfirm --needed $software_list
-    echo `date` ": Additional software $software_list was installed successfully !" >> $logfile
-fi
 
 # Touchpad libinput (laptop)
 computer_platform=`awk -F "=" '$1=="computer_platform" {print $2}' $configfile`
