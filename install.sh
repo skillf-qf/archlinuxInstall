@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-11-14 02:25:28
+ # @LastEditTime: 2021-11-14 02:50:59
  # @FilePath: \archlinuxInstall\install.sh
 ###
 
@@ -16,7 +16,7 @@ set -euo pipefail
 # For permanent Settings, modify the /etc/vconsole.conf
 setfont /usr/share/kbd/consolefonts/LatGrkCyr-12x22.psfu.gz
 
-source $install_dir/function.sh
+source ./function.sh
 
 var_list="\
         computer_platform network_connection_type \

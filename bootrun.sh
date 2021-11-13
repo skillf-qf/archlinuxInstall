@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-11-14 02:43:35
+ # @LastEditTime: 2021-11-14 03:03:58
  # @FilePath: \archlinuxInstall\bootrun.sh
 ###
 
@@ -16,9 +16,10 @@ set -euo pipefail
 systemctl --user import-environment
 sleep 5
 
-source ./function.sh
 install_path="$HOME/archlinuxInstall"
 download="$HOME/Downloads"
+source $install_path/function.sh
+
 
 # Print the string to the new terminal
 # The device number of the new "terminal": /dev/pts/0

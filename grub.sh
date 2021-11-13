@@ -1,7 +1,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-07 17:49:02
- # @LastEditTime: 2021-11-14 02:27:30
+ # @LastEditTime: 2021-11-14 03:04:18
  # @FilePath: \archlinuxInstall\grub.sh
 ###
 
@@ -11,7 +11,7 @@ set -euo pipefail
 # Please uncomment it to see how it works
 #set -x
 
-source $install_dir/function.sh
+source /archlinuxInstall/function.sh
 
 # Verify the boot mode
 pacman -S --noconfirm --needed grub

@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-11-14 02:47:40
+ # @LastEditTime: 2021-11-14 03:03:15
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ###
 
@@ -12,7 +12,7 @@ set -euo pipefail
 # Please uncomment it to see how it works
 #set -x
 
-source $install_dir/function.sh
+source /archlinuxInstall/function.sh
 
 # Time zone
 echo `date` ": Set the time zone ..." >> $logfile

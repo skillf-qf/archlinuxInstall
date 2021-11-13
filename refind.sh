@@ -1,7 +1,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-07 17:49:15
- # @LastEditTime: 2021-11-14 02:28:39
+ # @LastEditTime: 2021-11-14 03:04:41
  # @FilePath: \archlinuxInstall\refind.sh
 ###
 
@@ -11,7 +11,7 @@ set -euo pipefail
 # Please uncomment it to see how it works
 #set -x
 
-source $install_dir/function.sh
+source /archlinuxInstall/function.sh
 esp="/boot/efi"
 
 pacman -S --noconfirm --needed refind efibootmgr git
