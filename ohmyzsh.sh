@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-11-12 17:28:09
+ # @LastEditTime: 2021-11-13 17:04:51
  # @FilePath: \archlinuxInstall\ohmyzsh.sh
 ###
 
@@ -12,43 +12,39 @@ set -euo pipefail
 # Please uncomment it to see how it works
 #set -x
 
-[[ "$USER" == "root" ]] && \
-{ install_dir="/archlinuxInstall"; pacman -S --noconfirm --needed zsh; }
+source ./function.sh
 
-[[ "$USER" == "$username" ]] && \
-{ install_dir="$HOME/archlinuxInstall"; sudo pacman -S --noconfirm --needed zsh; }
-
+if [ "$USER" == "root" ]; then
+	install_dir="/archlinuxInstall"
+	pacman -S --noconfirm --needed zsh
+elif [ "$USER" == "$username" ]
+	install_dir="$HOME/archlinuxInstall"
+	sudo pacman -S --noconfirm --needed zsh
+fi
 echo `date` ": Zsh shell installation is complete !" >> $logfile
-
 
 configfile="$install_dir/config/install.conf"
 logfile="$install_dir/archlinuxInstall.log"
-
 username=`awk -F "=" '$1=="username" {print $2}' $configfile`
 download="$HOME/Downloads"
 ohmyzsh_dir="$download/ohmyzsh"
 zshsuggestions_dir="$HOME/.zsh/zsh-autosuggestions"
 powerlinefonts_dir="$download/powerlinefonts"
-
 shell=`awk -F "=" '$1=="shell" {print $2}' $configfile`
+
 [[ ! -d "$download" ]] && mkdir -p "$download"
 
 # ohmyzsh shell
-[ -d "$ohmyzsh_dir" ] && rm -rf $ohmyzsh_dir
-echo `date` ": Download and install ohmyzsh ..." >> $logfile
+echo `date` ": Download and install ohmyzsh..." >> $logfile
 
-set +e
-while ! git clone https://github.com/ohmyzsh/ohmyzsh.git $ohmyzsh_dir; do
-set -e
-	echo `date` ": \"git clone ohmyzsh.git\" tries to reconnect ..." >> $logfile
-	echo -e "\033[31m\"git clone ohmyzsh.git\" tries to reconnect ...\033[0m\n"
-	sleep 3
-done
+git_clone https://github.com/ohmyzsh/ohmyzsh.git https://gitee.com/skillf/ohmyzsh.git $ohmyzsh_dir $logfile
 
 chmod +x $ohmyzsh_dir/tools/install.sh $ohmyzsh_dir/tools/uninstall.sh
 echo y | $ohmyzsh_dir/tools/uninstall.sh
 rm -rf $HOME/.zsh*
 echo n | $ohmyzsh_dir/tools/install.sh
+
+echo `date` ": The ohmyzsh installation is successful !" >> $logfile
 
 # change zsh
 echo `date` ": Change the $USER shell ..." >> $logfile
@@ -64,35 +60,23 @@ fi
 
 # Install zsh-autosuggestions & Add ohmyzsh history time & Change ohmyzsh Theme: ys
 echo `date` ": Install zsh-autosuggestions | Add ohmyzsh history time | Change ohmyzsh Theme: ys ..." >> $logfile
-[[ -d "$HOME/.zsh" ]] && rm -rf $HOME/.zsh
-
-set +e
-while ! git clone https://github.com/zsh-users/zsh-autosuggestions.git $zshsuggestions_dir; do
-set -e
-	echo `date` ": \"git clone zsh-autosuggestions.git\" tries to reconnect ..." >> $logfile
-	echo -e "\033[31m\"git clone zsh-autosuggestions.git\" tries to reconnect ...\033[0m\n"
-	sleep 3
-done
+git_clone https://github.com/zsh-users/zsh-autosuggestions.git https://gitee.com/skillf/zsh-autosuggestions.git $zshsuggestions_dir $logfile
 
 sed -i "/^# ZSH_CUSTOM/a\\ZSH_CUSTOM=`echo $zshsuggestions_dir`" $HOME/.zshrc
 sed -i '/^# HIST_STAMPS/a\\HIST_STAMPS=\"\%Y-\%m-\%d \%H:\%M:\%S  \" ' $HOME/.zshrc
 sed -i 's/^ZSH_THEME/# ZSH_THEME/ ' $HOME/.zshrc
 sed -i '/^# ZSH_THEME=/a\\ZSH_THEME="ys"' $HOME/.zshrc
 
+echo `date` ": Zsh-autosuggestions is successfully installed and configured !" >> $logfile
+
 # powerline fonts
 echo `date` ": Install powerline fonts ..." >> $logfile
-[[ -d "$powerlinefonts_dir" ]] && rm -rf $powerlinefonts_dir
 
-set +e
-while ! git clone https://github.com/powerline/fonts.git $powerlinefonts_dir; do
-set -e
-	echo `date` ": \"git clone fonts.git\" tries to reconnect ..." >> $logfile
-	echo -e "\033[31m\"git clone fonts.git\" tries to reconnect ...\033[0m\n"
-	sleep 3
-done
+git_clone https://github.com/powerline/fonts.git https://gitee.com/skillf/fonts.git $powerlinefonts_dir $logfile
+
 chmod +x $powerlinefonts_dir/install.sh $powerlinefonts_dir/uninstall.sh
 $powerlinefonts_dir/uninstall.sh
 $powerlinefonts_dir/install.sh
 
-echo `date` ": The ohmyzsh installation configuration is complete !" >> $logfile
-https://gitee.com/skillf/hardware-design.git
+echo `date` ": The powerline fonts installation is successful !" >> $logfile
+echo `date` ": The ohmyzsh is installed and configured successfully !" >> $logfile

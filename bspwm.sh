@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-27 10:30:18
- # @LastEditTime: 2021-11-10 23:55:30
+ # @LastEditTime: 2021-11-13 16:49:16
  # @FilePath: \archlinuxInstall\bspwm.sh
 ###
 
@@ -23,6 +23,8 @@ function replacestr()
 	sed -i "$line  d" $1
 	sed -i "/super + Return/a\  $2" $1
 }
+
+source ./function.sh
 
 install_dir="/archlinuxInstall"
 configfile="$install_dir/config/install.conf"
@@ -59,45 +61,19 @@ if [ ! -d "$download" ]; then
 	mkdir -p "$download"
 fi
 
-if [ "$terminal" = "st" ] || [ -z "$terminal" ]; then
+if [ "$terminal" = "st" ] || [ -z "$terminal" ] || ! pacman -Fy $terminal; then
 
 	# st terminal
 	current_dir=`pwd`
-
-	set +e
-	while ! git clone https://github.com/skillf-qf/st.git $download/st; do
-	set -e
-		echo `date` ": \"git clone st.git\" tries to reconnect ..." >> $logfile
-		echo -e "\033[31m\"git clone st.git\" tries to reconnect ...\033[0m\n"
-		sleep 3
-	done
-
-	sleep 2
+	git_clone https://github.com/skillf-qf/st.git https://gitee.com/skillf/st.git $download/st $logfile
 	cd $download/st
 	make clean install
 	cd $current_dir
 	replacestr $userhome/.config/sxhkd/sxhkdrc st
 else
-	if  pacman -S --noconfirm pacman -S "$terminal"; then
+	if  pacman -S --noconfirm --needed $terminal; then
 		# set terminal
 		replacestr $userhome/.config/sxhkd/sxhkdrc "$terminal"
-	else
-		# default terminal
-		current_dir=`pwd`
-
-		set +e
-		while ! git clone https://github.com/skillf-qf/st.git $download/st; do
-		set -e
-			echo `date` ": \"git clone st.git\" tries to reconnect ..." >> $logfile
-			echo -e "\033[31m\"git clone st.git\" tries to reconnect ...\033[0m\n"
-			sleep 3
-		done
-
-		sleep 2
-		cd $download/st
-		make clean install
-		cd $current_dir
-		replacestr $userhome/.config/sxhkd/sxhkdrc st
 	fi
 fi
 echo `date` ": Installation of terminal $terminal was successful !" >> $logfile

@@ -1,7 +1,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-07 17:49:15
- # @LastEditTime: 2021-11-12 10:35:37
+ # @LastEditTime: 2021-11-13 16:51:00
  # @FilePath: \archlinuxInstall\refind.sh
 ###
 
@@ -11,6 +11,8 @@ set -euo pipefail
 # Please uncomment it to see how it works
 #set -x
 
+source ./function.sh
+
 install_dir="/archlinuxInstall"
 configfile="$install_dir/config/install.conf"
 logfile="$install_dir/archlinuxInstall.log"
@@ -19,14 +21,6 @@ esp="/boot/efi"
 boot=`awk -F "=" '$1=="boot" {print $2}' $configfile`
 root=`awk -F "=" '$1=="root" {print $2}' $configfile`
 #system=`awk -F "=" '$1=="system" {print $2}' $configfile`
-
-get_disk_part(){
-    local str="[0-9]"
-	if echo $1 | grep nvme > /dev/null; then str="p"$str; fi
-    local diskname=`echo $1 | sed "s/$str*$//"`
-	local partnum=`echo $1 | sed "s/$diskname//" | sed 's/p//'`
-    echo $diskname $partnum
-}
 
 pacman -S --noconfirm --needed refind efibootmgr git
 echo `date` ": Install the boot loader rEFInd !" >> $logfile
@@ -70,13 +64,18 @@ echo `date` ": Uncomment extra_kernel_version_strings..." >> $logfile
 mkrlconf --force
 echo `date` ": Create a Linux kernel configuration file refind_linux.conf for rEFInd..." >> $logfile
 
+disk_part=`get_disk_part $root`
+root_disk=`echo $disk_part | awk -F " " '{print $1}'`
+partnum=`echo $disk_part | awk -F " " '{print $2}'`
 [[ `lscpu | grep Intel` ]] && cpu="intel"
 [[ `lscpu | grep AMD` ]] && cpu="amd"
-parameters="initrd=$cpu-ucode.img initrd=initramfs-%v.img"
+parameters="initrd=\boot\\$cpu-ucode.img initrd=\boot\initramfs-%v.img"
+parameters_fallback="initrd=\boot\\$cpu-ucode.img initrd=\boot\initramfs-%v-fallback.img"
+
 cat > /boot/refind_linux.conf <<EOF
-"Boot using default options"     "ro root=/dev/$boot_disk$partnum rw add_efi_memmap $parameters"
-"Boot to single-user mode"     "ro root=/dev/$boot_disk$partnum rw add_efi_memmap $parameters single"
-"Boot with minimal options"     "ro root=/dev/$boot_disk$partnum"
+"Boot using default options"     "ro root=/dev/$root_disk$partnum rw add_efi_memmap $parameters"
+"Boot using fallback initramfs"     "ro root=/dev/$root_disk$partnum rw add_efi_memmap $parameters_fallback"
+"Boot to terminal"     "ro root=/dev/$root_disk$partnum rw add_efi_memmap $parameters systemd.unit=multi-user.target"
 EOF
 
 echo `date` ": Add kernel pass parameters to file refind_linux.conf..." >> $logfile
@@ -85,13 +84,9 @@ echo `date` ": Add kernel pass parameters to file refind_linux.conf..." >> $logf
 mkdir -p $esp/EFI/refind/themes
 echo `date` ": Clone the rEFInd theme file: https://github.com/kgoettler/ursamajor-rEFInd.git..." >> $logfile
 
-set +e
-while ! git clone https://github.com/kgoettler/ursamajor-rEFInd.git $esp/EFI/refind/themes/ursamajor-rEFInd; do
-set -e
-	echo `date` ": \"git clone ursamajor-rEFInd.git\" tries to reconnect ..." >> $logfile
-	echo -e "\033[31m\"git clone ursamajor-rEFInd.git\" tries to reconnect ...\033[0m\n"
-	sleep 3
-done
+git_clone https://github.com/kgoettler/ursamajor-rEFInd.git https://gitee.com/skillf/ursamajor-rEFInd \
+	$esp/EFI/refind/themes/ursamajor-rEFInd $logfile
+
 echo `date` ": Use the rEFInd theme ursamajor-rEFInd..." >> $logfile
 echo "include themes/ursamajor-rEFInd/theme.conf" >> $esp/EFI/refind/refind.conf
 

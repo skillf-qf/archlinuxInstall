@@ -1,7 +1,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-07 17:49:02
- # @LastEditTime: 2021-11-11 17:39:52
+ # @LastEditTime: 2021-11-13 16:50:43
  # @FilePath: \archlinuxInstall\grub.sh
 ###
 
@@ -11,6 +11,8 @@ set -euo pipefail
 # Please uncomment it to see how it works
 #set -x
 
+source ./function.sh
+
 install_dir="/archlinuxInstall"
 configfile="$install_dir/config/install.conf"
 logfile="$install_dir/archlinuxInstall.log"
@@ -18,14 +20,6 @@ logfile="$install_dir/archlinuxInstall.log"
 boot=`awk -F "=" '$1=="boot" {print $2}' $configfile`
 root=`awk -F "=" '$1=="root" {print $2}' $configfile`
 #system=`awk -F "=" '$1=="system" {print $2}' $configfile`
-
-get_disk_part(){
-    local str="[0-9]"
-	if echo $1 | grep nvme > /dev/null; then str="p"$str; fi
-    local diskname=`echo $1 | sed "s/$str*$//"`
-	local partnum=`echo $1 | sed "s/$diskname//" | sed 's/p//'`
-    echo $diskname $partnum
-}
 
 # Verify the boot mode
 pacman -S --noconfirm --needed grub

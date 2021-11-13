@@ -2,9 +2,9 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-28 09:23:43
- # @LastEditTime: 2021-01-30 17:41:59
+ # @LastEditTime: 2021-11-13 16:50:28
  # @FilePath: \archlinuxInstall\deleteline.sh
-### 
+###
 
 # Print the command. The script ends when the command fails.
 # -o pipefail : As soon as a subcommand fails, the entire pipeline command fails and the script terminates.

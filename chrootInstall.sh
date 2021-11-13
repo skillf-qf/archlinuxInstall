@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-11-12 11:51:31
+ # @LastEditTime: 2021-11-13 16:50:24
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ###
 
@@ -11,6 +11,8 @@
 set -euo pipefail
 # Please uncomment it to see how it works
 #set -x
+
+source ./function.sh
 
 install_dir="/archlinuxInstall"
 configfile="$install_dir/config/install.conf"
@@ -170,8 +172,7 @@ if [ "$computer_platform" = "laptop" ]; then
         cp $install_dir/config/touchpad/30-touchpad.conf /etc/X11/xorg.conf.d/
     else
         cp /usr/share/X11/xorg.conf.d/40-libinput.conf /etc/X11/xorg.conf.d/30-touchpad.conf
-        chmod +x $install_dir/deleteline.sh
-        $install_dir/deleteline.sh /etc/X11/xorg.conf.d/30-touchpad.conf  "^Section"
+        deleteline /etc/X11/xorg.conf.d/30-touchpad.conf  "^Section"
         cat >> /etc/X11/xorg.conf.d/30-touchpad.conf <<EOF
 Section "InputClass"
         Identifier "touchpad"
