@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-11-14 01:49:03
+ # @LastEditTime: 2021-11-14 02:29:37
  # @FilePath: \archlinuxInstall\ohmyzsh.sh
 ###
 
@@ -13,13 +13,6 @@ set -euo pipefail
 #set -x
 
 echo `date` ": The system starts to install and configure ohmyzsh..." >> $logfile
-source ./function.sh
-download="$HOME/Downloads"
-ohmyzsh_dir="$download/ohmyzsh"
-zshsuggestions_dir="$HOME/.zsh/zsh-autosuggestions"
-powerlinefonts_dir="$download/powerlinefonts"
-
-
 
 if [ "$USER" == "root" ]; then
 	install_dir="/archlinuxInstall"
@@ -29,6 +22,13 @@ elif [ "$USER" == "$username" ]
 	sudo pacman -S --noconfirm --needed zsh
 fi
 echo `date` ": Zsh shell installation is complete !" >> $logfile
+
+source $install_dir/function.sh
+download="$HOME/Downloads"
+ohmyzsh_dir="$download/ohmyzsh"
+zshsuggestions_dir="$HOME/.zsh/zsh-autosuggestions"
+powerlinefonts_dir="$download/powerlinefonts"
+
 
 [[ ! -d "$download" ]] && mkdir -p "$download"
 

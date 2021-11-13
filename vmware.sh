@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-02 21:20:10
- # @LastEditTime: 2021-11-14 02:03:36
+ # @LastEditTime: 2021-11-14 02:28:42
  # @FilePath: \archlinuxInstall\vmware.sh
 ###
 
@@ -12,7 +12,8 @@ set -euo pipefail
 # Please uncomment it to see how it works
 #set -x
 
-source ./function.sh
+source $install_dir/function.sh
+
 servicename="$hostshare-$guestshare"
 
 # In-kernel drivers

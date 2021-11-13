@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-11-14 01:24:24
+ # @LastEditTime: 2021-11-14 02:25:28
  # @FilePath: \archlinuxInstall\install.sh
 ###
 
@@ -16,27 +16,7 @@ set -euo pipefail
 # For permanent Settings, modify the /etc/vconsole.conf
 setfont /usr/share/kbd/consolefonts/LatGrkCyr-12x22.psfu.gz
 
-source ./function.sh
-install_dir="/root/archlinuxInstall"
-configfile="$install_dir/config/install.conf"
-logfile="$install_dir/archlinuxInstall.log"
-
-computer_platform=`awk -F "=" '$1=="computer_platform" {print $2}' $configfile`
-network_connection_type=`awk -F "=" '$1=="network_connection_type" {print $2}' $configfile`
-ssid=`awk -F "=" '$1=="ssid" {print $2}' $configfile`
-psk=`awk -F "=" '$1=="psk" {print $2}' $configfile`
-hostname=`awk -F "=" '$1=="hostname" {print $2}' $configfile`
-username=`awk -F "=" '$1=="username" {print $2}' $configfile`
-userpasswd=`awk -F "=" '$1=="userpasswd" {print $2}' $configfile`
-rootpasswd=`awk -F "=" '$1=="rootpasswd" {print $2}' $configfile`
-root=`awk -F "=" '$1=="root" {print $2}' $configfile`
-boot=`awk -F "=" '$1=="boot" {print $2}' $configfile`
-home=`awk -F "=" '$1=="home" {print $2}' $configfile`
-swap=`awk -F "=" '$1=="swap" {print $2}' $configfile`
-virtualmachine=`awk -F "=" '$1=="virtualmachine" {print $2}' $configfile`
-hostshare=`awk -F "=" '$1=="hostshare" {print $2}' $configfile`
-guestshare=`awk -F "=" '$1=="guestshare" {print $2}' $configfile`
-
+source $install_dir/function.sh
 
 var_list="\
         computer_platform network_connection_type \

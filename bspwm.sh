@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-27 10:30:18
- # @LastEditTime: 2021-11-14 02:17:23
+ # @LastEditTime: 2021-11-14 02:27:22
  # @FilePath: \archlinuxInstall\bspwm.sh
 ###
 
@@ -12,7 +12,7 @@ set -euo pipefail
 # Please uncomment it to see how it works
 #set -x
 
-source ./function.sh
+source $install_dir/function.sh
 userhome="/home/$username"
 download="$userhome/Downloads"
 
