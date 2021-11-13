@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-27 10:30:18
- # @LastEditTime: 2021-11-14 03:03:27
+ # @LastEditTime: 2021-11-14 03:37:21
  # @FilePath: \archlinuxInstall\bspwm.sh
 ###
 
@@ -78,8 +78,7 @@ if [ -s "$install_dir/config/Xorg-xinit/.xinitrc"  ]; then
 else
 	cp /etc/X11/xinit/xinitrc $userhome/.xinitrc
 	# Delete the last five lines
-	chmod +x $install_dir/deleteline.sh
-	$install_dir/deleteline.sh $userhome/.xinitrc "tem &"
+	deleteline $userhome/.xinitrc "tem &"
 	echo -e "\nexec bspwm\n" >> $userhome/.xinitrc
 fi
 

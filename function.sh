@@ -2,12 +2,14 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-13 16:18:58
- # @LastEditTime: 2021-11-14 02:42:33
+ # @LastEditTime: 2021-11-14 03:34:04
  # @FilePath: \archlinuxInstall\function.sh
 ###
 
 # Definitions
-install_dir="."
+current_dir=`pwd`
+[[ "$current_dir" == "/" ]] && current_dir="/archlinuxInstall"
+install_dir=$current_dir
 configfile="$install_dir/config/install.conf"
 logfile="$install_dir/archlinuxInstall.log"
 virtualmachine=`awk -F "=" '$1=="virtualmachine" {print $2}' $configfile`
