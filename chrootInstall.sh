@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-11-14 02:25:04
+ # @LastEditTime: 2021-11-14 02:47:40
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ###
 
@@ -202,11 +202,11 @@ echo "DISPLAY=:0" > /home/$username/.config/environment.d/display.conf
 
 # Copy the file to the user folder
 echo `date` ": Copy the installation script to the /home/$username$install_dir ..." >> $logfile
-rm -rf /home/$username$install_dir
-cp -r $install_dir /home/$username/
+rm -rf /home/$username/archlinuxInstall
+cp -r $install_dir /home/$username/archlinuxInstall
 
 # Change the file user permissions in the user's home directory
 echo `date` ": Change the file \"$username:users\" permissions in the user's home directory ..." >> $logfile
 chown -R $username:users /home/$username
 # Delete install directory
-rm -rf $install_dir
+rm -rf /archlinuxInstall

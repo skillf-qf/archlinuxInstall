@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-11-14 02:17:21
+ # @LastEditTime: 2021-11-14 02:43:35
  # @FilePath: \archlinuxInstall\bootrun.sh
 ###
 
@@ -17,7 +17,7 @@ systemctl --user import-environment
 sleep 5
 
 source ./function.sh
-install_path="$HOME$install_dir"
+install_path="$HOME/archlinuxInstall"
 download="$HOME/Downloads"
 
 # Print the string to the new terminal

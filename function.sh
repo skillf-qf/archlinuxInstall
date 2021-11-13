@@ -2,13 +2,13 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-13 16:18:58
- # @LastEditTime: 2021-11-14 02:19:35
+ # @LastEditTime: 2021-11-14 02:42:33
  # @FilePath: \archlinuxInstall\function.sh
 ###
 
 # Definitions
-install_dir="/archlinuxInstall"
-configfile="./config/install.conf"
+install_dir="."
+configfile="$install_dir/config/install.conf"
 logfile="$install_dir/archlinuxInstall.log"
 virtualmachine=`awk -F "=" '$1=="virtualmachine" {print $2}' $configfile`
 computer_platform=`awk -F "=" '$1=="computer_platform" {print $2}' $configfile`
