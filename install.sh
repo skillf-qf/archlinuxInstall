@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-11-12 10:24:19
+ # @LastEditTime: 2021-11-14 01:24:24
  # @FilePath: \archlinuxInstall\install.sh
 ###
 
@@ -16,6 +16,7 @@ set -euo pipefail
 # For permanent Settings, modify the /etc/vconsole.conf
 setfont /usr/share/kbd/consolefonts/LatGrkCyr-12x22.psfu.gz
 
+source ./function.sh
 install_dir="/root/archlinuxInstall"
 configfile="$install_dir/config/install.conf"
 logfile="$install_dir/archlinuxInstall.log"
@@ -151,13 +152,15 @@ fi
 echo `date` ": Attempt to connect to a $network_connection_type network ..." >> $logfile
 echo -e "\033[33mAttempt to connect to a $network_connection_type network ...\033[0m\n"
 
-#set +e
-while ! ping -c 3 www.baidu.com > /dev/null; do
-#set -e
-    echo `date` ": $network_connection_type network connection failed. The system is trying again ..." >> $logfile
-    echo -e "\033[31m$network_connection_type network connection failed. The system is trying again ...\033[0m\n"
-    sleep 1
-done
+repeat ping -c 3 www.baidu.com > /dev/null
+
+##set +e
+#while ! ping -c 3 www.baidu.com > /dev/null; do
+##set -e
+#    echo `date` ": $network_connection_type network connection failed. The system is trying again ..." >> $logfile
+#    echo -e "\033[31m$network_connection_type network connection failed. The system is trying again ...\033[0m\n"
+#    sleep 1
+#done
 echo `date` ": $network_connection_type network connection successful !" >> $logfile
 echo -e "\033[32m$network_connection_type network connection successful !\033[0m\n"
 
@@ -177,20 +180,22 @@ echo -e "\033[33mGets the latest mirrors list ...\033[0m\n"
 cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
 echo -e "\n##======================================================" > mirrorlist.temp
 
+repeat reflector --country China --latest 10 --protocol https --sort rate >> mirrorlist.temp
+
 counter=0
-#set +e
-while ! reflector --country China --latest 10 --protocol https --sort rate >> mirrorlist.temp; do
-#set -e
-    if [ $counter -lt 10 ];then
-    	echo `date` ": \"reflector\" tries to reconnect to the network ..." >> $logfile
-    	echo -e "\033[31m\"reflector\" tries to reconnect to the network ...\033[0m\n"
-        sleep 3
-        counter=`expr $counter + 1`
-    else
-        echo -e "\033[31mERROR: Network error, please check network and try again !\033[0m"
-        exit 0
-    fi
-done
+##set +e
+#while ! reflector --country China --latest 10 --protocol https --sort rate >> mirrorlist.temp; do
+##set -e
+#    if [ $counter -lt 10 ];then
+#    	echo `date` ": \"reflector\" tries to reconnect to the network ..." >> $logfile
+#    	echo -e "\033[31m\"reflector\" tries to reconnect to the network ...\033[0m\n"
+#        sleep 3
+#        counter=`expr $counter + 1`
+#    else
+#        echo -e "\033[31mERROR: Network error, please check network and try again !\033[0m"
+#        exit 0
+#    fi
+#done
 
 #reflector --country China --latest 10 --protocol https --sort rate >> mirrorlist.temp
 # If the above is not available please uncomment below and comment above as well

@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-02 21:20:10
- # @LastEditTime: 2021-11-10 17:23:19
+ # @LastEditTime: 2021-11-14 02:03:36
  # @FilePath: \archlinuxInstall\vmware.sh
 ###
 
@@ -12,12 +12,7 @@ set -euo pipefail
 # Please uncomment it to see how it works
 #set -x
 
-install_dir="/archlinuxInstall"
-configfile="$install_dir/config/install.conf"
-#logfile="$install_dir/archlinuxInstall.log"
-username=`awk -F "=" '$1=="username" {print $2}' $configfile`
-hostshare=`awk -F "=" '$1=="hostshare" {print $2}' $configfile`
-guestshare=`awk -F "=" '$1=="guestshare" {print $2}' $configfile`
+source ./function.sh
 servicename="$hostshare-$guestshare"
 
 # In-kernel drivers

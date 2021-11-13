@@ -1,7 +1,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-07 17:49:02
- # @LastEditTime: 2021-11-13 16:50:43
+ # @LastEditTime: 2021-11-14 01:31:37
  # @FilePath: \archlinuxInstall\grub.sh
 ###
 
@@ -13,13 +13,6 @@ set -euo pipefail
 
 source ./function.sh
 
-install_dir="/archlinuxInstall"
-configfile="$install_dir/config/install.conf"
-logfile="$install_dir/archlinuxInstall.log"
-
-boot=`awk -F "=" '$1=="boot" {print $2}' $configfile`
-root=`awk -F "=" '$1=="root" {print $2}' $configfile`
-#system=`awk -F "=" '$1=="system" {print $2}' $configfile`
 
 # Verify the boot mode
 pacman -S --noconfirm --needed grub

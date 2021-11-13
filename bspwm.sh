@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-27 10:30:18
- # @LastEditTime: 2021-11-13 16:49:16
+ # @LastEditTime: 2021-11-14 01:50:13
  # @FilePath: \archlinuxInstall\bspwm.sh
 ###
 
@@ -12,25 +12,7 @@ set -euo pipefail
 # Please uncomment it to see how it works
 #set -x
 
-function replacestr()
-# function : Replaces the string on the next line of the specified row
-# $1 : filename
-# S2 : string for replace
-{
-	line=`sed -n "/super + Return/=" $1`
-	line=`expr $line + 1`
-	echo -e "line=$line\n"
-	sed -i "$line  d" $1
-	sed -i "/super + Return/a\  $2" $1
-}
-
 source ./function.sh
-
-install_dir="/archlinuxInstall"
-configfile="$install_dir/config/install.conf"
-logfile="$install_dir/archlinuxInstall.log"
-
-username=`awk -F "=" '$1=="username" {print $2}' $configfile`
 userhome="/home/$username"
 download="$userhome/Downloads"
 

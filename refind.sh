@@ -1,7 +1,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-07 17:49:15
- # @LastEditTime: 2021-11-13 16:51:00
+ # @LastEditTime: 2021-11-14 01:54:23
  # @FilePath: \archlinuxInstall\refind.sh
 ###
 
@@ -12,15 +12,7 @@ set -euo pipefail
 #set -x
 
 source ./function.sh
-
-install_dir="/archlinuxInstall"
-configfile="$install_dir/config/install.conf"
-logfile="$install_dir/archlinuxInstall.log"
 esp="/boot/efi"
-
-boot=`awk -F "=" '$1=="boot" {print $2}' $configfile`
-root=`awk -F "=" '$1=="root" {print $2}' $configfile`
-#system=`awk -F "=" '$1=="system" {print $2}' $configfile`
 
 pacman -S --noconfirm --needed refind efibootmgr git
 echo `date` ": Install the boot loader rEFInd !" >> $logfile

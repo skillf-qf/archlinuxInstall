@@ -2,10 +2,34 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-13 16:18:58
- # @LastEditTime: 2021-11-13 17:03:15
+ # @LastEditTime: 2021-11-14 01:58:31
  # @FilePath: \archlinuxInstall\function.sh
 ###
 
+# Definitions
+install_dir="/archlinuxInstall"
+configfile="$install_dir/config/install.conf"
+logfile="$install_dir/archlinuxInstall.log"
+virtualmachine=`awk -F "=" '$1=="virtualmachine" {print $2}' $configfile`
+computer_platform=`awk -F "=" '$1=="computer_platform" {print $2}' $configfile`
+network_connection_type=`awk -F "=" '$1=="network_connection_type" {print $2}' $configfile`
+ssid=`awk -F "=" '$1=="ssid" {print $2}' $configfile`
+psk=`awk -F "=" '$1=="psk" {print $2}' $configfile`
+hostname=`awk -F "=" '$1=="hostname" {print $2}' $configfile`
+username=`awk -F "=" '$1=="username" {print $2}' $configfile`
+userpasswd=`awk -F "=" '$1=="userpasswd" {print $2}' $configfile`
+rootpasswd=`awk -F "=" '$1=="rootpasswd" {print $2}' $configfile`
+root=`awk -F "=" '$1=="root" {print $2}' $configfile`
+boot=`awk -F "=" '$1=="boot" {print $2}' $configfile`
+home=`awk -F "=" '$1=="home" {print $2}' $configfile`
+swap=`awk -F "=" '$1=="swap" {print $2}' $configfile`
+hostshare=`awk -F "=" '$1=="hostshare" {print $2}' $configfile`
+guestshare=`awk -F "=" '$1=="guestshare" {print $2}' $configfile`
+desktop=`awk -F "=" '$1=="desktop" {print $2}' $configfile`
+terminal=`awk -F "=" '$1=="terminal" {print $2}' $configfile`
+shell=`awk -F "=" '$1=="shell" {print $2}' $configfile`
+
+# Functions
 repeat(){
 # function : Run the command continuously until the command is successfully executed
 # $@ : The whole line command
@@ -28,7 +52,6 @@ replacestr(){
 	sed -i "$line  d" $1
 	sed -i "/super + Return/a\  $2" $1
 }
-
 
 git_clone(){
 # function : Clone git remote repositories
@@ -59,7 +82,6 @@ git_clone(){
 		echo `date` ": \"git clone $2\" failed !" >> $4
 	}
 }
-
 
 get_disk_part(){
 # function : Detach the disk name and partition number
