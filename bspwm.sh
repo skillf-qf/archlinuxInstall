@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-27 10:30:18
- # @LastEditTime: 2021-11-14 01:50:13
+ # @LastEditTime: 2021-11-14 02:17:23
  # @FilePath: \archlinuxInstall\bspwm.sh
 ###
 
@@ -36,7 +36,6 @@ fi
 echo `date` ": Copy the bspwmrc and sxhkdrc configuration files ..." >> $logfile
 
 # install teiminal : default  -> st
-terminal=`awk -F "=" '$1=="terminal" {print $2}' $configfile`
 echo `date` ": Installation terminal $terminal ..." >> $logfile
 
 if [ ! -d "$download" ]; then

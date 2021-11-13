@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-11-14 01:57:24
+ # @LastEditTime: 2021-11-14 02:17:21
  # @FilePath: \archlinuxInstall\bootrun.sh
 ###
 
@@ -98,7 +98,6 @@ elif [ "$network_connection_type" = "wired" ]; then
 fi
 set -e
 # user shell
-shell=`awk -F "=" '$1=="shell" {print $2}' $configfile`
 if [ -n "$shell" ]; then
     echo `date` ": Install and configure the $shell for $USER ..." >> $logfile
     echo "\033[33mInstall and configure the $shell for $USER ...\033[0m" > $terminal_id

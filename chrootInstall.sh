@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-11-14 01:31:09
+ # @LastEditTime: 2021-11-14 02:17:22
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ###
 
@@ -36,7 +36,6 @@ echo `date` ": LANG=en_US.UTF-8 setting the system locale ..." >> $logfile
 echo "LANG=en_US.UTF-8" > /etc/locale.conf
 
 # localhost Network configuration
-hostname=`awk -F "=" '$1=="hostname" {print $2}' $configfile`
 echo $hostname > /etc/hostname
 echo `date` ": Create the hostname file ..." >> $logfile
 
@@ -54,7 +53,6 @@ pacman -S --noconfirm --needed $cpu-ucode
 echo `date` ": $cpu Microcode installed successfully !" >> $logfile
 
 # Enable the VM shared folder
-virtualmachine=`awk -F "=" '$1=="virtualmachine" {print $2}' $configfile`
 if [ -n "$virtualmachine" ]; then
     echo `date` ": Enable $virtualmachine shared folders ..." >> $logfile
     echo -e "\033[33Enable $virtualmachine shared folders ...\033[0m\n"
@@ -65,7 +63,6 @@ if [ -n "$virtualmachine" ]; then
 fi
 
 # Root password
-rootpasswd=`awk -F "=" '$1=="rootpasswd" {print $2}' $configfile`
 echo root:$rootpasswd | chpasswd
 echo `date` ": Set the password for the root account !" >> $logfile
 
@@ -76,9 +73,6 @@ chmod +x $install_dir/$bootloader.sh
 $install_dir/$bootloader.sh
 
 # Adduser
-username=`awk -F "=" '$1=="username" {print $2}' $configfile`
-userpasswd=`awk -F "=" '$1=="userpasswd" {print $2}' $configfile`
-
 useradd -m -g users -G wheel -s /bin/bash $username
 echo $username:$userpasswd | chpasswd
 echo `date` ": Create a user account and set a password !" >> $logfile
@@ -133,7 +127,6 @@ systemctl enable dhcpcd
 systemctl disable NetworkManager-wait-online
 
 # desktop
-desktop=`awk -F "=" '$1=="desktop" {print $2}' $configfile`
 if [ -n "$desktop" ]; then
     echo `date` ": Start the installation and configuration of $desktop ..." >> $logfile
     chmod +x $install_dir/$desktop.sh
@@ -144,7 +137,6 @@ else
 fi
 
 # other software
-software_list=`awk -F "=" '$1=="software" {print $2}' $configfile`
 echo `date` ": Start installing additional packages..." >> $logfile
 echo -e "\033[33mStart installing additional packages...\033[0m\n"
 pacman -Fy
@@ -159,7 +151,6 @@ echo -e "\n\n\033[32mAll additional packages have been installed !\033[0m\n"
 
 
 # Touchpad libinput (laptop)
-computer_platform=`awk -F "=" '$1=="computer_platform" {print $2}' $configfile`
 if [ "$computer_platform" = "laptop" ]; then
     echo `date` ": Install and configure the TouchPad ..." >> $logfile
     pacman -S --noconfirm --needed xf86-input-libinput xorg-xinput
@@ -189,7 +180,6 @@ EOF
 fi
 
 # root shell
-shell=`awk -F "=" '$1=="shell" {print $2}' $configfile`
 if [ -n "$shell" ]; then
     echo `date` ": Install and configure the $shell for $USER ..." >> $logfile
     chmod +x $install_dir/$shell.sh
