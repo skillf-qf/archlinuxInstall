@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-27 10:30:18
- # @LastEditTime: 2021-11-14 03:37:21
+ # @LastEditTime: 2021-11-14 04:12:01
  # @FilePath: \archlinuxInstall\bspwm.sh
 ###
 
@@ -73,12 +73,12 @@ fi
 
 # start bspwm
 echo `date` ": Run bspwm directly after configuring startx to boot ..." >> $logfile
-if [ -s "$install_dir/config/Xorg-xinit/.xinitrc"  ]; then
-	cp $install_dir/config/Xorg-xinit/.xinitrc $userhome/
+if [ -s "$install_dir/config/xorg-xinit/.xinitrc"  ]; then
+	cp $install_dir/config/xorg-xinit/.xinitrc $userhome/
 else
 	cp /etc/X11/xinit/xinitrc $userhome/.xinitrc
 	# Delete the last five lines
-	deleteline $userhome/.xinitrc "tem &"
+	deleteline $userhome/.xinitrc "twm &"
 	echo -e "\nexec bspwm\n" >> $userhome/.xinitrc
 fi
 

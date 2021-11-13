@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-11-14 03:03:15
+ # @LastEditTime: 2021-11-14 04:20:44
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ###
 
@@ -140,7 +140,7 @@ fi
 echo `date` ": Start installing additional packages..." >> $logfile
 echo -e "\033[33mStart installing additional packages...\033[0m\n"
 pacman -Fy
-for package in $software_list; do
+for package in $software; do
     pacman -F $package && \
     { pacman -S --noconfirm $package; \
     echo `date` ": The $package package is successfully installed !" >> $logfile; } || \

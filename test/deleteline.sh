@@ -2,8 +2,8 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-28 09:23:43
- # @LastEditTime: 2021-11-13 16:50:28
- # @FilePath: \archlinuxInstall\deleteline.sh
+ # @LastEditTime: 2021-11-14 03:40:20
+ # @FilePath: \archlinuxInstall\test\deleteline.sh
 ###
 
 # Print the command. The script ends when the command fails.
@@ -19,7 +19,7 @@ function deleteline()
 # $1 : filename
 # $2 : start line for deleteline
 {
-  	line=`sed -n "/$str/=" $1 | sort -r | tail -1`
+  	line=`sed -n "/$2/=" $1 | sort -r | tail -1`
  	echo -e "line=$line\n"
   	sed -i "$line"',$d' $1
 }

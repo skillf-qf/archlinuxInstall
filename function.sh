@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-13 16:18:58
- # @LastEditTime: 2021-11-14 03:34:04
+ # @LastEditTime: 2021-11-14 04:20:25
  # @FilePath: \archlinuxInstall\function.sh
 ###
 
@@ -30,6 +30,7 @@ guestshare=`awk -F "=" '$1=="guestshare" {print $2}' $configfile`
 desktop=`awk -F "=" '$1=="desktop" {print $2}' $configfile`
 terminal=`awk -F "=" '$1=="terminal" {print $2}' $configfile`
 shell=`awk -F "=" '$1=="shell" {print $2}' $configfile`
+software=`awk -F "=" '$1=="software" {print $2}' $configfile`
 
 # Functions
 repeat(){
