@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-11-14 04:20:44
+ # @LastEditTime: 2021-11-15 02:46:29
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ###
 
@@ -141,10 +141,10 @@ echo `date` ": Start installing additional packages..." >> $logfile
 echo -e "\033[33mStart installing additional packages...\033[0m\n"
 pacman -Fy
 for package in $software; do
-    pacman -F $package && \
-    { pacman -S --noconfirm $package; \
-    echo `date` ": The $package package is successfully installed !" >> $logfile; } || \
-    echo `date` ": The $package package does not exist !" >> $logfile
+    pacman -F $package && {
+        pacman -S --noconfirm $package
+        echo `date` ": The $package package is successfully installed !" >> $logfile
+    } || echo `date` ": The $package package does not exist !" >> $logfile
 done
 echo `date` ": All additional packages have been installed !" >> $logfile
 echo -e "\n\n\033[32mAll additional packages have been installed !\033[0m\n"

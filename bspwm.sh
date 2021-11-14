@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-27 10:30:18
- # @LastEditTime: 2021-11-15 02:26:44
+ # @LastEditTime: 2021-11-15 02:39:46
  # @FilePath: \archlinuxInstall\bspwm.sh
 ###
 
@@ -38,9 +38,7 @@ echo `date` ": Copy the bspwmrc and sxhkdrc configuration files ..." >> $logfile
 # install teiminal : default  -> st
 echo `date` ": Installation terminal $terminal ..." >> $logfile
 
-if [ ! -d "$download" ]; then
-	mkdir -p "$download"
-fi
+[[ ! -d "$download" ]] && mkdir -p "$download"
 
 if [ "$terminal" = "st" ] || [ -z "$terminal" ] || ! pacman -Fy $terminal; then
 
@@ -92,9 +90,8 @@ EOF
 
 #  Wallpaper
 echo `date` ": Copy the wallpaper to $userhome/.picture" >> $logfile
-if [ ! -d "$userhome/.picture" ]; then
-	mkdir -p $userhome/.picture
-fi
+[[ ! -d "$userhome/.picture" ]] && mkdir -p $userhome/.picture
+
 if [ -s "$install_dir/wallpaper/wallpaper.jpg"  ]; then
 	cp $install_dir/wallpaper/wallpaper.jpg $userhome/.picture
 fi

@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-13 16:18:58
- # @LastEditTime: 2021-11-15 01:10:13
+ # @LastEditTime: 2021-11-15 02:41:53
  # @FilePath: \archlinuxInstall\function.sh
 ###
 
@@ -59,7 +59,7 @@ replacestr(){
 #
 	line=`sed -n "/super + Return/=" $1`
 	line=`expr $line + 1`
-	echo -e "line=$line\n"
+	#echo -e "line=$line\n"
 	sed -i "$line  d" $1
 	sed -i "/super + Return/a\  $2" $1
 }
