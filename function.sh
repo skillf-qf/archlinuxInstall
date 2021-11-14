@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-13 16:18:58
- # @LastEditTime: 2021-11-15 00:33:17
+ # @LastEditTime: 2021-11-15 01:10:13
  # @FilePath: \archlinuxInstall\function.sh
 ###
 
@@ -112,6 +112,6 @@ deleteline(){
 # $2 : start line for deleteline
 #
   	local line=`sed -n "/$2/=" $1 | sort -r | tail -1`
- 	echo -e "line=$line\n"
+ 	#echo -e "line=$line\n"
   	sed -i "$line"',$d' $1
 }

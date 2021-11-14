@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-11-14 03:03:58
+ # @LastEditTime: 2021-11-15 01:38:12
  # @FilePath: \archlinuxInstall\bootrun.sh
 ###
 
@@ -27,7 +27,7 @@ source $install_path/function.sh
 terminal_id='/dev/pts/0'
 $terminal &
 sleep 2
-echo -e  "\033[33mThe final step of the installation will continue, please be patient while it completes ...\033[0m" > $terminal_id
+sudo echo -e  "\033[33mThe final step of the installation will continue, please be patient while it completes ...\033[0m" > $terminal_id
 
 bridge_list=`ls /sys/class/net`
 # Connection Network
@@ -43,7 +43,7 @@ if [ "$network_connection_type" = "wireless" ]; then
 
 #    while ! sudo ip link set up dev $bridge  > $terminal_id; do
 #    	echo `date` ": \"ip link\" tries to re-enable $bridge ..." >> $logfile
-#    	echo -e "\033[31m\"ip link\" tries to re-enable $bridge ...\033[0m\n" > $terminal_id
+#    	sudo echo -e "\033[31m\"ip link\" tries to re-enable $bridge ...\033[0m\n" > $terminal_id
 #	    sleep 3
 #    done
     echo `date` ": $bridge enabled successfully !" >> $logfile
@@ -53,14 +53,14 @@ if [ "$network_connection_type" = "wireless" ]; then
     repeat nmcli device wifi connect $ssid password $psk > $terminal_id
 #    while ! nmcli device wifi connect $ssid password $psk > $terminal_id; do
 #    	echo `date` ": \"nmcli\" tries to reconnect to WiFi ..." >> $logfile
-#    	echo -e "\033[31m\"nmcli\" tries to reconnect to WiFi ...\033[0m\n" > $terminal_id
+#    	sudo echo -e "\033[31m\"nmcli\" tries to reconnect to WiFi ...\033[0m\n" > $terminal_id
 #	    sleep 3
 #    done
     echo `date` ": Successfully connected to wifi !" >> $logfile
     repeat ping -c 3 www.baidu.com > $terminal_id
 #    while ! ping -c 3 www.baidu.com > $terminal_id; do
 #        echo `date` ": \"ping\" tries to reconnect to the network ..." >> $logfile
-#        echo -e "\033[31m\"ping\" tries to reconnect to the network ...\033[0m\n" > $terminal_id
+#        sudo echo -e "\033[31m\"ping\" tries to reconnect to the network ...\033[0m\n" > $terminal_id
 #	    sleep 3
 #    done
     echo `date` ": Wifi network connected !" >> $logfile
@@ -74,7 +74,7 @@ elif [ "$network_connection_type" = "wired" ]; then
     repeat sudo ip link set up dev $bridge > $terminal_id
 #    while ! sudo ip link set up dev $bridge > $terminal_id; do
 #    	echo `date` ": \"ip link\" tries to re-enable $bridge ..." >> $logfile
-#    	echo -e "\033[31m\"ip link\" tries to re-enable $bridge ...\033[0m\n" > $terminal_id
+#    	sudo echo -e "\033[31m\"ip link\" tries to re-enable $bridge ...\033[0m\n" > $terminal_id
 #	    sleep 3
 #    done
     echo `date` ": $bridge enabled successfully !" >> $logfile
@@ -82,7 +82,7 @@ elif [ "$network_connection_type" = "wired" ]; then
     # connect wired
     #while ! nmcli device wifi connect $ssid password $psk; do
     #	echo `date` ": \"nmcli\" tries to reconnect to WiFi ..." >> $logfile
-    #	echo -e "\033[31m\"nmcli\" tries to reconnect to WiFi ...\033[0m\n" > $terminal_id
+    #	sudo echo -e "\033[31m\"nmcli\" tries to reconnect to WiFi ...\033[0m\n" > $terminal_id
 	#    sleep 3
     #done
 
@@ -90,7 +90,7 @@ elif [ "$network_connection_type" = "wired" ]; then
     repeat ping -c 3 www.baidu.com > $terminal_id
 #    while ! ping -c 3 www.baidu.com > $terminal_id; do
 #        echo `date` ": \"ping\" tries to reconnect to the network ..." >> $logfile
-#        echo -e "\033[31m\"ping\" tries to reconnect to the network ...\033[0m\n" > $terminal_id
+#        sudo echo -e "\033[31m\"ping\" tries to reconnect to the network ...\033[0m\n" > $terminal_id
 #	    sleep 3
 #    done
 
@@ -101,14 +101,14 @@ set -e
 # user shell
 if [ -n "$shell" ]; then
     echo `date` ": Install and configure the $shell for $USER ..." >> $logfile
-    echo "\033[33mInstall and configure the $shell for $USER ...\033[0m" > $terminal_id
+    sudo echo -e "\033[33mInstall and configure the $shell for $USER ...\033[0m" > $terminal_id
     chmod +x $install_path/$shell.sh
     $install_path/$shell.sh  > $terminal_id
 fi
 
 # yay
 echo `date` ": Download and install yay ..." >> $logfile
-echo -e "\033[33mDownload and install yay ...\033[0m" > $terminal_id
+sudo echo -e "\033[33mDownload and install yay ...\033[0m" > $terminal_id
 sudo pacman -S  --noconfirm --needed base-devel git yay  > $terminal_id
 # Speed up makepkg compilation
 sudo sed -i 's/^#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j$(nproc)\"/' /etc/makepkg.conf

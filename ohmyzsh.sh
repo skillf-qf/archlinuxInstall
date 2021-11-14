@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-11-14 04:37:06
+ # @LastEditTime: 2021-11-15 01:27:21
  # @FilePath: \archlinuxInstall\ohmyzsh.sh
 ###
 
@@ -16,7 +16,7 @@ set -euo pipefail
 if [ "$USER" == "root" ]; then
 	install_dir="/archlinuxInstall"
 	pacman -S --noconfirm --needed zsh
-elif [ "$USER" == "$username" ]; then
+else
 	install_dir="$HOME/archlinuxInstall"
 	sudo pacman -S --noconfirm --needed zsh
 fi
