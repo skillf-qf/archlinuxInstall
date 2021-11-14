@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-27 10:30:18
- # @LastEditTime: 2021-11-15 00:51:58
+ # @LastEditTime: 2021-11-15 01:40:24
  # @FilePath: \archlinuxInstall\bspwm.sh
 ###
 
