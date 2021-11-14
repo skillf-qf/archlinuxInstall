@@ -2,13 +2,21 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-13 16:18:58
- # @LastEditTime: 2021-11-14 04:20:25
+ # @LastEditTime: 2021-11-14 22:28:26
  # @FilePath: \archlinuxInstall\function.sh
 ###
 
 # Definitions
 current_dir=`pwd`
-[[ "$current_dir" == "/" ]] && current_dir="/archlinuxInstall"
+
+if [ "$current_dir" == "/" ]; then
+	current_dir="/archlinuxInstall"
+else
+	if [ "$current_dir" != *"archlinuxInstall" ]; then
+		current_dir="$current_dir/archlinuxInstall"
+	fi
+fi
+
 install_dir=$current_dir
 configfile="$install_dir/config/install.conf"
 logfile="$install_dir/archlinuxInstall.log"

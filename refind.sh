@@ -1,7 +1,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-07 17:49:15
- # @LastEditTime: 2021-11-14 03:04:41
+ # @LastEditTime: 2021-11-14 20:43:36
  # @FilePath: \archlinuxInstall\refind.sh
 ###
 
@@ -65,9 +65,9 @@ parameters="initrd=\boot\\$cpu-ucode.img initrd=\boot\initramfs-%v.img"
 parameters_fallback="initrd=\boot\\$cpu-ucode.img initrd=\boot\initramfs-%v-fallback.img"
 
 cat > /boot/refind_linux.conf <<EOF
-"Boot using default options"     "ro root=/dev/$root_disk$partnum rw add_efi_memmap $parameters"
-"Boot using fallback initramfs"     "ro root=/dev/$root_disk$partnum rw add_efi_memmap $parameters_fallback"
-"Boot to terminal"     "ro root=/dev/$root_disk$partnum rw add_efi_memmap $parameters systemd.unit=multi-user.target"
+"Boot using default options"     "root=/dev/$root_disk$partnum rw add_efi_memmap $parameters"
+"Boot using fallback initramfs"     "root=/dev/$root_disk$partnum rw add_efi_memmap $parameters_fallback"
+"Boot to terminal"     "root=/dev/$root_disk$partnum rw add_efi_memmap $parameters systemd.unit=multi-user.target"
 EOF
 
 echo `date` ": Add kernel pass parameters to file refind_linux.conf..." >> $logfile
