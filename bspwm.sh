@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-27 10:30:18
- # @LastEditTime: 2021-11-15 02:22:46
+ # @LastEditTime: 2021-11-15 02:26:44
  # @FilePath: \archlinuxInstall\bspwm.sh
 ###
 
@@ -104,12 +104,10 @@ echo `date` ": The bspwm installation configuration is complete !" >> $logfile
 ## Chinese font | fcitx
 pacman -S --noconfirm fcitx fcitx-configtool wqy-zenhei wqy-bitmapfont wqy-microhei firefox-i18n-zh-cn firefox-i18n-zh-tw
 echo `date` ": Fcitx and Chinese fonts are installed !" >> $logfile
-set +e
 fcitx_target=`sed -n '/fcitx/p' $userhome/.xinitrc`
-if [ -z "$fcitx_target" ]; then
+if [ -z "$fcitx_target" ] && [ -s "$install_dir/config/fcitx/fcitx.conf" ] ; then
 	sed -i "/bspwm/r $install_dir/config/fcitx/fcitx.conf" $userhome/.xinitrc
 	sed -i '/bspwm/d' $userhome/.xinitrc
 	sed -i '/fcitx &/a\exec bspwm' $userhome/.xinitrc
-	echo `date` ": Add FCITx to enable startup !" >> $logfile
+	echo `date` ": Add fcitx to enable startup !" >> $logfile
 fi
-set -e
