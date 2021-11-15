@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-13 16:18:58
- # @LastEditTime: 2021-11-15 02:41:53
+ # @LastEditTime: 2021-11-15 10:13:51
  # @FilePath: \archlinuxInstall\function.sh
 ###
 
@@ -69,6 +69,7 @@ git_clone(){
 # $1 and $2 are remote repositories addresses
 # $3 is the storage path
 #
+	set +e
 	local rep=
 	[[ -d "$3" ]] && rm -rf $3
 	while :
@@ -92,6 +93,7 @@ git_clone(){
 		echo -e "\033[31m\"git clone $2\" failed !\033[0m\n"
 		echo `date` ": \"git clone $2\" failed !" >> $4
 	}
+	set -e
 }
 
 get_disk_part(){
