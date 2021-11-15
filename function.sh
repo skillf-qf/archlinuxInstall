@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-13 16:18:58
- # @LastEditTime: 2021-11-15 10:13:51
+ # @LastEditTime: 2021-11-15 10:15:17
  # @FilePath: \archlinuxInstall\function.sh
 ###
 
@@ -45,11 +45,13 @@ repeat(){
 # function : Run the command continuously until the command is successfully executed
 # $@ : The whole line command
 #
+	set +e
 	while :
 	do
 		$@ && return
 		sleep 3
 	done
+	set -e
 }
 
 replacestr(){
