@@ -25,7 +25,7 @@ cp -r /run/archiso/bootmnt/archlinuxInstall /root
 Of course, if you have Internet access, you can clone the source code directly to the `/root` directory:
 
 ```bash
-pacman -Syyy git
+pacman -Syy git
 git clone https://https://github.com/skillf-qf/archlinuxInstall.git /root/archlinuxInstall
 ```
 

@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-11-14 02:50:59
+ # @LastEditTime: 2021-11-15 15:53:49
  # @FilePath: \archlinuxInstall\install.sh
 ###
 
@@ -146,7 +146,7 @@ echo -e "\033[32m$network_connection_type network connection successful !\033[0m
 
 # Check VMware share folder
 if [ "$virtualmachine" == "VMware" ]; then
-    pacman -Syyy --noconfirm open-vm-tools
+    pacman -Syy --noconfirm open-vm-tools
     if ! vmware-hgfsclient | grep $hostshare > /dev/null; then
         echo -e "\033[031mERROR: The VMware shared folder \"$hostshare\" is not enabled !\033[0m"
         echo `date` ": ERROR: The VMware shared folder \"$hostshare\" is not enabled !" >> $logfile
@@ -157,37 +157,14 @@ fi
 # Update mirrors
 echo `date` ": Gets the latest mirrors list ..." >> $logfile
 echo -e "\033[33mGets the latest mirrors list ...\033[0m\n"
-cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
-echo -e "\n##======================================================" > mirrorlist.temp
 
-repeat reflector --country China --latest 10 --protocol https --sort rate >> mirrorlist.temp
-
-counter=0
-##set +e
-#while ! reflector --country China --latest 10 --protocol https --sort rate >> mirrorlist.temp; do
-##set -e
-#    if [ $counter -lt 10 ];then
-#    	echo `date` ": \"reflector\" tries to reconnect to the network ..." >> $logfile
-#    	echo -e "\033[31m\"reflector\" tries to reconnect to the network ...\033[0m\n"
-#        sleep 3
-#        counter=`expr $counter + 1`
-#    else
-#        echo -e "\033[31mERROR: Network error, please check network and try again !\033[0m"
-#        exit 0
-#    fi
-#done
-
-#reflector --country China --latest 10 --protocol https --sort rate >> mirrorlist.temp
+repeat reflector --country China --latest 20 --protocol https,https --threads 20  --ipv4 --sort rate --save /etc/pacman.d/mirrorlist
 # If the above is not available please uncomment below and comment above as well
 #curl -sSL 'https://www.archlinux.org/mirrorlist/?country=CN&protocol=https&ip_version=4&use_mirror_status=on' | sed '/^## China/d; s/^#Server/Server/' >> mirrorlist.temp
-
-echo -e "##======================================================\n" >> mirrorlist.temp
-sed -i '1r ./mirrorlist.temp' /etc/pacman.d/mirrorlist
-rm mirrorlist.temp
 echo `date` ": The mirrors list is successfully created !" >> $logfile
 echo -e "\033[32mThe mirrors list is successfully created !\033[0m\n"
 
-pacman -Syyy
+pacman -Syy
 
 # Update the system clock
 timedatectl set-ntp true
@@ -262,7 +239,7 @@ if [ -n "$swap" ]; then
 fi
 
 # Install essential packages
-pacstrap /mnt base linux linux-firmware
+pacstrap /mnt base linux linux-firmware reflector
 echo `date` ": Install the base package, Linux kernel, and firmware successfully !" >> $logfile
 
 # Fstab

@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-11-15 02:46:29
+ # @LastEditTime: 2021-11-15 16:19:50
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ###
 
@@ -42,8 +42,8 @@ echo `date` ": Create the hostname file ..." >> $logfile
 echo `date` ": Add matching entries to hosts ..." >> $logfile
 cat >> /etc/hosts <<EOF
 127.0.0.1    localhost
-::1               localhost
-127.0.1.1    $hostname.localdomain	$hostname
+::1          localhost
+127.0.1.1    $hostname.localdomain    $hostname
 EOF
 
 # Microcode
@@ -82,7 +82,7 @@ echo `date` ": Create a user account and set a password !" >> $logfile
 # alsa-utils contains :
 #   alsamixer : provides a more intuitive ncurses based interface for audio device configuration.
 #   amixer :  a shell command to change audio settings,
-pacman -S --noconfirm --needed alsa-utils
+pacman -S --noconfirm --needed alsa-utils pulseaudio
 echo `date` ": Install the sound card driver alsa-utils !" >> $logfile
 
 # GPU open source
@@ -98,7 +98,7 @@ if lspci | grep VGA | grep AMD; then
 fi
 # NVIDIA
 if lspci | grep VGA | grep NVIDIA; then
-    pacman -S --noconfirm --needed nvidia
+    pacman -S --noconfirm --needed nvidia nvidia-utils nvidia-settings
     echo `date` ": Install NVIDIA GPU Open Source Driver \"nvidia\" !" >> $logfile
 fi
 
@@ -113,7 +113,7 @@ EOF
 
 # sudo
 echo `date` ": Install sudo and set sudo permissions to be password-free ..." >> $logfile
-pacman -Syyy --noconfirm --needed sudo
+pacman -Syy --noconfirm --needed sudo
 sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
 sed -i 's/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/' /etc/sudoers
 
@@ -151,7 +151,7 @@ echo -e "\n\n\033[32mAll additional packages have been installed !\033[0m\n"
 
 
 # Touchpad libinput (laptop)
-if [ "$computer_platform" = "laptop" ]; then
+if [ "$computer_platform" == "laptop" ]; then
     echo `date` ": Install and configure the TouchPad ..." >> $logfile
     pacman -S --noconfirm --needed xf86-input-libinput xorg-xinput
     # default configuration from /usr/share/X11/xorg.conf.d/40-libinput.conf
@@ -174,8 +174,12 @@ EndSection
 EOF
     echo `date` ": The TouchPad installation and configuration is complete !" >> $logfile
     fi
+
     #TODO ：Bluetooth（laptop）
-    #pacman -S --noconfirm --needed bluez bluez-utils blueman bluedevil
+    pacman -S --noconfirm --needed bluez bluez-utils blueman pulseaudio-bluetooth
+
+    systemctl enable bluetooth
+
 
 fi
 
