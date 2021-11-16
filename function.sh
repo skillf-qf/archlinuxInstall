@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-13 16:18:58
- # @LastEditTime: 2021-11-15 10:15:17
+ # @LastEditTime: 2021-11-16 10:20:13
  # @FilePath: \archlinuxInstall\function.sh
 ###
 
@@ -18,6 +18,7 @@ else
 fi
 
 install_dir=$current_dir
+config_dir="$install_dir/config/"
 configfile="$install_dir/config/install.conf"
 logfile="$install_dir/archlinuxInstall.log"
 virtualmachine=`awk -F "=" '$1=="virtualmachine" {print $2}' $configfile`

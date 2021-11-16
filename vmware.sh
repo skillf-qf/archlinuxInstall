@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-02 21:20:10
- # @LastEditTime: 2021-11-14 03:04:51
+ # @LastEditTime: 2021-11-16 12:25:01
  # @FilePath: \archlinuxInstall\vmware.sh
 ###
 
@@ -21,9 +21,20 @@ sed -i 's/^MODULES=()/MODULES=(vmw_balloon vmw_pvscsi vsock vmw_vsock_vmci_trans
 mkinitcpio -P
 
 # Open-VM-Tools
+## To enable copy and paste between host and guest "gtkmm3" is required.
 pacman -S --noconfirm open-vm-tools gtkmm3
+
+## Service responsible for the Virtual Machine status report.
 systemctl start vmtoolsd.service
 systemctl enable vmtoolsd.service
+
+##  Tool to enable clipboard sharing (copy/paste) between host and guest.
+cp /etc/X11/xinit/xinitrc /home/$username/.xinitrc
+# Delete the last five lines
+deleteline /home/$username/.xinitrc "twm &"
+echo -e "vmware-user &\n" >> /home/$username/.xinitrc
+
+## Filesystem utility. Enables drag & drop functionality between host and guest through FUSE (Filesystem in Userspace).
 systemctl start vmware-vmblock-fuse.service
 systemctl enable vmware-vmblock-fuse.service
 
@@ -31,9 +42,8 @@ systemctl enable vmware-vmblock-fuse.service
 pacman -S --noconfirm xf86-input-vmmouse xf86-video-vmware mesa
 echo "needs_root_rights=yes" > /etc/X11/Xwrapper.config
 
-# Shared Folders with vmhgfs-fuse utility
+# Utility for mounting "vmhgfs-fuse" shared folders
 mkdir -p /home/$username/$guestshare
-
 sed -i 's/^#user_allow_other/user_allow_other/' /etc/fuse.conf
 cat > /etc/systemd/system/$servicename.service <<EOF
 [Unit]
@@ -52,9 +62,10 @@ ExecStart=/usr/bin/vmhgfs-fuse -o allow_other -o auto_unmount .host:/$hostshare 
 WantedBy=multi-user.target
 EOF
 
+# The automatic mounting service is enabled
 systemctl enable $servicename.service
 
 # Time synchronization
-# Host machine as time source
+## Host machine as time source
 vmware-toolbox-cmd timesync enable
 hwclock --hctosys --localtime

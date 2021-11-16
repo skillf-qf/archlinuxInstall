@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-27 10:30:18
- # @LastEditTime: 2021-11-15 16:40:21
+ # @LastEditTime: 2021-11-16 16:57:45
  # @FilePath: \archlinuxInstall\bspwm.sh
 ###
 
@@ -21,28 +21,28 @@ pacman -S --noconfirm xorg xorg-xinit bspwm sxhkd sudo wget ttf-fira-code pkg-co
 								make gcc picom feh zsh ranger git
 echo `date` ": xorg xorg-xinit bspwm sxhkd sudo wget ttf-fira-code pkg-config make gcc picom feh zsh ranger git successfully installed !" >> $logfile
 
-# bspwm config file
-if [ -s "$install_dir/config/bspwm/bspwmrc"  ]; then
-	install -Dm755 $install_dir/config/bspwm/bspwmrc $userhome/.config/bspwm/bspwmrc
+# Bspwm config file
+if [ -s "$config_dir/bspwm/bspwmrc"  ]; then
+	install -Dm755 $config_dir/bspwm/bspwmrc $userhome/.config/bspwm/bspwmrc
 else
 	install -Dm755 /usr/share/doc/bspwm/examples/bspwmrc $userhome/.config/bspwm/bspwmrc
 fi
-# sxhkd config file
-if [ -s "$install_dir/config/bspwm/sxhkdrc"  ]; then
-	install -Dm755 $install_dir/config/bspwm/sxhkdrc $userhome/.config/sxhkd/sxhkdrc
+# Sxhkd config file
+if [ -s "$config_dir/sxhkd/sxhkdrc"  ]; then
+	install -Dm755 $config_dir/bspwm/sxhkdrc $userhome/.config/sxhkd/sxhkdrc
 else
 	install -Dm644 /usr/share/doc/bspwm/examples/sxhkdrc $userhome/.config/sxhkd/sxhkdrc
 fi
 echo `date` ": Copy the bspwmrc and sxhkdrc configuration files ..." >> $logfile
 
-# install teiminal : default  -> st
+# Terminal : default -> st
 echo `date` ": Installation terminal $terminal ..." >> $logfile
 
 [[ ! -d "$download" ]] && mkdir -p "$download"
 
 if [ "$terminal" = "st" ] || [ -z "$terminal" ] || ! pacman -Fy $terminal; then
 
-	# st terminal
+	## st terminal
 	current_dir=`pwd`
 	git_clone https://github.com/skillf-qf/st.git https://gitee.com/skillf/st.git $download/st $logfile
 	cd $download/st
@@ -51,16 +51,16 @@ if [ "$terminal" = "st" ] || [ -z "$terminal" ] || ! pacman -Fy $terminal; then
 	replacestr $userhome/.config/sxhkd/sxhkdrc st
 else
 	if  pacman -S --noconfirm --needed $terminal; then
-		# set terminal
+		## Set terminal
 		replacestr $userhome/.config/sxhkd/sxhkdrc "$terminal"
 	fi
 fi
 echo `date` ": Installation of terminal $terminal was successful !" >> $logfile
 
-# start startx
+# Startup startx
 echo `date` ": Configure the user to automatically start startx after successful login ..." >> $logfile
-if [ -s "$install_dir/config/bash/.bash_profile"  ]; then
-	cp $install_dir/config/bash/.bash_profile $userhome/
+if [ -s "$config_dir/bash/.bash_profile"  ]; then
+	cp $config_dir/bash/.bash_profile $userhome/
 else
 	cat >> $userhome/.bash_profile <<EOF
 	if systemctl -q is-active graphical.target && [[ ! $DISPLAY && $XDG_VTNR -eq 1 ]]; then
@@ -69,14 +69,18 @@ else
 EOF
 fi
 
-# start bspwm
+# Startup bspwm
 echo `date` ": Run bspwm directly after configuring startx to boot ..." >> $logfile
-cp /etc/X11/xinit/xinitrc $userhome/.xinitrc
-# Delete the last five lines
-deleteline $userhome/.xinitrc "twm &"
-echo -e "\nexec bspwm\n" >> $userhome/.xinitrc
+if [ ! -s "$userhome/.xinitrc" ]; then
+	cp /etc/X11/xinit/xinitrc $userhome/.xinitrc
+	# Delete the last five lines
+	deleteline $userhome/.xinitrc "twm &"
+	echo -e "exec bspwm\n" >> $userhome/.xinitrc
+else
+	echo -e "exec bspwm\n" >> $userhome/.xinitrc
+fi
 
-# autologin
+# Autologin
 echo `date` ": Configure the user to automatically log in the account without password ..." >> $logfile
 rm -rf /etc/systemd/system/getty@tty1.service.d
 mkdir -p /etc/systemd/system/getty@tty1.service.d
@@ -88,25 +92,43 @@ ExecStart=
 ExecStart=-/usr/bin/agetty --autologin $username --noclear %I \$TERM
 EOF
 
-#  Wallpaper
-echo `date` ": Copy the wallpaper to $userhome/.picture" >> $logfile
-[[ ! -d "$userhome/.picture" ]] && mkdir -p $userhome/.picture
+# Background
+echo `date` ": Copy the background to $userhome/.config/background/" >> $logfile
+[[ ! -d "$userhome/.config/background" ]] && mkdir -p $userhome/.config/background
 
-if [ -s "$install_dir/wallpaper/wallpaper.jpg"  ]; then
-	cp $install_dir/wallpaper/wallpaper.jpg $userhome/.picture
+if [ -s "$config_dir/background/background.jpg" ]; then
+	cp $config_dir/background/background.jpg $userhome/.config/background
+	feh_target=`sed -n '/feh --bg-scale/p' $userhome/.config/bspwm/bspwmrc`
+	if [ -z "$feh_target" ]; then
+		sed -i '/pgrep -x sxhkd/a\feh --bg-scale ~/.config/background/background.jpg' $userhome/.config/bspwm/bspwmrc
+	fi
 fi
 
-echo `date` ": The bspwm installation configuration is complete !" >> $logfile
+# Picom config file
+[[ ! -d "$userhome/.config/picom" ]] && mkdir -p $userhome/.config/picom
+
+if [ -s "$config_dir/picom/picom.conf" ]; then
+	cp $config_dir/picom/picom.conf $userhome/.config/picom/picom.conf
+else
+	cp /etc/xdg/picom.conf $userhome/.config/picom/picom.conf
+fi
+picom_target=`sed -n '/picom -b/p' $userhome/.config/bspwm/bspwmrc`
+if [ -z "$picom_target" ]; then
+	sed -i '/pgrep -x sxhkd/a\picom -b --config ~/.config/picom/picom.conf' $userhome/.config/bspwm/bspwmrc
+fi
+
 
 # Chinese font | fcitx
 pacman -S --noconfirm fcitx fcitx-configtool wqy-zenhei wqy-bitmapfont wqy-microhei firefox-i18n-zh-cn firefox-i18n-zh-tw
 echo `date` ": Fcitx and Chinese fonts are installed !" >> $logfile
 fcitx_target=`sed -n '/fcitx/p' $userhome/.xinitrc`
-if [ -z "$fcitx_target" ] && [ -s "$install_dir/config/fcitx/fcitx.conf" ] ; then
-	sed -i "/bspwm/r $install_dir/config/fcitx/fcitx.conf" $userhome/.xinitrc
+if [ -z "$fcitx_target" ] && [ -s "$config_dir/fcitx/fcitx.conf" ] ; then
+	sed -i "/bspwm/r $config_dir/fcitx/fcitx.conf" $userhome/.xinitrc
 	sed -i '/bspwm/d' $userhome/.xinitrc
-	sed -i '/fcitx &/a\exec bspwm' $userhome/.xinitrc
+	sed -i '/sleep 2/a\exec bspwm' $userhome/.xinitrc
 	echo `date` ": Add fcitx to enable startup !" >> $logfile
 fi
 
 # dmenu
+
+echo `date` ": The bspwm installation configuration is complete !" >> $logfile

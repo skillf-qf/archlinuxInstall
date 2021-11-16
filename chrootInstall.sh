@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-11-15 16:19:50
+ # @LastEditTime: 2021-11-16 12:23:07
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ###
 
@@ -52,16 +52,6 @@ EOF
 pacman -S --noconfirm --needed $cpu-ucode
 echo `date` ": $cpu Microcode installed successfully !" >> $logfile
 
-# Enable the VM shared folder
-if [ -n "$virtualmachine" ]; then
-    echo `date` ": Enable $virtualmachine shared folders ..." >> $logfile
-    echo -e "\033[33Enable $virtualmachine shared folders ...\033[0m\n"
-    chmod +x $install_dir/$virtualmachine.sh
-    $install_dir/$virtualmachine.sh
-    echo `date` ": The $virtualmachine shared folder is enabled successfully !" >> $logfile
-    echo -e "\033[32mThe $virtualmachine shared folder is enabled successfully !\033[0m\n"
-fi
-
 # Root password
 echo root:$rootpasswd | chpasswd
 echo `date` ": Set the password for the root account !" >> $logfile
@@ -72,10 +62,20 @@ if ls /sys/firmware/efi/efivars > /dev/null; then bootloader="refind"; fi
 chmod +x $install_dir/$bootloader.sh
 $install_dir/$bootloader.sh
 
-# Adduser
+# Add user
 useradd -m -g users -G wheel -s /bin/bash $username
 echo $username:$userpasswd | chpasswd
 echo `date` ": Create a user account and set a password !" >> $logfile
+
+# Enable the VM shared folder
+if [ -n "$virtualmachine" ]; then
+    echo `date` ": Enable $virtualmachine shared folders ..." >> $logfile
+    echo -e "\033[33Enable $virtualmachine shared folders ...\033[0m\n"
+    chmod +x $install_dir/$virtualmachine.sh
+    $install_dir/$virtualmachine.sh
+    echo `date` ": The $virtualmachine shared folder is enabled successfully !" >> $logfile
+    echo -e "\033[32mThe $virtualmachine shared folder is enabled successfully !\033[0m\n"
+fi
 
 # ALSA
 # ALSA is a set of built-in Linux kernel modules. Therefore, manual installation is not necessary.
@@ -126,7 +126,7 @@ systemctl enable NetworkManager
 systemctl enable dhcpcd
 systemctl disable NetworkManager-wait-online
 
-# desktop
+# Desktop
 if [ -n "$desktop" ]; then
     echo `date` ": Start the installation and configuration of $desktop ..." >> $logfile
     chmod +x $install_dir/$desktop.sh
@@ -136,7 +136,7 @@ else
     echo `date` ": The archLinux minimal system installation is complete !" >> $logfile
 fi
 
-# other software
+# Other software
 echo `date` ": Start installing additional packages..." >> $logfile
 echo -e "\033[33mStart installing additional packages...\033[0m\n"
 pacman -Fy

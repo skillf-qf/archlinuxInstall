@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-11-15 01:38:12
+ # @LastEditTime: 2021-11-16 10:28:56
  # @FilePath: \archlinuxInstall\bootrun.sh
 ###
 
@@ -16,9 +16,9 @@ set -euo pipefail
 systemctl --user import-environment
 sleep 5
 
-install_path="$HOME/archlinuxInstall"
+install_dir="$HOME/archlinuxInstall"
 download="$HOME/Downloads"
-source $install_path/function.sh
+source $install_dir/function.sh
 
 
 # Print the string to the new terminal
@@ -102,8 +102,8 @@ set -e
 if [ -n "$shell" ]; then
     echo `date` ": Install and configure the $shell for $USER ..." >> $logfile
     sudo echo -e "\033[33mInstall and configure the $shell for $USER ...\033[0m" > $terminal_id
-    chmod +x $install_path/$shell.sh
-    $install_path/$shell.sh  > $terminal_id
+    chmod +x $install_dir/$shell.sh
+    $install_dir/$shell.sh  > $terminal_id
 fi
 
 # yay
