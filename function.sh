@@ -19,7 +19,7 @@ fi
 
 install_dir=$current_dir
 config_dir="$install_dir/config"
-configfile="$install_dir/config/install.conf"
+configfile="$config_dir/install.conf"
 logfile="$install_dir/archlinuxInstall.log"
 virtualmachine=`awk -F "=" '$1=="virtualmachine" {print $2}' $configfile`
 computer_platform=`awk -F "=" '$1=="computer_platform" {print $2}' $configfile`
