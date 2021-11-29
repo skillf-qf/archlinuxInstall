@@ -21,7 +21,6 @@ betterlockscreen_dir="$download/betterlockscreen"
 polybar_dir="$download/polybar"
 
 
-
 echo `date` ": Install the prerequisite software required for BSPWM Tile Window Manager ..." >> $logfile
 pacman -S --noconfirm xorg xorg-xinit bspwm sxhkd sudo wget ttf-fira-code pkg-config \
 								make gcc picom feh zsh ranger git
@@ -35,7 +34,7 @@ else
 fi
 # Sxhkd config file
 if [ -s "$config_dir/sxhkd/sxhkdrc"  ]; then
-	install -Dm755 $config_dir/bspwm/sxhkdrc $userhome/.config/sxhkd/sxhkdrc
+	install -Dm755 $config_dir/sxhkd/sxhkdrc $userhome/.config/sxhkd/sxhkdrc
 else
 	install -Dm644 /usr/share/doc/bspwm/examples/sxhkdrc $userhome/.config/sxhkd/sxhkdrc
 fi

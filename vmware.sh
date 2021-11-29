@@ -22,7 +22,7 @@ mkinitcpio -P
 
 # Open-VM-Tools
 ## To enable copy and paste between host and guest "gtkmm3" is required.
-pacman -S --noconfirm open-vm-tools gtkmm3
+pacman -S --noconfirm open-vm-tools gtkmm3 xorg-xinit
 
 ## Service responsible for the Virtual Machine status report.
 systemctl start vmtoolsd.service

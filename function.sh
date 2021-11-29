@@ -18,7 +18,7 @@ else
 fi
 
 install_dir=$current_dir
-config_dir="$install_dir/config/"
+config_dir="$install_dir/config"
 configfile="$install_dir/config/install.conf"
 logfile="$install_dir/archlinuxInstall.log"
 virtualmachine=`awk -F "=" '$1=="virtualmachine" {print $2}' $configfile`

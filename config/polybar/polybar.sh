@@ -44,6 +44,7 @@ echo `date` ": Copy the polybar config to $userhome/.config/polybar.." >> $logfi
 
 if [ -s "$config_dir/polybar/launch.sh" ]; then
 	cp $config_dir/polybar/launch.sh $userhome/.config/polybar/
+	chmod +x $userhome/.config/polybar/launch.sh
 	launch_target=`sed -n '/launch.sh/p' $userhome/.config/bspwm/bspwmrc`
 	if [ -z "$launch_target" ]; then
 		sed -i '/pgrep -x sxhkd/a\$HOME/.config/polybar/launch.sh' $userhome/.config/bspwm/bspwmrc
