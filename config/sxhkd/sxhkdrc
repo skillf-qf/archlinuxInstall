@@ -10,6 +10,10 @@ super + Return
 super + b
 	chromium
 
+# lock screen
+super + l
+	betterlockscreen -l dimblur
+
 # program launcher
 super + @space
 	rofi -theme Arc-Dark -show run
@@ -73,8 +77,8 @@ super + c
   bspc node -f next.local.!hidden.window
 
 super + shift + c
-  bspc node -f next.local.!hidden.window; \ 
-  bspc node -t fullscreen 
+  bspc node -f next.local.!hidden.window; \
+  bspc node -t fullscreen
 	#bspc node -f {next,prev}.local.!hidden.window
 
 # focus the next/previous desktop in the current monitor
@@ -86,7 +90,7 @@ super + Tab
 	bspc desktop -f last
 
 # focus & swap last node: super+`
-super + grave 
+super + grave
 	bspc node -f last.window; \
   bspc node -t fullscreen
 

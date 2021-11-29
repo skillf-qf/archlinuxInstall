@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-11-15 15:53:49
+ # @LastEditTime: 2021-11-29 09:52:56
  # @FilePath: \archlinuxInstall\install.sh
 ###
 
@@ -117,7 +117,7 @@ EOF
 
     rfkill unblock wifi
     ip link set dev wlan0 up
-    #  check wpa_supplicant PID
+    # check wpa_supplicant PID
     set +e
     ps -aux|grep wpa_supplicant
     killall wpa_supplicant
@@ -192,8 +192,8 @@ else
 fi
 
 # /boot
-# Note that With UEFI booting, Windows can only be installed to a GPT disk.
-# Note that With BIOS booting, Windows can only be installed to a MBR disk.
+## Note that With UEFI booting, Windows can only be installed to a GPT disk.
+## Note that With BIOS booting, Windows can only be installed to a MBR disk.
 if ls /sys/firmware/efi/efivars > /dev/null; then
     echo `date` ": This system will boot using UEFI..." >> $logfile
     echo `date` ": Create a mount point /mnt/boot/efi for ESP !" >> $logfile

@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-13 16:18:58
- # @LastEditTime: 2021-11-16 10:20:13
+ # @LastEditTime: 2021-11-29 11:28:18
  # @FilePath: \archlinuxInstall\function.sh
 ###
 
@@ -60,6 +60,7 @@ replacestr(){
 # $1 : filename
 # S2 : string for replace
 #
+	local line=
 	line=`sed -n "/super + Return/=" $1`
 	line=`expr $line + 1`
 	#echo -e "line=$line\n"

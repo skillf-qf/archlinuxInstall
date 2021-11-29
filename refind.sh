@@ -1,7 +1,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-07 17:49:15
- # @LastEditTime: 2021-11-14 20:43:36
+ # @LastEditTime: 2021-11-29 13:43:41
  # @FilePath: \archlinuxInstall\refind.sh
 ###
 
@@ -76,7 +76,7 @@ echo `date` ": Add kernel pass parameters to file refind_linux.conf..." >> $logf
 mkdir -p $esp/EFI/refind/themes
 echo `date` ": Clone the rEFInd theme file: https://github.com/kgoettler/ursamajor-rEFInd.git..." >> $logfile
 
-git_clone https://github.com/kgoettler/ursamajor-rEFInd.git https://gitee.com/skillf/ursamajor-rEFInd \
+git_clone https://github.com/kgoettler/ursamajor-rEFInd.git https://gitee.com/skillf/ursamajor-rEFInd.git \
 	$esp/EFI/refind/themes/ursamajor-rEFInd $logfile
 
 echo `date` ": Use the rEFInd theme ursamajor-rEFInd..." >> $logfile

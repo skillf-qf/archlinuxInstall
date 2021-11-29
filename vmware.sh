@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-02 21:20:10
- # @LastEditTime: 2021-11-16 12:25:01
+ # @LastEditTime: 2021-11-29 09:48:41
  # @FilePath: \archlinuxInstall\vmware.sh
 ###
 
@@ -30,7 +30,7 @@ systemctl enable vmtoolsd.service
 
 ##  Tool to enable clipboard sharing (copy/paste) between host and guest.
 cp /etc/X11/xinit/xinitrc /home/$username/.xinitrc
-# Delete the last five lines
+### Delete the last five lines
 deleteline /home/$username/.xinitrc "twm &"
 echo -e "vmware-user &\n" >> /home/$username/.xinitrc
 

@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-11-16 12:23:07
+ # @LastEditTime: 2021-11-29 09:59:16
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ###
 
@@ -68,7 +68,7 @@ echo $username:$userpasswd | chpasswd
 echo `date` ": Create a user account and set a password !" >> $logfile
 
 # Enable the VM shared folder
-if [ -n "$virtualmachine" ]; then
+if [ -s "$install_dir/$virtualmachine.sh" ]; then
     echo `date` ": Enable $virtualmachine shared folders ..." >> $logfile
     echo -e "\033[33Enable $virtualmachine shared folders ...\033[0m\n"
     chmod +x $install_dir/$virtualmachine.sh
@@ -102,7 +102,7 @@ if lspci | grep VGA | grep NVIDIA; then
     echo `date` ": Install NVIDIA GPU Open Source Driver \"nvidia\" !" >> $logfile
 fi
 
- # The Chinese Arch Linux Community Warehouse
+# The Chinese Arch Linux Community Warehouse
 echo `date` ": Add Arch Linux community repository in China !" >> $logfile
 cat >> /etc/pacman.conf <<EOF
 [archlinuxcn]
@@ -127,7 +127,7 @@ systemctl enable dhcpcd
 systemctl disable NetworkManager-wait-online
 
 # Desktop
-if [ -n "$desktop" ]; then
+if [ -s "$install_dir/$desktop.sh" ]; then
     echo `date` ": Start the installation and configuration of $desktop ..." >> $logfile
     chmod +x $install_dir/$desktop.sh
     $install_dir/$desktop.sh
@@ -148,7 +148,6 @@ for package in $software; do
 done
 echo `date` ": All additional packages have been installed !" >> $logfile
 echo -e "\n\n\033[32mAll additional packages have been installed !\033[0m\n"
-
 
 # Touchpad libinput (laptop)
 if [ "$computer_platform" == "laptop" ]; then
@@ -177,9 +176,7 @@ EOF
 
     #TODO ：Bluetooth（laptop）
     pacman -S --noconfirm --needed bluez bluez-utils blueman pulseaudio-bluetooth
-
     systemctl enable bluetooth
-
 
 fi
 
@@ -199,8 +196,8 @@ ln -s /home/$username/.config/systemd/user/bootrun.service /home/$username/.conf
 
 # Import DISPLAY variable into systemd
 # Solution to open the terminal error : "can't open display"
-# step 1. Add the DISPLAY variable file to all user services folders
-# step 2. Import the DISPLAY variable into systemd in the startup script (eg: bootrun.sh) and open the terminal with a delay of a few seconds
+## step 1. Add the DISPLAY variable file to all user services folders
+## step 2. Import the DISPLAY variable into systemd in the startup script (eg: bootrun.sh) and open the terminal with a delay of a few seconds
 mkdir -p /home/$username/.config/environment.d
 echo "DISPLAY=:0" > /home/$username/.config/environment.d/display.conf
 
