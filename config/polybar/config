@@ -51,15 +51,16 @@ padding-right = 2
 module-margin-left = 1
 module-margin-right = 1
 
+# Run the "fc-list" command to list all fonts
 font-0 = fixed:pixelsize=10;1
 font-1 = unifont:fontformat=truetype:size=8:antialias=false;0
 font-2 = siji:pixelsize=10;1
 font-3 = Font Awesome 5 Free:pixelsize=12;2
 font-4 = Font Awesome 5 Free Solid:pixelsize=12;2
-font-5 = Font Awesome 5 Free Brands:pixelsize=12;2
+font-5 = Font Awesome 5 Brands:pixelsize=12;2
 
 modules-left = bspwm
-modules-center = xwindow pacman-updates 
+modules-center = xwindow pacman-updates
 #modules-right = filesystem xbacklight alsa pulseaudio xkeyboard memory cpu wlan eth battery temperature date powermenu
 modules-right = filesystem pulseaudio xkeyboard memory cpu eth date powermenu
 
@@ -85,8 +86,8 @@ cursor-scroll = ns-resize
 
 [module/pacman-updates]
 type = custom/script
-#exec = checkupdates | wc -l 
-exec = pacman -Qu | wc -l 
+#exec = checkupdates | wc -l
+exec = pacman -Qu | wc -l
 interval = 1000
 label = Updates: %output%
 format-foreground = ${colors.foreground}
@@ -126,8 +127,8 @@ label-unmounted-foreground = ${colors.foreground-alt}
 [module/bspwm]
 type = internal/bspwm
 
-ws-icon-0 = I; 
-ws-icon-1 = II; 
+ws-icon-0 = I;
+ws-icon-1 = II;
 
 label-focused = %icon%
 #label-focused-foreground = #ffffff
