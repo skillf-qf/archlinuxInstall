@@ -11,7 +11,7 @@ super + b
 	chromium
 
 # lock screen
-super + l
+super + x
 	betterlockscreen -l dimblur
 
 # program launcher

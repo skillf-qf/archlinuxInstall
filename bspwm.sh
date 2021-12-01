@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-27 10:30:18
- # @LastEditTime: 2021-11-29 15:09:03
+ # @LastEditTime: 2021-12-01 15:32:40
  # @FilePath: \archlinuxInstall\bspwm.sh
 ###
 
@@ -183,7 +183,7 @@ betterlockscreen_target=`sed -n '/betterlockscreen/p' $userhome/.config/sxhkd/sx
 if [ -z "$betterlockscreen_target" ]; then
 	sed -i '/# program launcher/i\# lock screen' $userhome/.config/sxhkd/sxhkdrc
 	sed -i '/# lock screen/a\super + l' $userhome/.config/sxhkd/sxhkdrc
-	sed -i '/super + l/a\        betterlockscreen -l dimblur' $userhome/.config/sxhkd/sxhkdrc
+	sed -i '/super + x/a\        betterlockscreen -l dimblur' $userhome/.config/sxhkd/sxhkdrc
 	echo `date` ": Add the betterlockscreen hotkey in sxhkdrc.." >> $logfile
 fi
 cd $current_dir
