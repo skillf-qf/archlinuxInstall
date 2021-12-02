@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-11-29 09:59:16
+ # @LastEditTime: 2021-12-02 15:21:59
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ###
 
@@ -103,17 +103,20 @@ if lspci | grep VGA | grep NVIDIA; then
 fi
 
 # The Chinese Arch Linux Community Warehouse
-echo `date` ": Add Arch Linux community repository in China !" >> $logfile
+## Tsinghua University open source software mirror site
+echo `date` ": Add tsinghua University open source software mirror site address..." >> $logfile
 cat >> /etc/pacman.conf <<EOF
 [archlinuxcn]
 SigLevel = Optional TrustAll
 # Tsinghua University
 Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/\$arch
 EOF
+echo `date` ": Import the GPG key..." >> $logfile
+pacman -Syy --noconfirm archlinuxcn-keyring
 
 # sudo
 echo `date` ": Install sudo and set sudo permissions to be password-free ..." >> $logfile
-pacman -Syy --noconfirm --needed sudo
+pacman -S --noconfirm --needed sudo
 sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
 sed -i 's/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/' /etc/sudoers
 
