@@ -1,9 +1,10 @@
 #! /bin/sh
 
 pgrep -x sxhkd > /dev/null || sxhkd &
-$HOME/.config/polybar/launch.sh
+~/.config/polybar/launch.sh
 picom -b --config ~/.config/picom/picom.conf
 feh --bg-scale ~/.config/background/background.jpg
+fcitx5 -d
 
 # When run without any option,
 ## "xrandr" shows the names of different outputs available on the system (VGA-1, HDMI-1, etc.)

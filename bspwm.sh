@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-27 10:30:18
- # @LastEditTime: 2021-12-01 15:32:40
+ # @LastEditTime: 2021-12-03 16:27:09
  # @FilePath: \archlinuxInstall\bspwm.sh
 ###
 
@@ -127,14 +127,18 @@ if [ -z "$picom_target" ]; then
 fi
 echo `date` ": Make the wallpaper transparent by enabling picom in the bspwmrc file  ..." >> $logfile
 
-# Chinese font | fcitx
-pacman -S --noconfirm fcitx fcitx-configtool wqy-zenhei wqy-bitmapfont wqy-microhei firefox-i18n-zh-cn firefox-i18n-zh-tw
+# Chinese font | fcitx5
+pacman -S --noconfirm fcitx5-im fcitx5-chinese-addons fcitx5-nord fcitx5-pinyin-zhwiki fcitx5-pinyin-moegirl \
+						wqy-zenhei wqy-bitmapfont wqy-microhei firefox-i18n-zh-cn firefox-i18n-zh-tw
 echo `date` ": Fcitx and Chinese fonts are installed !" >> $logfile
-fcitx_target=`sed -n '/fcitx/p' $userhome/.xinitrc`
-if [ -z "$fcitx_target" ] && [ -s "$config_dir/fcitx/fcitx.conf" ] ; then
-	line=`sed -n "/bspwm/=" $userhome/.xinitrc`
-	line=`expr $line - 1`
-	sed -i "$line r $config_dir/fcitx/fcitx.conf" $userhome/.xinitrc
+rm -rf $userhome/.pam_environment
+cp $config_dir/fcitx/fcitx.conf $userhome/.pam_environment
+[[ -d "$userhome/.config/fcitx5" ]] && rm -rf $userhome/.config/fcitx5
+cp -r $config_dir/fcitx/fcitx5 $userhome/.config
+
+fcitx_target=`sed -n '/fcitx/p' $userhome/.config/bspwm/bspwmrc`
+if [ -z "$fcitx_target" ]; then
+	sed -i '/pgrep -x sxhkd/a\fcitx5 -d' $userhome/.config/bspwm/bspwmrc
 	echo `date` ": Add fcitx to enable startup !" >> $logfile
 fi
 
