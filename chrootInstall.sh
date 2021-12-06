@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-12-02 15:21:59
+ # @LastEditTime: 2021-12-06 00:14:54
  # @FilePath: \archlinuxInstall\chrootInstall.sh
 ###
 
@@ -209,7 +209,7 @@ echo `date` ": Copy the installation script to the /home/$username$install_dir .
 rm -rf /home/$username/archlinuxInstall
 cp -r $install_dir /home/$username/archlinuxInstall
 
-# Change the file user permissions in the user's home directory
+# Change the owner permission of a user's home directory
 echo `date` ": Change the file \"$username:users\" permissions in the user's home directory ..." >> $logfile
 chown -R $username:users /home/$username
 # Delete install directory

@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-11-29 09:52:56
+ # @LastEditTime: 2021-12-06 14:57:17
  # @FilePath: \archlinuxInstall\install.sh
 ###
 
@@ -17,7 +17,7 @@ set -euo pipefail
 setfont /usr/share/kbd/consolefonts/LatGrkCyr-12x22.psfu.gz
 
 source ./function.sh
-
+# Non-empty variables to check
 var_list="\
         computer_platform network_connection_type \
         hostname username userpasswd rootpasswd \

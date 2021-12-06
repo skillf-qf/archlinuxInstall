@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-27 10:30:18
- # @LastEditTime: 2021-12-03 16:27:09
+ # @LastEditTime: 2021-12-04 09:34:21
  # @FilePath: \archlinuxInstall\bspwm.sh
 ###
 
@@ -19,7 +19,7 @@ st_dir="$download/st"
 ImageMagick_dir="$download/ImageMagick"
 betterlockscreen_dir="$download/betterlockscreen"
 polybar_dir="$download/polybar"
-
+startup_sh="$userhome/.config/startup/startup.sh"
 
 echo `date` ": Install the prerequisite software required for BSPWM Tile Window Manager ..." >> $logfile
 pacman -S --noconfirm xorg xorg-xinit bspwm sxhkd sudo wget ttf-fira-code pkg-config \
@@ -76,13 +76,14 @@ fi
 
 # Startup bspwm
 echo `date` ": Run bspwm directly after configuring startx to boot ..." >> $logfile
+
 if [ ! -s "$userhome/.xinitrc" ]; then
 	cp /etc/X11/xinit/xinitrc $userhome/.xinitrc
 	## Delete the last five lines
 	deleteline $userhome/.xinitrc "twm &"
-	echo -e "exec bspwm\n" >> $userhome/.xinitrc
+	echo -e 'exec bspwm\n' >> $userhome/.xinitrc
 else
-	echo -e "exec bspwm\n" >> $userhome/.xinitrc
+	echo -e 'exec bspwm\n' >> $userhome/.xinitrc
 fi
 
 # Autologin
@@ -100,15 +101,8 @@ EOF
 # Background
 echo `date` ": Copy the background to $userhome/.config/background/" >> $logfile
 [[ ! -d "$userhome/.config/background" ]] && mkdir -p $userhome/.config/background
-
-if [ -s "$config_dir/background/background.jpg" ]; then
-	cp $config_dir/background/background.jpg $userhome/.config/background
-	feh_target=`sed -n '/feh --bg-scale/p' $userhome/.config/bspwm/bspwmrc`
-	if [ -z "$feh_target" ]; then
-		sed -i '/pgrep -x sxhkd/a\feh --bg-scale ~/.config/background/background.jpg' $userhome/.config/bspwm/bspwmrc
-	fi
-	echo `date` ": Enable feh to set the wallpaper..." >> $logfile
-fi
+cp $config_dir/background/background.jpg $userhome/.config/background
+add_startup 'feh --bg-scale' 'feh --bg-scale ~/.config/background/background.jpg'
 
 # Picom config file
 [[ ! -d "$userhome/.config/picom" ]] && mkdir -p $userhome/.config/picom
@@ -120,12 +114,7 @@ else
 	cp /etc/xdg/picom.conf $userhome/.config/picom/picom.conf
 fi
 echo `date` ": Copy the picom.conf to $userhome/.config/picom .." >> $logfile
-
-picom_target=`sed -n '/picom -b/p' $userhome/.config/bspwm/bspwmrc`
-if [ -z "$picom_target" ]; then
-	sed -i '/pgrep -x sxhkd/a\picom -b --config ~/.config/picom/picom.conf' $userhome/.config/bspwm/bspwmrc
-fi
-echo `date` ": Make the wallpaper transparent by enabling picom in the bspwmrc file  ..." >> $logfile
+add_startup 'picom' 'picom -b --config ~/.config/picom/picom.conf'
 
 # Chinese font | fcitx5
 pacman -S --noconfirm fcitx5-im fcitx5-chinese-addons fcitx5-nord fcitx5-pinyin-zhwiki fcitx5-pinyin-moegirl \
@@ -135,12 +124,7 @@ rm -rf $userhome/.pam_environment
 cp $config_dir/fcitx/fcitx.conf $userhome/.pam_environment
 [[ -d "$userhome/.config/fcitx5" ]] && rm -rf $userhome/.config/fcitx5
 cp -r $config_dir/fcitx/fcitx5 $userhome/.config
-
-fcitx_target=`sed -n '/fcitx/p' $userhome/.config/bspwm/bspwmrc`
-if [ -z "$fcitx_target" ]; then
-	sed -i '/pgrep -x sxhkd/a\fcitx5 -d' $userhome/.config/bspwm/bspwmrc
-	echo `date` ": Add fcitx to enable startup !" >> $logfile
-fi
+add_startup 'fcitx5' 'fcitx5 -d'
 
 # The status bar
 ## Polybar

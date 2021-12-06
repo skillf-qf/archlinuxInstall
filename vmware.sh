@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-02 21:20:10
- # @LastEditTime: 2021-11-29 09:48:41
+ # @LastEditTime: 2021-12-06 13:48:55
  # @FilePath: \archlinuxInstall\vmware.sh
 ###
 
@@ -32,7 +32,7 @@ systemctl enable vmtoolsd.service
 cp /etc/X11/xinit/xinitrc /home/$username/.xinitrc
 ### Delete the last five lines
 deleteline /home/$username/.xinitrc "twm &"
-echo -e "vmware-user &\n" >> /home/$username/.xinitrc
+add_startup 'vmware-user' 'vmware-user &'
 
 ## Filesystem utility. Enables drag & drop functionality between host and guest through FUSE (Filesystem in Userspace).
 systemctl start vmware-vmblock-fuse.service
@@ -44,6 +44,8 @@ echo "needs_root_rights=yes" > /etc/X11/Xwrapper.config
 
 # Utility for mounting "vmhgfs-fuse" shared folders
 mkdir -p /home/$username/$guestshare
+# Change the owner permission of a shared folder
+chown -R $username:users /home/$username/$guestshare
 sed -i 's/^#user_allow_other/user_allow_other/' /etc/fuse.conf
 cat > /etc/systemd/system/$servicename.service <<EOF
 [Unit]
@@ -69,3 +71,6 @@ systemctl enable $servicename.service
 ## Host machine as time source
 vmware-toolbox-cmd timesync enable
 hwclock --hctosys --localtime
+
+# Virtunal resolution
+add_startup 'xrandr --output' 'xrandr --output Virtual1 --mode 1920x1080 --rate 60'

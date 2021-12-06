@@ -1,7 +1,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-07 17:49:15
- # @LastEditTime: 2021-11-29 15:02:40
+ # @LastEditTime: 2021-12-06 15:37:26
  # @FilePath: \archlinuxInstall\config\polybar\polybar.sh
 ###
 
@@ -25,9 +25,9 @@ chmod +x $siji_dir/install.sh
 $siji_dir/install.sh
 echo `date` ": Siji was successfully installed..." >> $logfile
 
-sed -i "/bspwm/i xset +fp $userhome\/.local\/share\/fonts" $userhome/.xinitrc
-sed -i '/bspwm/i xset fp rehash' $userhome/.xinitrc
-echo `date` ":  Add the following snippet in $userhome/.xinitrc..." >> $logfile
+add_startup 'xset +fp' 'xset +fp '"$userhome"'/.local/share/fonts'
+add_startup 'xset fp' 'xset fp rehash'
+echo `date` ":  Add the following snippet in $userhome/.config/startup/startup.sh..." >> $logfile
 
 pacman -S --noconfirm xorg-xfd polybar ttf-font-awesome pulseaudio alsa-utils
 

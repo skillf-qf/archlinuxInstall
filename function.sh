@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-13 16:18:58
- # @LastEditTime: 2021-11-29 11:28:18
+ # @LastEditTime: 2021-12-06 15:23:04
  # @FilePath: \archlinuxInstall\function.sh
 ###
 
@@ -40,6 +40,7 @@ desktop=`awk -F "=" '$1=="desktop" {print $2}' $configfile`
 terminal=`awk -F "=" '$1=="terminal" {print $2}' $configfile`
 shell=`awk -F "=" '$1=="shell" {print $2}' $configfile`
 software=`awk -F "=" '$1=="software" {print $2}' $configfile`
+startup_sh="/home/$username/.config/startup/startup.sh"
 
 # Functions
 repeat(){
@@ -120,4 +121,46 @@ deleteline(){
   	local line=`sed -n "/$2/=" $1 | sort -r | tail -1`
  	#echo -e "line=$line\n"
   	sed -i "$line"',$d' $1
+}
+
+add_startup(){
+# function : Add the app that starts automatically after startup
+# $1 : Check whether the command exists
+# $2 : Execute the command to start
+#
+	[[ ! -d "$startup_sh" ]] && mkdir -p /home/$username/.config/startup
+	[[ ! -s "$startup_sh" ]] && echo -e '#!/bin/bash\n' >> $startup_sh && chmod +x $startup_sh
+	app_target=`sed -n "/$1/p" $startup_sh`
+	if [ -z "$app_target" ]; then
+		echo -e "$2" >> $startup_sh
+		echo `date` ": Add \"$2\" to enable startup !" >> $logfile
+	fi
+
+	startup_target=`sed -n "/startup.sh/p" /home/$username/.xinitrc`
+	if [ -z "$startup_target" ]; then
+		bspwm_line=`sed -n "/bspwm/=" /home/$username/.xinitrc`
+		dwm_line=`sed -n "/dwm/=" /home/$username/.xinitrc`
+		[[ -n "$bspwm_line" ]] && line_array[${#line_array[@]}]=$bspwm_line
+		[[ -n "$dwm_line" ]] && line_array[${#line_array[@]}]=$dwm_line
+		# The original array
+		#echo ${line_array[@]}
+		for ((i=0; i < ${#line_array[*]}; i++));do
+			for ((j=$i+1; j < ${#line_array[*]}; j++));do
+				if [ ${line_array[$i]} -gt ${line_array[$j]} ];then
+					max=${line_array[$i]}
+					line_array[$i]=${line_array[$j]}
+					line_array[$j]=$max
+				fi
+			done
+		done
+		# Sorted array
+		#echo ${line_array[@]}
+		# Insert the command before the first line
+		if [ ${#line_array[*]} -gt 0 ]; then
+			sed -i "${line_array[0]} i ~/.config/startup/startup.sh\n" /home/$username/.xinitrc
+		else
+			echo -e '~/.config/startup/startup.sh\n' >> /home/$username/.xinitrc
+		fi
+	fi
+
 }
