@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-27 10:30:18
- # @LastEditTime: 2021-12-04 09:34:21
+ # @LastEditTime: 2021-12-09 17:24:37
  # @FilePath: \archlinuxInstall\bspwm.sh
 ###
 
@@ -98,6 +98,15 @@ ExecStart=
 ExecStart=-/usr/bin/agetty --autologin $username --noclear %I \$TERM
 EOF
 
+# Adjusting typematic delay and rate
+# The typematic delay indicates the amount of time (typically in milliseconds) a key needs to be pressed and held in order for
+## the repeating process to begin.
+# After the repeating process has been triggered, the character will be repeated with a certain frequency (usually given in Hz)
+## specified by the typematic rate.
+# Note that these settings are configured separately for Xorg and for the virtual console.
+# Set a typematic delay to 200ms and a typematic rate to 30Hz
+add_startup 'xset r' 'xset r rate 200 30'
+
 # Background
 echo `date` ": Copy the background to $userhome/.config/background/" >> $logfile
 [[ ! -d "$userhome/.config/background" ]] && mkdir -p $userhome/.config/background
@@ -114,7 +123,7 @@ else
 	cp /etc/xdg/picom.conf $userhome/.config/picom/picom.conf
 fi
 echo `date` ": Copy the picom.conf to $userhome/.config/picom .." >> $logfile
-add_startup 'picom' 'picom -b --config ~/.config/picom/picom.conf'
+add_startup 'picom' 'picom -b --config ~/.config/picom/picom.conf &'
 
 # Chinese font | fcitx5
 pacman -S --noconfirm fcitx5-im fcitx5-chinese-addons fcitx5-nord fcitx5-pinyin-zhwiki fcitx5-pinyin-moegirl \

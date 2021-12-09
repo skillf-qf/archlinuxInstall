@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-02 21:20:10
- # @LastEditTime: 2021-12-06 13:48:55
+ # @LastEditTime: 2021-12-09 17:26:59
  # @FilePath: \archlinuxInstall\vmware.sh
 ###
 

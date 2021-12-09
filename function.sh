@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-13 16:18:58
- # @LastEditTime: 2021-12-06 15:23:04
+ # @LastEditTime: 2021-12-09 16:35:06
  # @FilePath: \archlinuxInstall\function.sh
 ###
 
@@ -79,13 +79,13 @@ git_clone(){
 	[[ -d "$3" ]] && rm -rf $3
 	while :
     do
-		git clone $1 $3 && rep=$1 && {
+		git clone --depth=1 $1 $3 && rep=$1 && {
 			echo -e "\033[33m\"git clone $rep\" success !\033[0m\n"
 			echo `date` ": \"git clone $rep\" success !" >> $4
 			return
 		} || echo -e "\033[31m\"git clone $1\" tries to reconnect...\033[0m\n"
 
-		git clone $2 $3 && rep=$2 && {
+		git clone --depth=1 $2 $3 && rep=$2 && {
 			echo -e "\033[33m\"git clone $rep\" success !\033[0m\n"
 			echo `date` ": \"git clone $rep\" success !" >> $4
 			return
