@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-27 10:30:18
- # @LastEditTime: 2021-12-09 17:24:37
+ # @LastEditTime: 2021-12-10 15:41:54
  # @FilePath: \archlinuxInstall\bspwm.sh
 ###
 
@@ -105,7 +105,7 @@ EOF
 ## specified by the typematic rate.
 # Note that these settings are configured separately for Xorg and for the virtual console.
 # Set a typematic delay to 200ms and a typematic rate to 30Hz
-add_startup 'xset r' 'xset r rate 200 30'
+add_startup 'xset r' 'xset r rate 300 30'
 
 # Background
 echo `date` ": Copy the background to $userhome/.config/background/" >> $logfile
