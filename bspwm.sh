@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-27 10:30:18
- # @LastEditTime: 2021-12-10 15:41:54
+ # @LastEditTime: 2021-12-15 18:55:13
  # @FilePath: \archlinuxInstall\bspwm.sh
 ###
 
@@ -104,8 +104,8 @@ EOF
 # After the repeating process has been triggered, the character will be repeated with a certain frequency (usually given in Hz)
 ## specified by the typematic rate.
 # Note that these settings are configured separately for Xorg and for the virtual console.
-# Set a typematic delay to 200ms and a typematic rate to 30Hz
-add_startup 'xset r' 'xset r rate 300 30'
+# Set a typematic delay to 400ms and a typematic rate to 35Hz
+add_startup 'xset r' 'xset r rate 400 35'
 
 # Background
 echo `date` ": Copy the background to $userhome/.config/background/" >> $logfile

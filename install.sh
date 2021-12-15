@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-12-06 14:57:17
+ # @LastEditTime: 2021-12-15 19:25:10
  # @FilePath: \archlinuxInstall\install.sh
 ###
 
@@ -265,9 +265,10 @@ chmod +x $chrootinstall/$scriptfile
 arch-chroot /mnt /archlinuxInstall/$scriptfile
 set +x
 
-echo -e "\n\nThe system will reboot for the final configuration step !\n\n"
+echo -e "\n\nThe system will reboot for the final configuration step !\n"
+echo -ne "\r\033[33mYou can press <Ctrl-c> to stop \033[0m"
 for time in `seq 5 -1 0`; do
-    echo -e "\033[33mRestarting for the last configuration $time press Ctrl+c to stop it ...\033[0m\r\r"
+    echo -ne "\033[33m.\033[0m"
     sleep 1
 done
 
