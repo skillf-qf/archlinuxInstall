@@ -2,8 +2,8 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-13 16:18:58
- # @LastEditTime: 2021-12-09 16:35:06
- # @FilePath: \archlinuxInstall\function.sh
+ # @LastEditTime : 2022-02-17 09:59:32
+ # @FilePath     : \archlinuxInstall\function.sh
 ###
 
 # Definitions
@@ -144,21 +144,13 @@ add_startup(){
 		[[ -n "$dwm_line" ]] && line_array[${#line_array[@]}]=$dwm_line
 		# The original array
 		#echo ${line_array[@]}
-		for ((i=0; i < ${#line_array[*]}; i++));do
-			for ((j=$i+1; j < ${#line_array[*]}; j++));do
-				if [ ${line_array[$i]} -gt ${line_array[$j]} ];then
-					max=${line_array[$i]}
-					line_array[$i]=${line_array[$j]}
-					line_array[$j]=$max
-				fi
-			done
-		done
-		# Sorted array
-		#echo ${line_array[@]}
-		# Insert the command before the first line
-		if [ ${#line_array[*]} -gt 0 ]; then
+		if [ ! -z $line_array ]; then
+			# Sorted array
+			line_array=($(echo ${line_array[@]} | tr ' ' '\n' | sort -n))
+			#echo ${line_array[@]}
+			# Insert the command before the first line
 			sed -i "${line_array[0]} i ~/.config/startup/startup.sh\n" /home/$username/.xinitrc
-		else
+ 		else
 			echo -e '~/.config/startup/startup.sh\n' >> /home/$username/.xinitrc
 		fi
 	fi
