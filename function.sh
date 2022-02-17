@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-13 16:18:58
- # @LastEditTime : 2022-02-17 09:59:32
+ # @LastEditTime : 2022-02-17 10:34:39
  # @FilePath     : \archlinuxInstall\function.sh
 ###
 
@@ -138,19 +138,23 @@ add_startup(){
 
 	startup_target=`sed -n "/startup.sh/p" /home/$username/.xinitrc`
 	if [ -z "$startup_target" ]; then
-		bspwm_line=`sed -n "/bspwm/=" /home/$username/.xinitrc`
-		dwm_line=`sed -n "/dwm/=" /home/$username/.xinitrc`
-		[[ -n "$bspwm_line" ]] && line_array[${#line_array[@]}]=$bspwm_line
-		[[ -n "$dwm_line" ]] && line_array[${#line_array[@]}]=$dwm_line
+
+		check_desktop=("bspwm" "dwm" "qtile")
+		for check in ${check_desktop[@]}
+		do
+			line_number=`sed -n "/$check/=" /home/$username/.xinitrc`
+			[[ -n "$line_number" ]] && line_array[${#line_array[@]}]=$line_number
+		done
 		# The original array
 		#echo ${line_array[@]}
 		if [ ! -z $line_array ]; then
 			# Sorted array
 			line_array=($(echo ${line_array[@]} | tr ' ' '\n' | sort -n))
 			#echo ${line_array[@]}
-			# Insert the command before the first line
+			# Append the command before the first desktop startup command
 			sed -i "${line_array[0]} i ~/.config/startup/startup.sh\n" /home/$username/.xinitrc
  		else
+		 	# Append the command to the end
 			echo -e '~/.config/startup/startup.sh\n' >> /home/$username/.xinitrc
 		fi
 	fi
