@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime : 2022-02-18 16:32:41
+ # @LastEditTime : 2022-02-18 16:46:33
  # @FilePath     : \archlinuxInstall\bootrun.sh
 ###
 
@@ -40,29 +40,14 @@ if [ "$network_connection_type" = "wireless" ]; then
     echo `date` ": Enable the $bridge ..." >> $logfile
 
     repeat sudo ip link set up dev $bridge  > $terminal_id
-
-#    while ! sudo ip link set up dev $bridge  > $terminal_id; do
-#    	echo `date` ": \"ip link\" tries to re-enable $bridge ..." >> $logfile
-#    	sudo echo -e "\033[31m\"ip link\" tries to re-enable $bridge ...\033[0m\n" > $terminal_id
-#	    sleep 3
-#    done
     echo `date` ": $bridge enabled successfully !" >> $logfile
 
     # connect wifi
     echo `date` ": Try to connect to wifi ..." >> $logfile
     repeat nmcli device wifi connect $ssid password $psk > $terminal_id
-#    while ! nmcli device wifi connect $ssid password $psk > $terminal_id; do
-#    	echo `date` ": \"nmcli\" tries to reconnect to WiFi ..." >> $logfile
-#    	sudo echo -e "\033[31m\"nmcli\" tries to reconnect to WiFi ...\033[0m\n" > $terminal_id
-#	    sleep 3
-#    done
     echo `date` ": Successfully connected to wifi !" >> $logfile
+
     repeat ping -c 3 www.baidu.com > $terminal_id
-#    while ! ping -c 3 www.baidu.com > $terminal_id; do
-#        echo `date` ": \"ping\" tries to reconnect to the network ..." >> $logfile
-#        sudo echo -e "\033[31m\"ping\" tries to reconnect to the network ...\033[0m\n" > $terminal_id
-#	    sleep 3
-#    done
     echo `date` ": Wifi network connected !" >> $logfile
 
 elif [ "$network_connection_type" = "wired" ]; then
@@ -72,28 +57,10 @@ elif [ "$network_connection_type" = "wired" ]; then
     # set bridge
     echo `date` ": Enable the $bridge ..." >> $logfile
     repeat sudo ip link set up dev $bridge > $terminal_id
-#    while ! sudo ip link set up dev $bridge > $terminal_id; do
-#    	echo `date` ": \"ip link\" tries to re-enable $bridge ..." >> $logfile
-#    	sudo echo -e "\033[31m\"ip link\" tries to re-enable $bridge ...\033[0m\n" > $terminal_id
-#	    sleep 3
-#    done
     echo `date` ": $bridge enabled successfully !" >> $logfile
-
-    # connect wired
-    #while ! nmcli device wifi connect $ssid password $psk; do
-    #	echo `date` ": \"nmcli\" tries to reconnect to WiFi ..." >> $logfile
-    #	sudo echo -e "\033[31m\"nmcli\" tries to reconnect to WiFi ...\033[0m\n" > $terminal_id
-	#    sleep 3
-    #done
 
     dhcpcd $bridge
     repeat ping -c 3 www.baidu.com > $terminal_id
-#    while ! ping -c 3 www.baidu.com > $terminal_id; do
-#        echo `date` ": \"ping\" tries to reconnect to the network ..." >> $logfile
-#        sudo echo -e "\033[31m\"ping\" tries to reconnect to the network ...\033[0m\n" > $terminal_id
-#	    sleep 3
-#    done
-
     echo `date` ": Wired network connected !" >> $logfile
 
 fi
@@ -110,11 +77,9 @@ fi
 echo `date` ": Download and install yay ..." >> $logfile
 sudo echo -e "\033[33mDownload and install yay ...\033[0m" > $terminal_id
 sudo pacman -S  --noconfirm --needed base-devel git yay  > $terminal_id
+
 # Speed up makepkg compilation
 sudo sed -i 's/^#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j$(nproc)\"/' /etc/makepkg.conf
-
-# # fcitx-sogoupinyin
-# yay -S --answerclean None --answerdiff None --noconfirm fcitx-sogoupinyin
 
 # Remove the auto start service
 echo `date` ": Remove the auto start service ..." >> $logfile
