@@ -2,8 +2,8 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-11-16 10:28:56
- # @FilePath: \archlinuxInstall\bootrun.sh
+ # @LastEditTime : 2022-02-18 16:32:41
+ # @FilePath     : \archlinuxInstall\bootrun.sh
 ###
 
 # Print the command. The script ends when the command fails.
@@ -113,8 +113,8 @@ sudo pacman -S  --noconfirm --needed base-devel git yay  > $terminal_id
 # Speed up makepkg compilation
 sudo sed -i 's/^#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j$(nproc)\"/' /etc/makepkg.conf
 
-# fcitx-sogoupinyin
-yay -S --answerclean None --answerdiff None --noconfirm fcitx-sogoupinyin
+# # fcitx-sogoupinyin
+# yay -S --answerclean None --answerdiff None --noconfirm fcitx-sogoupinyin
 
 # Remove the auto start service
 echo `date` ": Remove the auto start service ..." >> $logfile
