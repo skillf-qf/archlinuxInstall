@@ -55,16 +55,16 @@ module-margin-right = 1
 font-0 = fixed:pixelsize=10;1
 font-1 = unifont:fontformat=truetype:size=8:antialias=false;0
 font-2 = siji:pixelsize=10;1
-font-3 = Font Awesome 5 Free:pixelsize=12;2
-font-4 = Font Awesome 5 Free Solid:pixelsize=12;2
-font-5 = Font Awesome 5 Brands:pixelsize=12;2
+font-3 = Font Awesome 6 Free:pixelsize=12;2
+font-4 = Font Awesome 6 Free Solid:pixelsize=12;2
+font-5 = Font Awesome 6 Brands:pixelsize=12;2
 
 modules-left = bspwm
 modules-center = xwindow pacman-updates
 #modules-right = filesystem xbacklight alsa pulseaudio xkeyboard memory cpu wlan eth battery temperature date powermenu
 modules-right = filesystem pulseaudio xkeyboard memory cpu eth date powermenu
 
-separator = |
+separator = " "
 
 tray-position = none
 tray-padding = 2
@@ -149,7 +149,7 @@ label-empty-foreground = ${colors.foreground-alt}
 label-empty-padding = 2
 
 ; Separator in between workspaces
-label-separator = |
+label-separator = " "
 label-separator-padding = 2
 label-separator-foreground = #ffb52a
 
