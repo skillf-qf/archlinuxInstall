@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-13 16:18:58
- # @LastEditTime : 2022-02-17 10:34:39
+ # @LastEditTime : 2022-02-18 14:03:44
  # @FilePath     : \archlinuxInstall\function.sh
 ###
 
@@ -138,7 +138,6 @@ add_startup(){
 
 	startup_target=`sed -n "/startup.sh/p" /home/$username/.xinitrc`
 	if [ -z "$startup_target" ]; then
-
 		check_desktop=("bspwm" "dwm" "qtile")
 		for check in ${check_desktop[@]}
 		do
@@ -147,15 +146,15 @@ add_startup(){
 		done
 		# The original array
 		#echo ${line_array[@]}
-		if [ ! -z $line_array ]; then
+		if [ ${line_array:-1} -eq 1 ]; then
+		 	# Append the command to the end
+			echo -e '~/.config/startup/startup.sh\n' >> /home/$username/.xinitrc
+ 		else
 			# Sorted array
 			line_array=($(echo ${line_array[@]} | tr ' ' '\n' | sort -n))
 			#echo ${line_array[@]}
 			# Append the command before the first desktop startup command
 			sed -i "${line_array[0]} i ~/.config/startup/startup.sh\n" /home/$username/.xinitrc
- 		else
-		 	# Append the command to the end
-			echo -e '~/.config/startup/startup.sh\n' >> /home/$username/.xinitrc
 		fi
 	fi
 
