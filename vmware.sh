@@ -2,8 +2,8 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-02 21:20:10
- # @LastEditTime: 2021-12-09 17:26:59
- # @FilePath: \archlinuxInstall\vmware.sh
+ # @LastEditTime : 2022-03-23 09:57:11
+ # @FilePath     : /archlinuxInstall/vmware.sh
 ###
 
 # Print the command. The script ends when the command fails.
@@ -32,7 +32,7 @@ systemctl enable vmtoolsd.service
 cp /etc/X11/xinit/xinitrc /home/$username/.xinitrc
 ### Delete the last five lines
 deleteline /home/$username/.xinitrc "twm &"
-add_startup 'vmware-user' 'vmware-user &'
+add_startup 'vmware-user' '# Enable VMware Shared folders\nvmware-user &'
 
 ## Filesystem utility. Enables drag & drop functionality between host and guest through FUSE (Filesystem in Userspace).
 systemctl start vmware-vmblock-fuse.service

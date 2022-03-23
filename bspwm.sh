@@ -2,8 +2,8 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-27 10:30:18
- # @LastEditTime: 2021-12-15 18:55:13
- # @FilePath: \archlinuxInstall\bspwm.sh
+ # @LastEditTime : 2022-03-23 10:12:57
+ # @FilePath     : /archlinuxInstall/bspwm.sh
 ###
 
 # Print the command. The script ends when the command fails.
@@ -104,14 +104,13 @@ EOF
 # After the repeating process has been triggered, the character will be repeated with a certain frequency (usually given in Hz)
 ## specified by the typematic rate.
 # Note that these settings are configured separately for Xorg and for the virtual console.
-# Set a typematic delay to 400ms and a typematic rate to 35Hz
-add_startup 'xset r' 'xset r rate 400 35'
+add_startup 'xset r' '# Set a typematic delay to 300ms and a typematic rate to 30Hz\nxset r rate 300 30'
 
 # Background
 echo `date` ": Copy the background to $userhome/.config/background/" >> $logfile
 [[ ! -d "$userhome/.config/background" ]] && mkdir -p $userhome/.config/background
 cp $config_dir/background/background.jpg $userhome/.config/background
-add_startup 'feh --bg-scale' 'feh --bg-scale ~/.config/background/background.jpg'
+add_startup 'feh --bg-scale' '# Setting the Desktop Wallpaper\nfeh --bg-scale ~/.config/background/background.jpg'
 
 # Picom config file
 [[ ! -d "$userhome/.config/picom" ]] && mkdir -p $userhome/.config/picom
@@ -123,7 +122,7 @@ else
 	cp /etc/xdg/picom.conf $userhome/.config/picom/picom.conf
 fi
 echo `date` ": Copy the picom.conf to $userhome/.config/picom .." >> $logfile
-add_startup 'picom' 'picom -b --config ~/.config/picom/picom.conf &'
+add_startup 'picom' '# Enable transparency effect\npicom -b --config ~/.config/picom/picom.conf &'
 
 # Chinese font | fcitx5
 pacman -S --noconfirm fcitx5-im fcitx5-chinese-addons fcitx5-nord fcitx5-pinyin-zhwiki fcitx5-pinyin-moegirl \
@@ -133,7 +132,7 @@ rm -rf $userhome/.pam_environment
 cp $config_dir/fcitx/fcitx.conf $userhome/.pam_environment
 [[ -d "$userhome/.config/fcitx5" ]] && rm -rf $userhome/.config/fcitx5
 cp -r $config_dir/fcitx/fcitx5 $userhome/.config
-add_startup 'fcitx5' 'fcitx5 -d'
+add_startup 'fcitx5' '# Start the fcitx5 input method\nfcitx5 -d &'
 
 # The status bar
 ## Polybar

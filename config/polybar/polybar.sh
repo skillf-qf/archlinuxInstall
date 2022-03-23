@@ -1,8 +1,8 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-07 17:49:15
- # @LastEditTime: 2021-12-06 15:37:26
- # @FilePath: \archlinuxInstall\config\polybar\polybar.sh
+ # @LastEditTime : 2022-03-23 10:08:05
+ # @FilePath     : /archlinuxInstall/config/polybar/polybar.sh
 ###
 
 # Print the command. The script ends when the command fails.
@@ -25,7 +25,7 @@ chmod +x $siji_dir/install.sh
 $siji_dir/install.sh
 echo `date` ": Siji was successfully installed..." >> $logfile
 
-add_startup 'xset +fp' 'xset +fp '"$userhome"'/.local/share/fonts'
+add_startup 'xset +fp' '# Rescan and load the font directory\nxset +fp '"$userhome"'/.local/share/fonts'
 add_startup 'xset fp' 'xset fp rehash'
 echo `date` ":  Add the following snippet in $userhome/.config/startup/startup.sh..." >> $logfile
 

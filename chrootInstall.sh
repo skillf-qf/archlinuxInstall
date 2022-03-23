@@ -2,8 +2,8 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime: 2021-12-06 00:14:54
- # @FilePath: \archlinuxInstall\chrootInstall.sh
+ # @LastEditTime : 2022-03-23 10:18:45
+ # @FilePath     : /archlinuxInstall/chrootInstall.sh
 ###
 
 # Print the command. The script ends when the command fails.
@@ -138,6 +138,9 @@ else
     echo -e "The archLinux minimal system installation is complete !\n"
     echo `date` ": The archLinux minimal system installation is complete !" >> $logfile
 fi
+
+# Proxy http https
+add_startup 'http_proxy' '# Proxy http https\n#ip_="0.0.0.0"\n#port_="0000"\n#export http_proxy="$ip_:$port_\n#export https_proxy="$ip_:$port_"'
 
 # Other software
 echo `date` ": Start installing additional packages..." >> $logfile
