@@ -1,8 +1,8 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-07 17:49:15
- # @LastEditTime: 2021-11-29 13:43:41
- # @FilePath: \archlinuxInstall\refind.sh
+ # @LastEditTime : 2022-03-26 19:13:15
+ # @FilePath     : \archlinuxInstall\refind.sh
 ###
 
 # Print the command. The script ends when the command fails.
@@ -59,15 +59,18 @@ echo `date` ": Create a Linux kernel configuration file refind_linux.conf for rE
 disk_part=`get_disk_part $root`
 root_disk=`echo $disk_part | awk -F " " '{print $1}'`
 partnum=`echo $disk_part | awk -F " " '{print $2}'`
+if echo $root_disk | grep nvme > /dev/null; then partnum="p"$partnum; fi
+boot_part = $root_disk$partnum
+
 [[ `lscpu | grep Intel` ]] && cpu="intel"
 [[ `lscpu | grep AMD` ]] && cpu="amd"
 parameters="initrd=\boot\\$cpu-ucode.img initrd=\boot\initramfs-%v.img"
 parameters_fallback="initrd=\boot\\$cpu-ucode.img initrd=\boot\initramfs-%v-fallback.img"
 
 cat > /boot/refind_linux.conf <<EOF
-"Boot using default options"     "root=/dev/$root_disk$partnum rw add_efi_memmap $parameters"
-"Boot using fallback initramfs"     "root=/dev/$root_disk$partnum rw add_efi_memmap $parameters_fallback"
-"Boot to terminal"     "root=/dev/$root_disk$partnum rw add_efi_memmap $parameters systemd.unit=multi-user.target"
+"Boot using default options"     "root=/dev/$boot_part rw add_efi_memmap $parameters"
+"Boot using fallback initramfs"     "root=/dev/$boot_part rw add_efi_memmap $parameters_fallback"
+"Boot to terminal"     "root=/dev/$boot_part rw add_efi_memmap $parameters systemd.unit=multi-user.target"
 EOF
 
 echo `date` ": Add kernel pass parameters to file refind_linux.conf..." >> $logfile
