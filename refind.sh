@@ -1,7 +1,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-11-07 17:49:15
- # @LastEditTime : 2022-03-26 19:13:15
+ # @LastEditTime : 2022-03-26 19:39:48
  # @FilePath     : \archlinuxInstall\refind.sh
 ###
 
@@ -60,7 +60,7 @@ disk_part=`get_disk_part $root`
 root_disk=`echo $disk_part | awk -F " " '{print $1}'`
 partnum=`echo $disk_part | awk -F " " '{print $2}'`
 if echo $root_disk | grep nvme > /dev/null; then partnum="p"$partnum; fi
-boot_part = $root_disk$partnum
+boot_part=$root_disk$partnum
 
 [[ `lscpu | grep Intel` ]] && cpu="intel"
 [[ `lscpu | grep AMD` ]] && cpu="amd"
