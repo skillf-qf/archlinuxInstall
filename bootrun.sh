@@ -2,7 +2,7 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime : 2022-02-18 16:46:33
+ # @LastEditTime : 2022-03-26 21:50:10
  # @FilePath     : \archlinuxInstall\bootrun.sh
 ###
 
@@ -87,7 +87,7 @@ systemctl --user disable bootrun.service  > $terminal_id
 rm -rf $HOME/.config/systemd/user/*  > $terminal_id
 
 echo `date` ": Set sudo permissions to have a password ..." >> $logfile
-sudo sed -i 's/^%wheel ALL=(ALL) NOPASSWD: ALL/# %wheel ALL=(ALL) NOPASSWD: ALL/' /etc/sudoers
+sudo sed -i 's/^%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/' /etc/sudoers
 
 cat >> $logfile <<EOF
 

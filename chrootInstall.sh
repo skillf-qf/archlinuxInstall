@@ -2,8 +2,8 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-24 20:22:07
- # @LastEditTime : 2022-03-23 10:18:45
- # @FilePath     : /archlinuxInstall/chrootInstall.sh
+ # @LastEditTime : 2022-03-26 21:50:34
+ # @FilePath     : \archlinuxInstall\chrootInstall.sh
 ###
 
 # Print the command. The script ends when the command fails.
@@ -117,8 +117,11 @@ pacman -Syy --noconfirm archlinuxcn-keyring
 # sudo
 echo `date` ": Install sudo and set sudo permissions to be password-free ..." >> $logfile
 pacman -S --noconfirm --needed sudo
-sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
-sed -i 's/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/' /etc/sudoers
+
+# uncomment:
+# %wheel ALL=(ALL:ALL) ALL
+# %wheel ALL=(ALL:ALL) NOPASSWD: ALL
+sed -i 's/^# %wheel ALL/%wheel ALL/' /etc/sudoers
 
 # NetworkManager
 echo `date` ": Install the NetworkManager ..." >> $logfile
