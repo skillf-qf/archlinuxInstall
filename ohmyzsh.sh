@@ -2,8 +2,8 @@
 ###
  # @Author: skillf
  # @Date: 2021-01-23 23:51:42
- # @LastEditTime: 2021-12-09 16:50:04
- # @FilePath: \archlinuxInstall\ohmyzsh.sh
+ # @LastEditTime : 2022-04-19 03:55:52
+ # @FilePath     : \archlinuxInstall\ohmyzsh.sh
 ###
 
 # Print the command. The script ends when the command fails.
@@ -68,7 +68,7 @@ echo `date` ": Change ohmyzsh Theme: ys..." >> $logfile
 # Add the zsh plugin : zsh-autosuggestions
 echo `date` ": Add-in zsh-autosuggestions configuration..." >> $logfile
 git_clone https://github.com/zsh-users/zsh-autosuggestions.git https://gitee.com/skillf/zsh-autosuggestions.git $zshsuggestions_dir $logfile
-sed -i '/^plugins=(git)/plugins=(git zsh-autosuggestions)' $HOME/.zshrc
+sed -i 's/^plugins=(git)/plugins=(git zsh-autosuggestions)' $HOME/.zshrc
 echo `date` ": The zsh-autosuggestions plugin is configured !" >> $logfile
 
 # Add a zsh theme : powerlevel10k
